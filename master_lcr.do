@@ -43,6 +43,8 @@ ssc install stripplot
 net install http://www.stata.com/users/kcrow/tab2docx
 ssc install labutil
 */
+ssc install psmatch2, replace
+
 
 
 	* define graph scheme for visual outputs
@@ -85,7 +87,7 @@ set sortseed 8413195
 		
 
 ***********************************************************************
-* 	PART 4: 	Run do-files for data cleaning & lcrtration progress
+* 	PART 4: 	Run do-files for data cleaning
 ***********************************************************************
 /* --------------------------------------------------------------------
 	PART 4.1: Import & raw data
@@ -103,16 +105,20 @@ if (1) do "${lcr_github}/lcr_correct.do"
 	PART 4.4: Generate variables for analysis or implementation
 ----------------------------------------------------------------------*/	
 if (1) do "${lcr_github}/lcr_generate.do"
+
+***********************************************************************
+* 	PART 5: 	Run do-files for data analysis
+***********************************************************************
 /* --------------------------------------------------------------------
-	PART 4.6: export open text or number variables for RA check
+	PART 5.1: select variables to include into matching model
 ----------------------------------------------------------------------*/	
-if (0) do "${lcr_github}/lcr_open_question_checks.do"
+if (0) do "${lcr_github}/lcr_model_choice.do"
 /* --------------------------------------------------------------------
-	PART 4.7: Export pdf with number, characteristics & eligibility of lcrtered firms
+	PART 5.2.: select model for estimation of propensity score
 ----------------------------------------------------------------------*/	
-if (0) do "${lcr_github}/lcr_progress_eligibility_characteristics.do"
+if (0) do "${lcr_github}/lcr_variable_choice.do"
 /* --------------------------------------------------------------------
-	PART 4.8: De-identify and save as final for analysis
+	PART 5.3.: De-identify and save as final for analysis
 ----------------------------------------------------------------------*/
-if (0) do "${lcr_github}/lcr_deidentify.do"
+if (0) do "${lcr_github}/lcr_.do"
 

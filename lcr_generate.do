@@ -1,4 +1,3 @@
-* generate: company_id
 ***********************************************************************
 * 			lcrtration generate									  	  
 ***********************************************************************
@@ -24,7 +23,7 @@
 *	Creates:  lcr_inter.dta			                          
 *																	  
 ***********************************************************************
-* 	PART 1:  Define non-response categories  			
+* 	PART 1:  set the scene  			
 ***********************************************************************
 use "${lcr_intermediate}/lcr_inter", clear
 
@@ -79,7 +78,7 @@ order city state subsidiary lob, a(employees)
 * 	Save the changes made to the data		  			
 ***********************************************************************
 	* set export directory
-cd "$lcr_intermediate"
+cd "$lcr_final"
 
 	* save dta file
-save "lcr_inter", replace
+save "lcr_final", replace
