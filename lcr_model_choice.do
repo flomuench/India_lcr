@@ -30,8 +30,17 @@ use "${lcr_intermediate}/lcr_final", clear
 ***********************************************************************
 * 	PART 1: visualise the distribution of the DV solar patents  			
 ***********************************************************************
+	* possible or better to use count model?
 
+kdensity solarpatents
 
+probit solarpatents
+margins, predict(xb)
+
+logit solarpatents
+margins, predict(l_solarpatents)
+
+br solarpatents*
 
 ***********************************************************************
 * 	Save the changes made to the data		  			

@@ -65,6 +65,8 @@ rename primarystateprovince state
 rename foreign0trulyindian international
 rename issubsidiary subsidiary
 rename lineofbusiness lob
+rename solarpatent solarpatents
+rename otherpatent otherpatents
 
 ***********************************************************************
 * 	PART 5: 	Order the varialcres in the data set		  			

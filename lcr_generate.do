@@ -73,6 +73,40 @@ foreach x in city state subsidiary lob {
 }
 order city state subsidiary lob, a(employees)
 
+***********************************************************************
+* 	PART 3: create dummy for firm having participated in LCR auction		  										  
+***********************************************************************
+gen lcr = (total_lcr > 0 & total_lcr <.), b(total_lcr)
+
+***********************************************************************
+* 	PART 4: create dummy for firm having filed a solar patent
+***********************************************************************
+gen solar_patentor = (solarpatents > 0 & solarpatents <.), b(solarpatents)
+
+***********************************************************************
+* 	PART 5: create dummy for firm having filed a patent
+***********************************************************************
+gen patentor = (otherpatents > 0 & otherpatents <.), b(otherpatents)
+
+***********************************************************************
+* 	PART 6: create dummy for Indian companies
+***********************************************************************
+gen indian = (international < 1)
+lab def national 1 "indian" 0 "international"
+lab val indian national
+
+***********************************************************************
+* 	PART 7: create dummy for company HQ main city in India
+***********************************************************************
+gen hq_indian_state = .
+replace hq_indian_state = 1 if state != .
+local not_indian 5 11 19 9 6 16 15
+foreach x of local not_indian  {
+	replace hq_indian_state = 0 if state == `x'
+}
+
+	* dummy for delhi
+gen capital = (city == 21)
 
 ***********************************************************************
 * 	Save the changes made to the data		  			
