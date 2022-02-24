@@ -42,6 +42,7 @@ ssc install strgroup
 ssc install stripplot
 net install http://www.stata.com/users/kcrow/tab2docx
 ssc install labutil
+ssc install xtgraph
 */
 ssc install psmatch2, replace
 
@@ -56,29 +57,31 @@ set scheme plotplain
 
 		* dynamic folder path for gdrive(data,output), github(code), backup(local computer)
 if c(os) == "Windows" {
-	global lcr_gdrive = "C:/Users/`c(username)'/Google Drive/Research_Solar India TU-IASS-PTB/Data/Firm data"
+	global lcr_gdrive_data = "C:/Users/`c(username)'/Google Drive/Research_Solar India TU-IASS-PTB/Data/Firm data"
+	global lcr_gdrive_analysis = "C:/Users/`c(username)'/Google Drive/Research_Solar India TU-IASS-PTB/Analysis"
 	global lcr_github = "C:/Users/`c(username)'/Documents/GitHub/India_lcr"
 	global lcr_backup = "C:/Users/`c(username)'/Documents/India_lcr"
 	
 }
 else if c(os) == "MacOSX" {
-	global lcr_gdrive = "/Volumes/GoogleDrive/My Drive/Research_Solar India TU-IASS-PTB/Data/Firm data"
+	global lcr_gdrive_data = "/Volumes/GoogleDrive/My Drive/Research_Solar India TU-IASS-PTB/Data/Firm data"
+	global lcr_gdrive_analysis = "/Volumes/GoogleDrive//My Drive/Research_Solar India TU-IASS-PTB/Analysis"
 	global lcr_github = "/Users/`c(username)'/Documents/GitHub/India_lcr"
 	global lcr_backup = "/Users/`c(username)'/Documents/India_lcr"
 }
 
 		* paths within gdrive
 			* data
-global lcr_raw = "${lcr_gdrive}/raw"
-global lcr_intermediate "${lcr_gdrive}/intermediate"
-global lcr_final = "${lcr_gdrive}/final"
+global lcr_raw = "${lcr_gdrive_data}/raw"
+global lcr_intermediate "${lcr_gdrive_data}/intermediate"
+global lcr_final = "${lcr_gdrive_data}/final"
 global lcr_checks = "${lcr_gdrive}/checks"
 
 
 			* output (regression tables, figures)
-global lcr_output = "${lcr_gdrive}/output"
-global lcr_figures = "${lcr_output}/descriptive-statistics-figures"
-global lcr_progress = "${lcr_output}/progress-eligibility-characteristics"
+global lcr_rt = "${lcr_gdrive_analysis}/regression-tables"
+global lcr_descriptives = "${lcr_output_analysis}/descriptive-statistics-figures"
+global lcr_psm = "${lcr_output_analysis}/propensity-score-matching"
 
 			
 		* set seeds for replication
