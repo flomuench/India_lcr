@@ -40,6 +40,7 @@ gen not_solar_patent = (solarpatent < 1)
 	* create a one to count each patent
 gen onepatent = 1
 
+set graphics on
 sort year_application
 graph bar (sum) solarpatent not_solar_patent, over(year_application, label(labs(tiny))) ///
 	blabel(total, size(vsmall)) ///
@@ -159,6 +160,7 @@ drop _merge
 ***********************************************************************
 * 	PART 9: replace the existing lcr_raw.dta file		  						
 ***********************************************************************
+set graphics off
 save "lcr_raw", replace
 
 

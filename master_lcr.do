@@ -43,8 +43,8 @@ ssc install stripplot
 net install http://www.stata.com/users/kcrow/tab2docx
 ssc install labutil
 ssc install xtgraph
-*/
 ssc install psmatch2, replace
+*/
 
 
 
@@ -58,7 +58,7 @@ set scheme plotplain
 		* dynamic folder path for gdrive(data,output), github(code), backup(local computer)
 if c(os) == "Windows" {
 	global lcr_gdrive_data = "C:/Users/`c(username)'/Google Drive/Research_Solar India TU-IASS-PTB/Data/Firm data"
-	global lcr_gdrive_analysis = "C:/Users/`c(username)'/Google Drive/Research_Solar India TU-IASS-PTB/Analysis"
+	global lcr_gdrive_analysis = "C:/Users/`c(username)'/Google Drive/Research_Solar India TU-IASS-PTB/Analysis/LCR effect on innovation"
 	global lcr_github = "C:/Users/`c(username)'/Documents/GitHub/India_lcr"
 	global lcr_backup = "C:/Users/`c(username)'/Documents/India_lcr"
 	
@@ -80,8 +80,8 @@ global lcr_checks = "${lcr_gdrive}/checks"
 
 			* output (regression tables, figures)
 global lcr_rt = "${lcr_gdrive_analysis}/regression-tables"
-global lcr_descriptives = "${lcr_output_analysis}/descriptive-statistics-figures"
-global lcr_psm = "${lcr_output_analysis}/propensity-score-matching"
+global lcr_descriptives = "${lcr_gdrive_analysis}/descriptive-statistics-figures"
+global lcr_psm = "${lcr_gdrive_analysis}/propensity-score-matching"
 
 			
 		* set seeds for replication
