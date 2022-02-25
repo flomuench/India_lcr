@@ -2,30 +2,25 @@
 * 			variable choice - the effect of LCR on innovation									  	  
 ***********************************************************************
 *																	    
-*	PURPOSE: generate lcrtration variables				  							  
+*	PURPOSE: identify the variables 			  							  
 *																	  
 *																	  
 *	OUTLINE:														  
 *	1) sector
-* 	2) gender
-* 	3) onshore / offshore  							  
-*	4) produit exportable  
-*	5) intention d'exporter 			  
-*	6) une opération d'export				  
-*   7) export status  
-*	8) age
-*	9) eligibility	
 *
 *																	  															      
-*	Author:  	Florian Muench & Kais Jomaa							  
-*	ID varialcre: 	id (example: f101)			  					  
-*	Requires: lcr_inter.dta 	  								  
-*	Creates:  lcr_inter.dta			                          
+*	Author:  	Florian Muench							  
+*	ID varialcre: 	company_name		  					  
+*	Requires: lcr_final.dta 	  								  
+*	Creates:  lcr_final.dta			                          
 *																	  
 ***********************************************************************
 * 	PART 1:  set the scene  			
 ***********************************************************************
-use "${lcr_intermediate}/lcr_final", clear
+use "${lcr_final}/lcr_final", clear
+
+	* set the directory to propensity matching folder
+cd "$lcr_psm"
 
 ***********************************************************************
 * 	PART 1: run  			
@@ -40,51 +35,54 @@ use "${lcr_intermediate}/lcr_final", clear
 			* size of company: sales & employees
 			* level of economic complexity of company lob
 			* lob
+			* subsidiary
 	* significance method:
 		* (1-3) indian
-eststo indian, r: logit lcr i.indian /* seems like this */
-eststo indian_state, r: logit lcr i.hq_indian_state
-eststo dehli, r: logit lcr i.capital
+_eststo indian, r: logit lcr i.indian if patent_outlier == 0, vce(robust)
+_eststo india_state, r: logit lcr i.hq_indian_state if patent_outlier == 0, vce(robust)
+_eststo india_capital, r: logit lcr i.capital if patent_outlier == 0, vce(robust)
 
 		* (4) total auction participation
-eststo auctions, r: logit lcr total_auctions
+*_eststo auctions, r: logit lcr total_auctions if patent_outlier == 0, vce(robust)
+
+		* (4) total won
+_eststo auctions, r: logit lcr total_won if patent_outlier == 0, vce(robust)
+
+/* note: total auctions participated & total_won are highly correlated 0.85 */
 
 		* (5) ever patented non solar patents
-eststo patentor, r: logit lcr total_auctions patentor
+_eststo patentor, r: logit lcr total_won i.patentor if patent_outlier == 0, vce(robust)
 		
 		* (6) amount of other patents
-eststo otherpatents, r: logit lcr total_auctions otherpatents
+_eststo otherprepatents, r: logit lcr total_won pre_not_solar_patent if patent_outlier == 0, vce(robust)
 
 		* (7) size
-eststo size, r: logit lcr total_auctions sales employees
+_eststo size, r: logit lcr total_won sales employees if patent_outlier == 0, vce(robust)
 
-		* (8) complexity
-eststo size, r: logit lcr total_auctions lob_pc_avg
+		* (8) plant price
+_eststo size, r: logit lcr total_won total_plant_price_lifetime if patent_outlier == 0, vce(robust)
+
+		* (9) complexity
+_eststo complexity, r: logit lcr total_won  total_plant_price_lifetime lob_pc_avg if patent_outlier == 0, vce(robust)
 	
-		* (9) lob
-eststo size, r: logit lcr total_auctions lob_pc_avg lob
+		* (10) lob
+_eststo lob, r: logit lcr total_won total_plant_price_lifetime lob_pc_avg lob1 if patent_outlier == 0, vce(robust)
+
+		* (11) all
+_eststo all, r: logit lcr i.capital total_won total_plant_price_lifetime i.patentor pre_not_solar_patent employees sales lob_pc_avg lob1 if patent_outlier == 0, vce(robust)
 
 
-
-local regressions indian
-
-
-
-eststo exp2, r: logit exporter qii employees age i.genre_ceo i.pdg_educ, vce(robust)
-
-local regressions expi1 exp2 markets3 xsales4
-esttab `regressions' using reg_exp1.tex, replace ///
-	title("Export and QI index") ///
-	mtitles("Exp. index" "Export" "Exp. markets" "Exp. sales") ///
+local regressions indian india_state india_capital auctions patentor otherprepatents size complexity lob all
+esttab `regressions' using variable_choice.csv, replace ///
+	title("Selection of variables used for PSM") ///
+	mtitles("Indian" "HQ Indian state" "HQ in Delhi" "Auction won" "Patentor" "Pre-patents" "Size" "Plant price" "Complexity" "Main business" "All") ///
 	label ///
 	b(2) ///
 	se(2) ///
 	width(0.8\hsize) ///
 	star(* 0.1 ** 0.05 *** 0.01) ///
-	drop(*.gouvernorat *.sector) ///
 	nobaselevels ///
-	scalars("gouvernorat Region controls" "sector Sector controls") ///
-	addnotes("Export performance index is a z-score of export dummy, export markets and export sales."  "Estimates in column (2) are based on a logit" "Estimates in column (3) are based on a Poisson model.")
+	addnotes("All estimtes are based on a Logit model with robust standard errors in parentheses.")
 	
 
 ***********************************************************************

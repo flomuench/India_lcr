@@ -81,8 +81,8 @@ tab year_application if post == 0 /* 262 patents after after treatment */
 
 encode companyname_correct, gen(firm)
 xtset firm year_application
-xtgraph onepatent
-xtgraph solarpatent
+*xtgraph onepatent
+*xtgraph solarpatent
 
 
 ***********************************************************************
@@ -98,8 +98,8 @@ rename solarpatent0 pre_solar_patent
 rename solarpatent1 post_solar_patent
 rename not_solar_patent0 pre_not_solar_patent
 rename not_solar_patent1 post_not_solar_patent
-rename onepatent0 pre_total_patents
-rename onepatent1 post_total_patents
+rename onepatent0 pre_total_patent
+rename onepatent1 post_total_patent
 
 lab var pre_solar_patent "solar patents 1982-2011"
 lab var post_solar_patent "solar patents 2012-2021"
@@ -110,37 +110,9 @@ lab var post_not_solar_patent "non-solar patents 2012-2021"
 lab var pre_total_patent "total patents 1982-2011"
 lab var post_total_patent "total patents 2012-2021"
 
-***********************************************************************
-* 	PART 6: descriptive statistics about pre-post (solar) patents 	  						
-***********************************************************************
-	* 
-local prepostsolar pre_solar_patent post_solar_patent
-local prepostother pre_not_solar_patent post_not_solar_patent
-local preposttotal pre_total_patents post_total_patents
-
-	* pre-post solar and non solar patents
-graph bar (sum)  `prepostsolar' `prepostother', ///
-	blabel(total, size(vsmall)) ///
-	title("{bf: Solar and non-solar patents pre-and post auctions in India}") ///
-	subtitle("Firms that participated in SECI solar auctions between 2013-2020", size(small)) ///
-	legend(label(1 "solar patents 1982-2011") label(2 "solar patents 2012-2021") ///
-	label(3 "non-solar patents 1982-2011") label(4 "non-solar patents 2012-2021") rows(2) pos(6)) ///
-	note("Authors own calculations based on patent application at Indian patent office.", size(vsmall)) ///
-	name(prepost_all, replace)
-gr export prepost_all.png, replace
-
-	* pre-post solar only
-graph bar (sum)  `prepostsolar', ///
-	blabel(total, size(vsmall)) ///
-	title("{bf: Solar patents pre-and post auctions in India}") ///
-	subtitle("Firms that participated in SECI solar auctions between 2013-2020", size(small)) ///
-	legend(label(1 "solar patents 1982-2011") label(2 "solar patents 2012-2021") rows(2) pos(6)) ///
-	note("Authors own calculations based on patent application at Indian patent office.", size(vsmall)) ///
-	name(prepost_solar, replace)
-gr export prepost_solar.png, replace
 
 ***********************************************************************
-* 	PART 7: save file of pre-post treatment in raw folder		  						
+* 	PART 6: save file of pre-post treatment in raw folder		  						
 ***********************************************************************
 * change directory to raw
 cd "$lcr_raw"
@@ -149,7 +121,7 @@ save "patents_pre_post", replace
 
 
 ***********************************************************************
-* 	PART 8: merge cross-section lcr_raw.dta file with patents			  						
+* 	PART 7: merge cross-section lcr_raw.dta file with patents			  						
 ***********************************************************************
 	* companyname_correct is the common unique identifier
 	* import lcr_raw.dta
@@ -158,7 +130,7 @@ merge m:1 companyname_correct using patents_pre_post /* results should indicate 
 drop _merge
 
 ***********************************************************************
-* 	PART 9: replace the existing lcr_raw.dta file		  						
+* 	PART 8: replace the existing lcr_raw.dta file		  						
 ***********************************************************************
 set graphics off
 save "lcr_raw", replace

@@ -44,6 +44,8 @@ net install http://www.stata.com/users/kcrow/tab2docx
 ssc install labutil
 ssc install xtgraph
 ssc install psmatch2, replace
+ssc install table1
+ssc install estout
 */
 
 
@@ -57,15 +59,15 @@ set scheme plotplain
 
 		* dynamic folder path for gdrive(data,output), github(code), backup(local computer)
 if c(os) == "Windows" {
-	global lcr_gdrive_data = "C:/Users/`c(username)'/Google Drive/Research_Solar India TU-IASS-PTB/Data/Firm data"
-	global lcr_gdrive_analysis = "C:/Users/`c(username)'/Google Drive/Research_Solar India TU-IASS-PTB/Analysis/LCR effect on innovation"
+	global lcr_gdrive_data = "C:/Users/`c(username)'/Google Drive/Research_Solar India TU-IASS-PTB/Paper effect of LCR on innovation/data"
+	global lcr_gdrive_analysis = "C:/Users/`c(username)'/Google Drive/Research_Solar India TU-IASS-PTB/Paper effect of LCR on innovation/output"
 	global lcr_github = "C:/Users/`c(username)'/Documents/GitHub/India_lcr"
 	global lcr_backup = "C:/Users/`c(username)'/Documents/India_lcr"
 	
 }
 else if c(os) == "MacOSX" {
-	global lcr_gdrive_data = "/Volumes/GoogleDrive/My Drive/Research_Solar India TU-IASS-PTB/Data/Firm data"
-	global lcr_gdrive_analysis = "/Volumes/GoogleDrive//My Drive/Research_Solar India TU-IASS-PTB/Analysis"
+	global lcr_gdrive_data = "/Volumes/GoogleDrive/My Drive/Research_Solar India TU-IASS-PTB/Paper effect of LCR on innovation/data"
+	global lcr_gdrive_analysis = "/Volumes/GoogleDrive//My Drive/Research_Solar India TU-IASS-PTB/Paper effect of LCR on innovation/output"
 	global lcr_github = "/Users/`c(username)'/Documents/GitHub/India_lcr"
 	global lcr_backup = "/Users/`c(username)'/Documents/India_lcr"
 }
@@ -117,15 +119,19 @@ if (1) do "${lcr_github}/lcr_generate.do"
 * 	PART 5: 	Run do-files for data analysis
 ***********************************************************************
 /* --------------------------------------------------------------------
+	PART 5.0: descriptive statitics
+----------------------------------------------------------------------*/	
+if (0) do "${lcr_github}/lcr_descriptives.do"
+/* --------------------------------------------------------------------
 	PART 5.1: select variables to include into matching model
 ----------------------------------------------------------------------*/	
 if (0) do "${lcr_github}/lcr_model_choice.do"
 /* --------------------------------------------------------------------
 	PART 5.2.: select model for estimation of propensity score
 ----------------------------------------------------------------------*/	
-if (0) do "${lcr_github}/lcr_variable_choice.do"
+if (1) do "${lcr_github}/lcr_variable_choice.do"
 /* --------------------------------------------------------------------
-	PART 5.3.: De-identify and save as final for analysis
+	PART 5.3.: evaluate common support
 ----------------------------------------------------------------------*/
-if (0) do "${lcr_github}/lcr_.do"
+if (0) do "${lcr_github}/lcr_common_support.do"
 

@@ -27,6 +27,13 @@
 ***********************************************************************
 use "${lcr_intermediate}/lcr_final", clear
 
+	* useful links
+* https://thomasgstewart.github.io/propensity-score-matching-in-stata/
+* http://kaichen.work/?p=1522
+*https://www.ssc.wisc.edu/sscc/pubs/stata_psmatch.htm
+* https://www.stata.com/manuals/teteffectspsmatch.pdf
+* https://blogs.worldbank.org/impactevaluations/what-do-you-need-do-make-matching-estimator-convincing-rhetorical-vs-statistical
+
 ***********************************************************************
 * 	PART 1: visualise the distribution of the DV solar patents  			
 ***********************************************************************

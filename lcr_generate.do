@@ -68,8 +68,6 @@ label define subsector_name 1 "agriculture" ///
 ***********************************************************************
 foreach x in city state subsidiary lob {
 	encode `x', gen(`x'1)
-	drop `x'
-	rename `x'1 `x' 
 }
 order city state subsidiary lob, a(employees)
 
@@ -98,19 +96,45 @@ lab val indian national
 ***********************************************************************
 * 	PART 7: create dummy for company HQ main city in India
 ***********************************************************************
+
 gen hq_indian_state = .
-replace hq_indian_state = 1 if state != .
+replace hq_indian_state = 1 if state1 != .
 local not_indian 5 11 19 9 6 16 15
 foreach x of local not_indian  {
-	replace hq_indian_state = 0 if state == `x'
+	replace hq_indian_state = 0 if state1 == `x'
 }
 
 	* dummy for delhi
-gen capital = (city == 21)
+gen capital = (city1 == 21)
+
+
+***********************************************************************
+* 	PART 8: create dummy patent outliers
+***********************************************************************
+cd "$lcr_descriptives"
+set graphics on
+
+	* graph 
+graph box totalpatents, mark(1, mlab(company_name)) ///
+	title("Identification of outliers in terms of total patents") ///
+	name(outlier_patents, replace)
+gr export outlier_patents.png, replace
+
+graph box solarpatents, mark(1, mlab(company_name)) ///
+	title("Identification of outliers in terms of solar patents") ///
+	name(outlier_solarpatents, replace)
+gr export outlier_solarpatents.png, replace
+	
+	* define dummy for outliers
+gen patent_outliers = 0
+replace patent_outliers = 1 if company_name == "bosch" | company_name == "bharat" | company_name == "larsen"
+
 
 ***********************************************************************
 * 	Save the changes made to the data		  			
 ***********************************************************************
+set graphics off 
+
 	* set export directory
 cd "$lcr_final"
 

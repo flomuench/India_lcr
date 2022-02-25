@@ -57,7 +57,20 @@ order sales, a(bidder)
 ***********************************************************************
 * 	PART 5:  miscallaneous corrections
 ***********************************************************************
+
 replace international = 0 if international == .
+
+***********************************************************************
+* 	PART 6:  replace all MV = 0 for firms that did never patent
+***********************************************************************
+foreach x in pre_solar_patent pre_not_solar_patent pre_total_patent post_solar_patent post_not_solar_patent post_total_patent{
+	replace `x' = 0 if `x' == .
+}
+
+***********************************************************************
+* 	PART 7:  check for missing values
+***********************************************************************
+misstable sum, all
 
 ***********************************************************************
 * 	PART 9:  Identify duplicates
