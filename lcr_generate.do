@@ -74,7 +74,16 @@ order city state subsidiary lob, a(employees)
 ***********************************************************************
 * 	PART 3: create dummy for firm having participated in LCR auction		  										  
 ***********************************************************************
+		* dummy for at least 1x LCR
 gen lcr = (total_lcr > 0 & total_lcr <.), b(total_lcr)
+label var lcr "participated (or not) in LCR auction"
+lab def local_content 1 "participated in LCR" 0 "did not participate in LCR"
+lab val lcr local_content
+
+		* dummy for only LCR
+gen lcr_only = (total_lcr == total_auctions) if total_auctions != . , a(total_lcr)
+lab def just_lcr 1 "only participated in LCR" 0 "LCR & no LCR"
+lab val lcr_only just_lcr
 
 ***********************************************************************
 * 	PART 4: create dummy for firm having filed a solar patent

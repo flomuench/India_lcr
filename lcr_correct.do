@@ -80,6 +80,11 @@ misstable sum, all
 duplicates report company_name
 duplicates tag company_name, gen(dup_company)
 
+***********************************************************************
+* 	PART 10: Drop firms that were in Ben's base only
+***********************************************************************
+*br solarpatents if benonly == 1
+drop if benonly == 1 /* 11 firms with no single solar patent */
 
 
 ***********************************************************************

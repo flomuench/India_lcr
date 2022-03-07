@@ -131,7 +131,15 @@ if (0) do "${lcr_github}/lcr_model_choice.do"
 ----------------------------------------------------------------------*/	
 if (1) do "${lcr_github}/lcr_variable_choice.do"
 /* --------------------------------------------------------------------
-	PART 5.3.: evaluate common support
+	PART 5.3.: estimate the propensity score
+----------------------------------------------------------------------*/	
+if (1) do "${lcr_github}/lcr_ps_estimation.do"
+/* --------------------------------------------------------------------
+	PART 5.4.: evaluate common support
 ----------------------------------------------------------------------*/
-if (0) do "${lcr_github}/lcr_common_support.do"
+if (1) do "${lcr_github}/lcr_common_support.do"
+/* --------------------------------------------------------------------
+	PART 5.5.: PSM estimation
+----------------------------------------------------------------------*/
+if (0) do "${lcr_github}/lcr_main_regression.do"
 

@@ -85,6 +85,30 @@ esttab `regressions' using variable_choice.csv, replace ///
 	addnotes("All estimtes are based on a Logit model with robust standard errors in parentheses.")
 	
 
+
+***********************************************************************
+* 	PART 2:  explore pre-matching balance based on selected variables 			
+***********************************************************************
+	* put variables for matching into a local
+local matching_var hq_indian_state total_won patentor pre_not_solar_patent sales employees total_plant_price_lifetime
+
+set graphics on
+
+	* table 1 / balance table
+iebaltab `matching_var' if patent_outlier == 0, grpvar(lcr) save(baltab_lcr_pre) replace ///
+			 vce(robust) pttest rowvarlabels balmiss(mean) onerow stdev notecombine ///
+			 format(%12.2fc)
+	
+	* pre-matching standardised bias
+pstest `matching_var' if patent_outlier == 0, raw rubin treated(lcr) graph ///
+		title(Standardized bias LCR vs. no LCR firms) ///
+		subtitle(Pre-matching) ///
+		note(Standardised bias should between [-25%-25%]., size(small)) ///
+		name(pre_bias, replace)
+gr export pre_bias.png, replace
+
+set graphics off
+
 ***********************************************************************
 * 	Save the changes made to the data		  			
 ***********************************************************************
