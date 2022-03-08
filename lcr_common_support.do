@@ -50,6 +50,18 @@ gr export common_support.png, replace
 
 set graphics off
 
+	* range of propensity score in both groups
+bysort lcr: sum pscore 
+/* LCR = 1 min: 0 ; max.: .95 
+   LCR = 0 min: 0 ; max.: .72
+*/
+	
+	* density distribution of propensity score in both groups
+kdensity pscore if lcr == 1 & pscore >= 0 & pscore <., addplot(kdensity pscore if lcr == 0 & pscore >= 0 & pscore <.)	///
+	legend(ring(0) pos(2) label(1 "participated LCR") label(2 "no LCR")) ///
+	title("Propensity score density by LCR participation") ///
+	xlabel(0(.05)1)
+	
 ***********************************************************************
 * 	PART 2:  generate dummy for observations within common support		
 ***********************************************************************
@@ -60,6 +72,21 @@ label var common_support "=1 for firms within CS"
 ***********************************************************************
 * 	PART 3: who are the firms that fall outside the common support?	
 ***********************************************************************
+br company_name pscore solar_patentor pre_solar_patent post_solar_patent total_auctions total_lcr if pscore > 0.72 & lcr == 1
+	/* 
+tata --> .86
+azure --> .95
+today
+bharat	
+	*/
+	
+gr hbar pscore if pscore > .6 & pscore != ., over(company_name) ///
+		by(lcr, title("{bf:Firms with propensity score > 0.6}") subtitle("Potential matches by LCR")) ///
+		blabel(total, format(%9.2fc)) ///
+		ytitle(pscore) ///
+		name(pscore_lcr, replace)
+gr export pscore_lcr.png, replace
+
 br company_name pscore solar_patentor pre_solar_patent post_solar_patent total_auctions total_lcr if common_support == 0 & lcr == 1
 /*
 company_name
