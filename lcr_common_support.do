@@ -48,7 +48,6 @@ gr combine common_support5 common_support10 common_support15 common_support20, /
 		name(common_support, replace)
 gr export common_support.png, replace
 
-set graphics off
 
 	* range of propensity score in both groups
 bysort lcr: sum pscore 
@@ -57,10 +56,13 @@ bysort lcr: sum pscore
 */
 	
 	* density distribution of propensity score in both groups
-kdensity pscore if lcr == 1 & pscore >= 0 & pscore <., addplot(kdensity pscore if lcr == 0 & pscore >= 0 & pscore <.)	///
+kdensity pscore if lcr == 1 & patent_outliers == 0, addplot(kdensity pscore if lcr == 0 & patent_outliers == 0)	///
 	legend(ring(0) pos(2) label(1 "participated LCR") label(2 "no LCR")) ///
 	title("Propensity score density by LCR participation") ///
-	xlabel(0(.05)1)
+	xlabel(0(.05)1) ///
+	name(common_support_density, replace)
+gr export common_support_density.png, replace
+
 	
 ***********************************************************************
 * 	PART 2:  generate dummy for observations within common support		
@@ -101,6 +103,8 @@ today --> not relevant
 ***********************************************************************
 * 	Save the changes made to the data		  			
 ***********************************************************************
+set graphics off
+
 	* set export directory
 cd "$lcr_final"
 
