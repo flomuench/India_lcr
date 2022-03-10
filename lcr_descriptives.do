@@ -96,6 +96,14 @@ gr hbar (sum) post_solar_patent if post_solar_patent > 0 & patent_outliers == 0,
 gr export firms_LCR_solarpatents.png, replace
 
 
+	* difference in solar patents
+gr hbar (sum) dif_solar_patents if solarpatents > 0 & solarpatents != ., over(company_name) ///
+	by(lcr, title("{bf:Difference in firms' solar patents & their participation in LCR auctions}") note("Authors own calculations based on patent application at Indian patent office & SECI auction archives.", size(vsmall))) ///
+	blabel(total) ///
+	ytitle("Difference solar patents 1982-2011 vs. 2012-2021") ///
+	name(firms_LCR_solarpatents, replace)
+gr export firms_LCR_dif_solarpatents.png, replace
+
 ***********************************************************************
 * 	PART 2: auction participation 	  						
 ***********************************************************************

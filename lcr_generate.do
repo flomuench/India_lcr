@@ -29,39 +29,10 @@ use "${lcr_intermediate}/lcr_inter", clear
 
 
 ***********************************************************************
-* 	PART 2: factor variable sector & subsector 			  										  
+* 	PART 2: outcome variable for DiD		  										  
 ***********************************************************************
-/*
-label define sector_name 1 "Agriculture & Peche" ///
-	2 "Artisanat" ///
-	3 "Commerce international" ///
-	4 "Industrie" ///
-	5 "Services" ///
-	6 "TIC" 
-
-label define subsector_name 1 "agriculture" ///
-	2 "architecture" ///
-	3 "artisanat" ///
-	4 "assistance" ///
-	5 "audit" ///
-	6 "autres" ///
-	7 "centre d'appel" ///
-	8 "commerce international" ///
-	9 "développement informatique" ///
-	10 "enseignement" ///
-	11 "environnement et formation" ///
-	12 "industries diverses" ///
-	13 "industries mécaniques et électriques" ///
-	14 "industries agro-alimentaires" ///
-	15 "industries chimiques" ///
-	16 "industries des matériaux de construction, de la céramique et du verre" ///
-	17 "industries du cuir et de la chaussure" ///
-	18 "industries du textile et de l'habillement" ///
-	19 "pêche" ///
-	20 "réseaux et télécommunication" ///
-	21 "services et études dans le domaine de batîment"
-
-*/
+gen dif_solar_patents = post_solar_patent-pre_solar_patent
+*br company_name dif_solar_patents post_solar_patent pre_solar_patent
 
 ***********************************************************************
 * 	PART 3: encode factor variables			  										  
