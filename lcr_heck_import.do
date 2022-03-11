@@ -1,5 +1,5 @@
 ***********************************************************************
-* 		import cross_section data - the effect of LCR on innovation						
+* 	import bid data from auctions - the effect of LCR on innovation						
 ***********************************************************************
 *																	   
 *	PURPOSE: Import the data from SECI online archives about firms' 					  								  
@@ -15,16 +15,17 @@
 *	Creates:							  
 *																	  
 ***********************************************************************
-* 	PART 1: import collapsed bid data from SECI online archives
+* 	PART 1: import SECI online archives data set
 ***********************************************************************
 	* set directory to raw folder
 cd "$lcr_raw"
 
-	* old code
-use "${lcr_raw}/cross_section", clear
+	* excel
+import excel "${lcr_raw}/combined_results.xlsx", firstrow clear
 
 
 ***********************************************************************
-* 	PART 2: save cross-section data as raw
+* 	PART 2: save list of lcrtered firms in lcrtration raw 			  						
 ***********************************************************************
-save "lcr_raw", replace
+	* save 
+save "lcr_bid_raw", replace

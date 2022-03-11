@@ -24,26 +24,58 @@
 ***********************************************************************
 * 	PART 1:  set the scene  			
 ***********************************************************************
-use "${lcr_intermediate}/lcr_inter", clear
+use "${lcr_intermediate}/lcr_bid_inter", clear
 
 
 ***********************************************************************
-* 	PART 2: outcome variable for DiD		  										  
+* 	PART 2: dummy for successful bid	  										  
 ***********************************************************************
-gen dif_solar_patents = post_solar_patent-pre_solar_patent
-*br company_name dif_solar_patents post_solar_patent pre_solar_patent
+tab has_won, gen(won)
+tab won2
+drop won1
+rename won2 won
+
+lab var won "firm's bid was successful"
+lab def win 1 "bid won" 0 "bid lost"
+lab val won win
+
 
 ***********************************************************************
 * 	PART 3: encode factor variables			  										  
 ***********************************************************************
-foreach x in city state subsidiary lob {
+local vars city state subsidiary lob auction_type location lcr_content scope technology plant_type plant_type_details grid_connected contractual_arrangement subsidy_level
+foreach x of local vars  {
 	encode `x', gen(`x'1)
+	drop `x'
+	rename `x'1 `x'
 }
 order city state subsidiary lob, a(employees)
+
+/*
+problem: implies having to relabel all the variables; can also be maintained as 1,2?
+	* replace dummies with 0,1 instead of 1,2
+foreach var in list contractual_arrangement {
+	replace `var' = 0 if `var' == 1
+	replace `var' = 1 if `var' == 2
+}
+*/
 
 ***********************************************************************
 * 	PART 3: create dummy for firm having participated in LCR auction		  										  
 ***********************************************************************
+rename lcr LCR
+gen lcr = .
+replace lcr = 1 if LCR == "true" /* note: we observe only 52 LCR bids in 11 different auctions but argue a proxy */
+codebook auction if lcr == 1
+replace lcr = 0 if LCR == "false" /* note: we observe 222 non LCR bids in 30 different auctions */
+codebook auction if lcr == 0
+drop LCR 
+
+lab def local_content_auction 1 "LCR auction" 0 "auction without LCR"
+lab val lcr local_content_auction
+
+
+/*
 		* dummy for at least 1x LCR
 gen lcr = (total_lcr > 0 & total_lcr <.), b(total_lcr)
 label var lcr "participated (or not) in LCR auction"
@@ -54,16 +86,34 @@ lab val lcr local_content
 gen lcr_only = (total_lcr == total_auctions) if total_auctions != . , a(total_lcr)
 lab def just_lcr 1 "only participated in LCR" 0 "LCR & no LCR"
 lab val lcr_only just_lcr
+*/
 
 ***********************************************************************
-* 	PART 4: create dummy for firm having filed a solar patent
+* 	PART 4: aggregate price variables (not only price per kwh)
 ***********************************************************************
-gen solar_patentor = (solarpatents > 0 & solarpatents <.), b(solarpatents)
+		* price per mwh
+gen price_mwh = 1000*final_price_after_era
+label var price_mwh "price per mw hour"
+order price_mwh, a(quantity_allocated_mw)
+
+		* total plant price
+gen total_plant_price = price_mwh * quantity_allocated_mw
+label var total_plant_price "total plant price = price * peak performance in mwh"
+order total_plant_price, a(price_mwh)
+
+		* total plant price over contract length
+gen total_plant_price_lifetime = total_plant_price*contractlength
+label var total_plant_price_lifetime "total lifetime plant price for peak mwh"
+order total_plant_price_lifetime, a(contractlength)
 
 ***********************************************************************
-* 	PART 5: create dummy for firm having filed a patent
+* 	PART 5: dummy for bid related to a solar park
 ***********************************************************************
-gen patentor = (otherpatents > 0 & otherpatents <.), b(otherpatents)
+gen solar_park = (solarpark != "")
+drop solarpark
+rename solar_park solarpark
+lab var solarpark "bid related to a solar park"
+
 
 ***********************************************************************
 * 	PART 6: create dummy for Indian companies
@@ -77,45 +127,52 @@ lab val indian national
 ***********************************************************************
 
 gen hq_indian_state = .
-replace hq_indian_state = 1 if state1 != .
+replace hq_indian_state = 1 if state != .
 local not_indian 5 11 19 9 6 16 15
 foreach x of local not_indian  {
-	replace hq_indian_state = 0 if state1 == `x'
+	replace hq_indian_state = 0 if state == `x'
 }
 
 	* dummy for delhi
-gen capital = (city1 == 21)
+gen capital = (city == 21)
 
 
 ***********************************************************************
-* 	PART 8: create dummy patent outliers
+* 	PART 8: subsidiary 
 ***********************************************************************
-cd "$lcr_descriptives"
-set graphics on
+gen sub = .
+replace sub = 0 if subsidiary == 1
+replace sub = 1 if subsidiary == 2
 
-	* graph 
-graph box totalpatents, mark(1, mlab(company_name)) ///
-	title("Identification of outliers in terms of total patents") ///
-	name(outlier_patents, replace)
-gr export outlier_patents.png, replace
+lab def subsi 1 "subsidiary" 0 "no subsidiary"
+lab val sub subsi
 
-graph box solarpatents, mark(1, mlab(company_name)) ///
-	title("Identification of outliers in terms of solar patents") ///
-	name(outlier_solarpatents, replace)
-gr export outlier_solarpatents.png, replace
-	
-	* define dummy for outliers
-gen patent_outliers = 0
-replace patent_outliers = 1 if company_name == "bosch" | company_name == "bharat" | company_name == "larsen"
+drop subsidiary
+rename sub subsidiary
 
+/*
+to do in terms of data cleaning:
+create a subsidy dummy
+*/
+
+***********************************************************************
+* 	PART 9: subsidy dummy
+***********************************************************************
+gen sub = .
+replace sub = 0 if subsidy == "no specifications"
+replace sub = 1 if subsidy == "vgf"
+
+lab def subdy 1 "subsidy" 0 "no subsidy"
+lab val sub subdy
+
+drop subsidy
+rename sub subsidy
 
 ***********************************************************************
 * 	Save the changes made to the data		  			
 ***********************************************************************
-set graphics off 
-
 	* set export directory
 cd "$lcr_final"
 
 	* save dta file
-save "lcr_final", replace
+save "lcr_bid_final", replace
