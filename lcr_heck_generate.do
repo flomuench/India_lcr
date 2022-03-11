@@ -150,10 +150,6 @@ lab val sub subsi
 drop subsidiary
 rename sub subsidiary
 
-/*
-to do in terms of data cleaning:
-create a subsidy dummy
-*/
 
 ***********************************************************************
 * 	PART 9: subsidy dummy
@@ -168,6 +164,21 @@ lab val sub subdy
 drop subsidy
 rename sub subsidy
 
+***********************************************************************
+* 	PART 10: generate cumulative mw won as measure of experience
+***********************************************************************
+bysort company_name (auction) : gen cum_mw = sum(quantity_allocated_mw)
+ihstrans cum_mw
+lab var cum_mw "ihs transformed cumulative mw won"
+ 
+ 
+***********************************************************************
+* 	PART 11: competition as defined in Probst et al. 2020
+*********************************************************************** 
+gen competition = quantity_allocated / quantity_total
+replace competition = log(competition) if competition != 0
+lab var competition "quantity
+ 
 ***********************************************************************
 * 	Save the changes made to the data		  			
 ***********************************************************************

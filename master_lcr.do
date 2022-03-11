@@ -10,10 +10,10 @@
 *				PART 3: Run all do-files                          
 *																	  
 *																	  
-*	Author:  	Florian Münch							    
-*	ID variable: id_email		  					  
+*	Author:  	Florian Münch, Fabian Scheifele						    
+*	ID variable: cross-section = company_name ; combined_results = bid ; 	  
 *	Requires:  	  										  
-*	Creates:  master-data-ecommerce; emailexperiment_population_lcrle.dta		                                  
+*	Creates:  		                                  
 ***********************************************************************
 * 	PART 1: 	Set standard settings & install packages			  
 ***********************************************************************
@@ -45,6 +45,7 @@ ssc install xtgraph
 ssc install psmatch2, replace
 ssc install table1
 ssc install estout
+ssc install ihstrans, replace
 */
 
 
