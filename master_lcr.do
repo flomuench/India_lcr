@@ -112,7 +112,7 @@ if (1) do "${lcr_github}/lcr_heck_generate.do"
 /* --------------------------------------------------------------------
 	PART 3.5: Descriptive statistics
 ----------------------------------------------------------------------*/	
-if (0) do "${lcr_github}/lcr_heck_descriptives.do"
+if (1) do "${lcr_github}/lcr_heck_descriptives.do"
 /* --------------------------------------------------------------------
 	PART 3.6: Heckman regression - replication of Probst
 ----------------------------------------------------------------------*/	

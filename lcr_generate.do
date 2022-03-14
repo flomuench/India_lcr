@@ -58,7 +58,7 @@ lab def just_lcr 1 "only participated in LCR" 0 "LCR & no LCR"
 lab val lcr_only just_lcr
 
 		* dummy for both LCR & no LCR 
-gen lcr_both = (lcr == 1 & lcr_only == 0)
+gen lcr_both = (total_auctions_lcr > 0 & total_auctions_lcr < . & total_auctions_no_lcr > 0 & total_auctions_no_lcr < .)
 lab var lcr_both "firm participated in lcr & no lcr auctions"
 
 ***********************************************************************

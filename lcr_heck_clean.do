@@ -87,6 +87,9 @@ rename localdomesticcontentrequireme lcr_content
 rename localtestingrequirement local_test
 rename companyname company_name_long
 
+rename sales_inr sales
+lab var sales "sales in INR"
+
 ***********************************************************************
 * 	PART 5: 	Order the varialcres in the data set		  			
 ***********************************************************************

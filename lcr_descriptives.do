@@ -17,7 +17,7 @@
 ***********************************************************************
 * 	PART 1:  set the scene  			
 ***********************************************************************
-use "${lcr_intermediate}/lcr_final", clear
+use "${lcr_final}/lcr_final", clear
 
 	* set the directory to descriptive statistics
 cd "$lcr_descriptives"
@@ -92,6 +92,7 @@ gr hbar (sum) post_solar_patent if post_solar_patent > 0 & patent_outliers == 0,
 	by(lcr, title("{bf:Firms with solar patents & their participation in LCR auctions}") note("Authors own calculations based on patent application at Indian patent office & SECI auction archives.", size(vsmall))) ///
 	blabel(total) ///
 	ytitle("Number of filed solar patents 2011-2021") ///
+	note("Only 14 out of 116 (12%) participating firms ever filed a solar patented." "Authors own calculations based on patent application at Indian patent office.", size(vsmall)) ///
 	name(firms_LCR_solarpatents, replace)
 gr export firms_LCR_solarpatents.png, replace
 
@@ -100,7 +101,7 @@ gr export firms_LCR_solarpatents.png, replace
 gr hbar (sum) dif_solar_patents if solarpatents > 0 & solarpatents != ., over(company_name) ///
 	by(lcr, title("{bf:Difference in firms' solar patents & their participation in LCR auctions}") note("Authors own calculations based on patent application at Indian patent office & SECI auction archives.", size(vsmall))) ///
 	blabel(total) ///
-	ytitle("Difference solar patents 1982-2011 vs. 2012-2021") ///
+	ytitle("Only 14 out of 116 (12%) participating firms ever filed a solar patented." "Difference solar patents 1982-2011 vs. 2012-2021") ///
 	name(firms_LCR_solarpatents, replace)
 gr export firms_LCR_dif_solarpatents.png, replace
 
@@ -112,6 +113,14 @@ gr export firms_LCR_dif_solarpatents.png, replace
 		* only LCR
 		* LCR & no LCR
 		* only no LCR auctions
+		
+		
+	* price / bid price
+	
+gr bar final_price_after_era_lcr final_price_after_era_no_lcr, blabel(total)
+
+
+gr bar final_price_after_era_lcr final_price_after_era_no_lcr if lcr_both == 1, blabel(total)
 
 
 

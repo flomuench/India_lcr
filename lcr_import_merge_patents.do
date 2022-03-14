@@ -244,7 +244,7 @@ save "lcr_raw", replace
 ***********************************************************************
 * 	PART 8: 			* merge lob complexity		  						
 ***********************************************************************
-cd "C:\Users\fmunch\Google Drive\Research_Solar India TU-IASS-PTB\Data\Firm data"
+cd "$lcr_raw"
 import excel "cross_section_sumpatents_complexity", firstrow clear
 
 rename pc_2017 lob_pc_2017 

@@ -87,6 +87,8 @@ duplicates tag company_name, gen(dup_company)
 *br solarpatents if benonly == 1
 *drop if benonly == 1 /* 11 firms with no single solar patent */
 
+drop if total_auctions_lcr == . & total_auctions_no_lcr == .
+
 
 ***********************************************************************
 * 	Save the changes made to the data		  			

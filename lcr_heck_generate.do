@@ -76,6 +76,27 @@ lab def local_content_auction 1 "LCR auction" 0 "auction without LCR"
 lab val lcr local_content_auction
 
 
+egen lcr_only1 = sum(lcr), by(company_name)
+egen lcr_only2 = min(lcr_only1 > 0 & lcr_only1 <.), by(company_name)
+
+egen only_no_lcr1 = max(lcr_only1), by(company_name)
+egen only_no_lcr2 = mean(only_no_lcr1 == 0), by(company_name)
+
+egen both1 = sum(lcr_only2 only_no_lcr2), by(company_name)
+egen both2 = mean(both1 == 0), by(company_name)
+
+drop lcr_only1 only_no_lcr1 both1
+
+
+		* dummy for only LCR
+gen lcr_only = (total_auctions_lcr == total_auctions) if total_auctions != . , a(total_auctions_lcr)
+lab def just_lcr 1 "only participated in LCR" 0 "LCR & no LCR"
+lab val lcr_only just_lcr
+
+		* dummy for both LCR & no LCR 
+gen lcr_both = (total_auctions_lcr > 0 & total_auctions_lcr < . & total_auctions_no_lcr > 0 & total_auctions_no_lcr < .)
+lab var lcr_both "firm participated in lcr & no lcr auctions"
+
 /*
 		* dummy for at least 1x LCR
 gen lcr = (total_lcr > 0 & total_lcr <.), b(total_lcr)

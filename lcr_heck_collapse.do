@@ -53,8 +53,8 @@ local allvar expected_annual_revenue expected_revenue final_price_after_era fina
 reshape wide `allvar', i(company_name) j(lcr)
 
 foreach var of local allvar {
-	rename `var'0 `var'_lcr
-	rename `var'1 `var'_no_lcr
+	rename `var'0 `var'_no_lcr
+	rename `var'1 `var'_lcr
 	replace `var'_lcr = 0 if `var'_lcr == .
 	replace `var'_no_lcr = 0 if `var'_no_lcr == .
 	gen `var'_total = `var'_lcr + `var'_no_lcr 

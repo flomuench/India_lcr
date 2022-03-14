@@ -74,7 +74,7 @@ label var common_support "=1 for firms within CS"
 ***********************************************************************
 * 	PART 3: who are the firms that fall outside the common support?	
 ***********************************************************************
-br company_name pscore solar_patentor pre_solar_patent post_solar_patent total_auctions total_lcr if pscore > 0.72 & lcr == 1
+br company_name pscore solar_patentor pre_solar_patent post_solar_patent total_auctions total_auctions_lcr if pscore > 0.72 & lcr == 1
 	/* 
 tata --> .86
 azure --> .95
@@ -89,7 +89,7 @@ gr hbar pscore if pscore > .6 & pscore != ., over(company_name) ///
 		name(pscore_lcr, replace)
 gr export pscore_lcr.png, replace
 
-br company_name pscore solar_patentor pre_solar_patent post_solar_patent total_auctions total_lcr if common_support == 0 & lcr == 1
+br company_name pscore solar_patentor pre_solar_patent post_solar_patent total_auctions total_auctions_lcr if common_support == 0 & lcr == 1
 /*
 company_name
 azure ---> highly important

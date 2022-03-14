@@ -46,30 +46,30 @@ _eststo india_capital, r: logit lcr i.capital if patent_outlier == 0, vce(robust
 *_eststo auctions, r: logit lcr total_auctions if patent_outlier == 0, vce(robust)
 
 		* (4) total won
-_eststo auctions, r: logit lcr total_won if patent_outlier == 0, vce(robust)
+_eststo auctions, r: logit lcr won_total if patent_outlier == 0, vce(robust)
 
-/* note: total auctions participated & total_won are highly correlated 0.85 */
+/* note: total auctions participated & won_total are highly correlated 0.85 */
 
 		* (5) ever patented non solar patents
-_eststo patentor, r: logit lcr total_won i.patentor if patent_outlier == 0, vce(robust)
+_eststo patentor, r: logit lcr won_total i.patentor if patent_outlier == 0, vce(robust)
 		
 		* (6) amount of other patents
-_eststo otherprepatents, r: logit lcr total_won pre_not_solar_patent if patent_outlier == 0, vce(robust)
+_eststo otherprepatents, r: logit lcr won_total pre_not_solar_patent if patent_outlier == 0, vce(robust)
 
 		* (7) size
-_eststo size, r: logit lcr total_won sales employees if patent_outlier == 0, vce(robust)
+_eststo size, r: logit lcr won_total sales employees if patent_outlier == 0, vce(robust)
 
 		* (8) plant price
-_eststo size, r: logit lcr total_won total_plant_price_lifetime if patent_outlier == 0, vce(robust)
+_eststo size, r: logit lcr won_total total_plant_price_life_total if patent_outlier == 0, vce(robust)
 
 		* (9) complexity
-_eststo complexity, r: logit lcr total_won  total_plant_price_lifetime lob_pc_avg if patent_outlier == 0, vce(robust)
+_eststo complexity, r: logit lcr won_total  total_plant_price_life_total lob_pc_avg if patent_outlier == 0, vce(robust)
 	
 		* (10) lob
-_eststo lob, r: logit lcr total_won total_plant_price_lifetime lob_pc_avg lob1 if patent_outlier == 0, vce(robust)
+_eststo lob, r: logit lcr won_total total_plant_price_life_total lob_pc_avg lob if patent_outlier == 0, vce(robust)
 
 		* (11) all
-_eststo all, r: logit lcr i.capital total_won total_plant_price_lifetime i.patentor pre_not_solar_patent employees sales lob_pc_avg lob1 if patent_outlier == 0, vce(robust)
+_eststo all, r: logit lcr i.capital won_total total_plant_price_life_total i.patentor pre_not_solar_patent employees sales lob_pc_avg lob if patent_outlier == 0, vce(robust)
 
 
 local regressions indian india_state india_capital auctions patentor otherprepatents size complexity lob all
@@ -90,7 +90,7 @@ esttab `regressions' using variable_choice.csv, replace ///
 * 	PART 2:  explore pre-matching balance based on selected variables 			
 ***********************************************************************
 	* put variables for matching into a local
-local matching_var hq_indian_state total_won patentor pre_not_solar_patent sales employees total_plant_price_lifetime
+local matching_var hq_indian_state won_total patentor pre_not_solar_patent sales employees total_plant_price_life_total
 
 set graphics on
 

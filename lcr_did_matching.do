@@ -37,7 +37,7 @@ psmatch2 lcr if patent_outliers == 0, radius caliper(0.25) outcome(post_solar_pa
 _eststo did_no_controls, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(robust)
 
 	* controls for variables that were still imbalanced after matching
-_eststo did_controls, r: reg dif_solar_patents i.lcr c.total_won c.pre_not_solar_patent [iweight=_weight], vce(robust)
+_eststo did_controls, r: reg dif_solar_patents i.lcr c.won_total c.pre_not_solar_patent [iweight=_weight], vce(robust)
 
 	* export results in a table
 esttab did_no_controls did_controls using did.csv, replace ///
