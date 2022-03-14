@@ -30,8 +30,7 @@ use "${lcr_final}/lcr_bid_final", clear
 cd "$lcr_rt"
 
 /* to do
-create "competition" capacity bid in auctioned capacity
-
+create SOE
 */
 ***********************************************************************
 * 	PART 1:    			
@@ -41,3 +40,12 @@ create "competition" capacity bid in auctioned capacity
 	* 2nd stage variables: price = DV: LCR, cumulative experience (MW), offtaker (SECI vs NTPC), log(competition), solar park, solar radiation state, time effects
 heckman final_price_after_era cum_mw competition i.solarpark i.flh_single_axis i.auction_year, select(lcr = ) twostep
 	
+	
+	* add additional explanatory variables & see whether price gap remains
+		* module_price_inr_per_w
+		* competition as number of bidders (unobserved given newspaper articles only report winners)
+		* climate_zone
+		* scope of the auction: domestic vs. global
+		* subsidy/VGF
+		
+	* sample: restrict to ground-mounted plants &/or boo

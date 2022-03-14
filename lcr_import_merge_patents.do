@@ -117,6 +117,8 @@ lab var post_total_patent "total patents 2012-2021"
 * change directory to raw
 cd "$lcr_raw"
 
+rename companyname_correct company_name
+
 save "patents_pre_post", replace
 
 
@@ -126,8 +128,15 @@ save "patents_pre_post", replace
 	* companyname_correct is the common unique identifier
 	* import lcr_raw.dta
 use "${lcr_raw}/lcr_raw", clear
-merge m:1 companyname_correct using patents_pre_post /* results should indicate 27 firms merged */
+merge m:1 company_name using patents_pre_post /* results should indicate 27 firms merged */
 drop _merge
+
+
+***********************************************************************
+* 	PART 7: merge with firm characteristics + lob		  						
+***********************************************************************
+
+
 
 ***********************************************************************
 * 	PART 8: replace the existing lcr_raw.dta file		  						

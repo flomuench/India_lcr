@@ -33,6 +33,7 @@ use "${lcr_intermediate}/lcr_bid_inter", clear
 tab has_won, gen(won)
 tab won2
 drop won1
+drop has_won
 rename won2 won
 
 lab var won "firm's bid was successful"
@@ -43,7 +44,7 @@ lab val won win
 ***********************************************************************
 * 	PART 3: encode factor variables			  										  
 ***********************************************************************
-local vars city state subsidiary lob auction_type location lcr_content scope technology plant_type plant_type_details grid_connected contractual_arrangement subsidy_level
+local vars city state subsidiary lob auction_type location lcr_content climate_zone scope technology plant_type plant_type_details grid_connected contractual_arrangement subsidy_level
 foreach x of local vars  {
 	encode `x', gen(`x'1)
 	drop `x'
@@ -178,6 +179,39 @@ lab var cum_mw "ihs transformed cumulative mw won"
 gen competition = quantity_allocated / quantity_total
 replace competition = log(competition) if competition != 0
 lab var competition "quantity
+
+
+***********************************************************************
+* 	PART 12: uniform bid price
+*********************************************************************** 
+/*
+* uniform bid price
+	* boo
+gen uniform_price = final_bid_after_era(((quantity_allocated_mw*final_vgf_after_era)/(1.03^contractlength))/  ) if contractual arrangement == 1
+flh_single_axis
+	
+	* epc
+*/
+
+
+***********************************************************************
+* 	PART 13: expected revenue
+***********************************************************************
+gen expected_revenue = .
+replace expected_revenue = final_epc_after_era + final_vgf_after_era if won == 1 & contractual_arrangement == 2
+replace expected_revenue = final_price_after_era * 1000 * quantity_allocated_mw * contractlength * flh_single_axis + final_vgf_after_era if won == 1 & contractual_arrangement == 1
+replace expected_revenue = 0 if won == 0
+
+format expected_revenue %-20.2fc
+lab var expected_revenue "expected total lifetime revenue for plant"
+
+gen expected_annual_revenue = .
+replace expected_annual_revenue = (final_epc_after_era + final_vgf_after_era)/contractlength if won == 1 & contractual_arrangement == 2
+replace expected_annual_revenue = final_price_after_era * 1000 * quantity_allocated_mw * flh_single_axis + final_vgf_after_era if won == 1 & contractual_arrangement == 1
+replace expected_annual_revenue = 0 if won == 0
+
+format expected_annual_revenue %-20.2fc
+lab var expected_annual_revenue "expected total lifetime revenue for plant"
  
 ***********************************************************************
 * 	Save the changes made to the data		  			

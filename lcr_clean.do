@@ -43,10 +43,7 @@ foreach x of local strvars {
 ***********************************************************************
 * 	PART 2: 	Drop all text windows from the survey		  			
 ***********************************************************************
-{
-drop id domesticduns dunsno rough_estimation_foreign0indian1 primarycountryregion
-
-}
+*drop id domesticduns dunsno rough_estimation_foreign0indian1 primarycountryregion
 
 ***********************************************************************
 * 	PART 3: 	Make all varialcres names lower case		  			
@@ -58,7 +55,6 @@ rename *, lower
 * 	PART 4: 	Rename the varialcres in line with GIZ contact list final	  			
 ***********************************************************************
 * rename
-rename companyname_correct company_name
 rename employeesatthislocation employees
 rename primarycity city
 rename primarystateprovince state

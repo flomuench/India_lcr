@@ -21,7 +21,7 @@
 cd "$lcr_raw"
 
 	* old code
-use "${lcr_raw}/cross_section", clear
+use "${lcr_raw}/cross_section_new", clear
 
 
 ***********************************************************************

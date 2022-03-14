@@ -55,6 +55,10 @@ gen lcr_only = (total_lcr == total_auctions) if total_auctions != . , a(total_lc
 lab def just_lcr 1 "only participated in LCR" 0 "LCR & no LCR"
 lab val lcr_only just_lcr
 
+		* dummy for both LCR & no LCR 
+gen lcr_both = (lcr == 1 & lcr_only == 0)
+lab var lcr_both "firm participated in lcr & no lcr auctions"
+
 ***********************************************************************
 * 	PART 4: create dummy for firm having filed a solar patent
 ***********************************************************************
