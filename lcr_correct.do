@@ -32,6 +32,7 @@ use "${lcr_intermediate}/lcr_inter", clear
 ***********************************************************************
 * 	PART 2: use regular expressions to correct variables 		  			
 ***********************************************************************
+/*
 	* make sales numeric
 		* remove dollar sign from sales
 split sales, parse($) gen(sales)
@@ -43,7 +44,7 @@ replace sales = ustrregexra(sales,",","")
 destring sales, replace
 format sales %-20.3fc
 order sales, a(bidder)
-
+*/
 
 ***********************************************************************
 * 	PART 3:  Replace string with numeric values		  			
@@ -84,7 +85,7 @@ duplicates tag company_name, gen(dup_company)
 * 	PART 10: Drop firms that were in Ben's base only
 ***********************************************************************
 *br solarpatents if benonly == 1
-drop if benonly == 1 /* 11 firms with no single solar patent */
+*drop if benonly == 1 /* 11 firms with no single solar patent */
 
 
 ***********************************************************************

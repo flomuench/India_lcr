@@ -131,10 +131,143 @@ use "${lcr_raw}/lcr_raw", clear
 merge m:1 company_name using patents_pre_post /* results should indicate 27 firms merged */
 drop _merge
 
+save "lcr_raw", replace
 
 ***********************************************************************
-* 	PART 7: merge with firm characteristics + lob		  						
+* 	PART 7: merge with firm characteristics + avg, min, max patent level complexity for each firm		  						
 ***********************************************************************
+use "solar_components_updated_HS", clear
+
+rename companyname_correct company_name
+
+	* create some descriptive statistics
+cd "$lcr_descriptives"
+
+		* solar patents by ipc group
+gr hbar (count) , over(ipcgroups, sort(1)) ///
+	blabel(total) ///
+	title("{bf:Solar patents by IPC group category}") ///
+	subtitle("filed by firms participating in SECI auctions", size(small)) ///
+	ytitle("number of patents") ///
+	note("Author's own calculation based on Indian patent office data.", size(vsmall)) ///
+	name(solarpatents_ipcgroup, replace)
+gr export solarpatents_ipcgroup.png, replace
+
+		* solar patents by ipc component
+gr hbar (count) , over(ipcsubgroupscomponents, sort(1)) ///
+	blabel(total) ///
+	title("{bf:Solar patents by IPC component category}") ///
+	subtitle("filed by firms participating in SECI auctions", size(small)) ///
+	ytitle("number of patents") ///
+	note("Author's own calculation based on Indian patent office data.", size(vsmall)) ///
+	name(solarpatents_ipccomponent, replace)
+gr export solarpatents_ipccomponent.png, replace
+
+
+		* histogram of product complexity
+histogram pc_avg_17_19
+kdensity pc_avg_17_19
+
+		* average product complexity by ipc group
+gr hbar pc_avg_17_19, over(ipcgroups, sort(1)) ///
+	blabel(total, format(%9.2g)) ///
+	title("{bf:Solar patents product complexity by IPC group category}") ///
+	subtitle("filed by firms participating in SECI auctions", size(small)) ///
+	ytitle("product complexity") ///
+	note("Author's own calculation based on Indian patent office data.", size(vsmall)) ///
+	name(solarpatents_ipcgroup_pci, replace)
+gr export solarpatents_ipcgroup_pci.png, replace
+		
+		* average product complexity by ipc component group
+gr hbar pc_avg_17_19, over(ipcsubgroupscomponents, sort(1)) ///
+	blabel(total, format(%9.2g)) ///
+	title("{bf:Solar patents product complexity by IPC component category}") ///
+	subtitle("filed by firms participating in SECI auctions", size(small)) ///
+	ytitle("product complexity") ///
+	note("Author's own calculation based on Indian patent office data.", size(vsmall)) ///
+	name(solarpatents_ipccomponent_pci, replace)
+gr export solarpatents_ipccomponent_pci.png, replace
+
+		* average product complexity by company
+gr hbar pc_avg_17_19, over(company_name, sort(1)) ///
+	blabel(total, format(%9.2g)) ///
+	title("{bf:Solar patents mean product complexity by company}") ///
+	subtitle("filed by firms participating in SECI auctions", size(small)) ///
+	ytitle("product complexity") ///
+	note("Author's own calculation based on Indian patent office data.", size(vsmall)) ///
+	name(solarpatents_byfirm_pci, replace)
+gr export solarpatents_byfirm_pci.png, replace
+
+/*
+	* patents by company
+levelsof company_name, local(company)
+foreach x of local company {
+	gr hbar (count) if company_name == "`x'", over(ipcgroups) ///
+	blabel(total) ///
+	subtitle("filed by `x'", size(small)) ///
+	ytitle("number of patents") ///
+	name(`x', replace)
+}
+levelsof company_name, local(company)
+graph combine `company', ///
+	title("{bf:Solar patents by IPC group category}") ///
+	note("Author's own calculation based on Indian patent office data.", size(vsmall)) ///
+	name(byfirm_solarpatents_ipcgroup, replace)
+gr export byfirm_solarpatents_ipcgroup.png, replace
+*/
+
+	* create average patent complexity value
+
+egen min_pci = min(pc_avg_17_19), by(company_name)
+egen max_pci = max(pc_avg_17_19), by(company_name)
+egen avg_pci = mean(pc_avg_17_19), by(company_name)
+
+lab var min_pci "min pci of solar patents"
+lab var max_pci "max pci of solar patents"
+lab var avg_pci "mean pci of solar patents"
+
+rename min_pci pat_min_pci
+rename max_pci pat_max_pci
+rename avg_pci pat_avg_pci
+
+
+collapse (first) pat_min_pci pat_max_pci pat_avg_pci, by(company_name)
+
+save "firm_pci", replace
+
+use "${lcr_raw}/lcr_raw", clear
+merge 1:1 company_name using "firm_pci"
+drop _merge
+save "lcr_raw", replace
+
+
+***********************************************************************
+* 	PART 8: 			* merge lob complexity		  						
+***********************************************************************
+cd "C:\Users\fmunch\Google Drive\Research_Solar India TU-IASS-PTB\Data\Firm data"
+import excel "cross_section_sumpatents_complexity", firstrow clear
+
+rename pc_2017 lob_pc_2017 
+rename pc_2018 lob_pc_2018
+rename pc_2019 lob_pc_2019
+rename pc_avg lob_pc_avg
+
+rename companyname_correct company_name
+
+
+keep company_name HS6_HS07 HS6_HS07 hs_description lob_pc_2017 lob_pc_2018 lob_pc_2019 lob_pc_avg
+
+keep in 1/127 
+
+save "cross_section_lob_complexity", replace
+
+use "${lcr_raw}/lcr_raw", clear
+merge 1:1 company_name using "cross_section_lob_complexity"
+gen benonly = (_merge == 2)
+tab benonly
+label var benonly "NTPC not SECI auctions"
+drop _merge
+lab var HS6_HS07 "hs code line of business"
 
 
 

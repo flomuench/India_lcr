@@ -22,14 +22,21 @@
 ***********************************************************************
 use "${lcr_final}/lcr_bid_final", clear
 
-	* change directory to output folder for descriptive stats
-cd "$lcr_rt"
+	* change directory to final folder to save files resulting from collapse for merger
+cd "$lcr_final"
 
 
 ***********************************************************************
 * 	PART 1:  collapse + reshape the data  			
 ***********************************************************************
-* variables to create
+* variables to created on firms level
+preserve 
+collapse (firstnm) bidder totalemployees sales_inr indian international dummy_firm_operation_india webaddress city state lob ultimateparent subsidiary hq_indian_state, by(company_name)
+save "firm_characteristics", replace
+restore
+	
+
+* variables to be created by LCR vs. no LCR auctions
 	* number of times bid, won total, in lcr, in non lcr
 	* mw applied for & mw won in all auctions, in lcr auctions, in non lcr auctions
 	* price: average bid price, average total life time,
@@ -38,10 +45,9 @@ cd "$lcr_rt"
 	* VGF
 	* average competitors
 collapse (sum) one won quantity* total_plant_price total_plant_price_lifetime final_vgf_after_era expected_*revenue ///
-	(firstnm) bidder (mean) n_competitors final_price_after_era, by(company_name lcr) 
+	 (mean) n_competitors final_price_after_era, by(company_name lcr) 
 
 	* bring from long format with two obs per firms (one in LCR & one in no LCR) to wide
-drop bidder 
 rename total_plant_price_lifetime total_plant_price_life
 local allvar expected_annual_revenue expected_revenue final_price_after_era final_vgf_after_era n_competitors one quantity_allocated_mw quantity_total quantity_wanted_mw total_plant_price total_plant_price_life won	
 reshape wide `allvar', i(company_name) j(lcr)
@@ -71,9 +77,14 @@ foreach var of local allvar {
 	order `var'*, a(company_name)
 }
 
+***********************************************************************
+* 	PART 3:  add firm characteristics
+***********************************************************************
+merge 1:1 company_name using firm_characteristics
+drop _merge
 
 ***********************************************************************
-* 	PART 2: save cross-section data as raw
+* 	PART 4: save cross-section data as raw
 ***********************************************************************
 	* set directory to raw folder
 cd "$lcr_raw"
