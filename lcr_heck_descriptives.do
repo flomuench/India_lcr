@@ -74,10 +74,18 @@ gr bar, over(won)  ///
 gr export bid_results_lcr.png, replace
 
 
+***********************************************************************
+* 	PART 3: price in lcr vs price outside lcr					
+***********************************************************************
+gr bar final_price_after_era if won == 1, over(lcr)
+
+gr bar final_price_after_era if won == 1 & lcr_both == 1, over(lcr)
+
 
 
 ******************* auction-level statistics **************************
-collapse , by(auction)
+preserve
+collapse (firstnm) n_competitors auction_year , by(auction)
 
 ***********************************************************************
 * 	PART 2: lcr & contractual arrangement 						
@@ -109,9 +117,11 @@ gr bar (sum) lcr, over(year, label(labs(small))) ///
 	name(patent_evolution, replace)
 gr export patent_evolution.png, replace
 
+
 ***********************************************************************
 * 	PART 4: collapse on firm level to create a cross-section 						
 ***********************************************************************
+restore
 collapse (sum) one won quantity* total_plant_price total_plant_price_lifetime  lcr* ///
 	(firstnm) bidder (mean) final_price_after_era, by(companyname_correct) 
 
