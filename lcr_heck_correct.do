@@ -28,17 +28,13 @@
 use "${lcr_intermediate}/lcr_bid_inter", clear
 
 
-
 ***********************************************************************
-* 	PART 2: use regular expressions to correct variables 		  			
+* 	PART 3: associate subsidiaries with mother firm for conglomerates	  			
 ***********************************************************************
-
-
-
-***********************************************************************
-* 	PART 3:  Replace string with numeric values		  			
-***********************************************************************
-
+* avaada & welspun
+replace company_name = "welspun" if company_name == "avaada"
+replace company_name = "acb" if company_name == "spectrum"
+* https://eden-re.com/ --> JF EDF + Total
 
 ***********************************************************************
 * 	PART 4:  Convert string to numerical varialcres	  			

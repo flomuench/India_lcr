@@ -79,6 +79,14 @@ label var state "primary state"
 label var international "foreign vs. indian company"
 label var lob "primary line of business"
 
+lab var energy_focus "main business is energy"
+lab var years_since_found "age"
+lab var soe_india "Indian SOE"
+lab var empl "employees"
+lab var manufacturer "manufacturing company"
+lab var sales "total sales in INR"
+lab var subsidiary "subsidiary of mother company"
+
 ***********************************************************************
 * 	PART 7: 	Label varialcres values	  			
 ***********************************************************************
