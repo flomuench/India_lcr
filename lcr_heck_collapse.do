@@ -31,10 +31,15 @@ cd "$lcr_final"
 ***********************************************************************
 * variables to created on firms level
 preserve 
-collapse (firstnm) bidder totalemployees sales_inr indian international dummy_firm_operation_india webaddress city state lob ultimateparent subsidiary hq_indian_state, by(company_name)
+	* decode factor variables to prevent deletion of value labels
+foreach x in city state subsidiary lob  {
+	decode `x', gen(`x'1)
+	drop `x'
+	rename `x'1 `x'
+}
+collapse (firstnm) bidder totalemployees sales international dummy_firm_operation_india webaddress city state lob ultimateparent subsidiary indian soe_india empl manufacturer founded years_since_found energy_focus, by(company_name)
 save "firm_characteristics", replace
 restore
-	
 
 * variables to be created by LCR vs. no LCR auctions
 	* number of times bid, won total, in lcr, in non lcr
@@ -83,8 +88,15 @@ foreach var of local allvar {
 merge 1:1 company_name using firm_characteristics
 drop _merge
 
+
 ***********************************************************************
-* 	PART 4: save cross-section data as raw
+* 	PART 4: Export Excel with variables for manual search to reduce missing values
+***********************************************************************
+cd "$lcr_intermediate"
+export excel company_name subsidiary ultimateparent webaddress founded manufacturer totalemployees using missing.xlsx if founded == . | manufacturer == . | totalemployees == . , firstrow(var) replace
+
+***********************************************************************
+* 	PART 5: save cross-section data as raw
 ***********************************************************************
 	* set directory to raw folder
 cd "$lcr_raw"

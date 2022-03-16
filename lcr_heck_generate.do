@@ -75,7 +75,7 @@ drop LCR
 lab def local_content_auction 1 "LCR auction" 0 "auction without LCR"
 lab val lcr local_content_auction
 
-
+/*
 egen lcr_only1 = sum(lcr), by(company_name)
 egen lcr_only2 = min(lcr_only1 > 0 & lcr_only1 <.), by(company_name)
 
@@ -97,7 +97,6 @@ lab val lcr_only just_lcr
 gen lcr_both = (total_auctions_lcr > 0 & total_auctions_lcr < . & total_auctions_no_lcr > 0 & total_auctions_no_lcr < .)
 lab var lcr_both "firm participated in lcr & no lcr auctions"
 
-/*
 		* dummy for at least 1x LCR
 gen lcr = (total_lcr > 0 & total_lcr <.), b(total_lcr)
 label var lcr "participated (or not) in LCR auction"
@@ -238,7 +237,7 @@ lab var expected_annual_revenue "expected total lifetime revenue for plant"
 * 	Save the changes made to the data		  			
 ***********************************************************************
 	* set export directory
-cd "$lcr_inter"
+cd "$lcr_intermediate"
 
 	* save dta file
-save "lcr_bid_intermediate", replace
+save "lcr_bid_inter", replace

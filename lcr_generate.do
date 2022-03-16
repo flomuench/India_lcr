@@ -36,12 +36,11 @@ gen dif_solar_patents = post_solar_patent-pre_solar_patent
 ***********************************************************************
 * 	PART 3: encode factor variables			  										  
 ***********************************************************************
-/*
-foreach x in city state subsidiary lob {
+foreach x in city state subsidiary lob  {
 	encode `x', gen(`x'1)
+	drop `x'
+	rename `x'1 `x'
 }
-order city state subsidiary lob, a(employees)
-*/
 
 ***********************************************************************
 * 	PART 3: create dummy for firm having participated in LCR auction		  										  
@@ -74,7 +73,10 @@ gen solar_patentor = (solarpatents > 0 & solarpatents <.), b(solarpatents)
 ***********************************************************************
 gen total_patents = pre_total_patent + post_total_patent
 lab var total_patents "pre + post total patents"
-gen patentor = (total_patents > 0 & total_patents <.), b(total_patents)
+
+gen patentor = (pre_total_patent > 0 & pre_total_patent <.), b(pre_total_patent)
+lab var patentor "filed patent before 2012"
+
 
 ***********************************************************************
 * 	PART 6: create dummy for Indian companies
@@ -100,6 +102,7 @@ foreach x of local not_indian  {
 
 	* dummy for delhi
 gen capital = (city == 21)
+lab var capital "HQ in Delhi"
 
 
 ***********************************************************************
@@ -121,8 +124,7 @@ gr export outlier_solarpatents.png, replace
 	
 	* define dummy for outliers
 gen patent_outliers = 0
-replace patent_outliers = 1 if company_name == "bosch" | company_name == "bharat" | company_name == "larsen"
-
+replace patent_outliers = 1 if company_name == "bosch" /* | company_name == "bharat" | company_name == "larsen" */
 
 ***********************************************************************
 * 	Save the changes made to the data		  			

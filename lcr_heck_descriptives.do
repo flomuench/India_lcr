@@ -29,6 +29,7 @@ use "${lcr_final}/lcr_bid_final", clear
 	* change directory to output folder for descriptive stats
 cd "$lcr_descriptives"
 
+set graphics on
 ******************* bid-level statistics ******************************
 
 ***********************************************************************
