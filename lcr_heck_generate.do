@@ -238,7 +238,7 @@ lab var expected_annual_revenue "expected total lifetime revenue for plant"
 * 	Save the changes made to the data		  			
 ***********************************************************************
 	* set export directory
-cd "$lcr_final"
+cd "$lcr_inter"
 
 	* save dta file
-save "lcr_bid_final", replace
+save "lcr_bid_intermediate", replace
