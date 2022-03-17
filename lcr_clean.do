@@ -63,6 +63,7 @@ rename totalemployees employees
 *rename lineofbusiness lob
 *rename solarpatent solarpatents
 *rename otherpatent otherpatents
+rename final_vgf_after_era vgf_total
 
 ***********************************************************************
 * 	PART 5: 	Order the varialcres in the data set		  			
@@ -84,9 +85,11 @@ lab var years_since_found "age"
 lab var soe_india "Indian SOE"
 lab var empl "employees"
 lab var manufacturer "manufacturing company"
+lab var manufacturer_solar "solar manufacturing"
 lab var sales "total sales in INR"
 lab var subsidiary "subsidiary of mother company"
 
+lab var vgf_total " total VGF in INR"
 ***********************************************************************
 * 	PART 7: 	Label varialcres values	  			
 ***********************************************************************

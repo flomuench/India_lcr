@@ -118,19 +118,22 @@ _eststo age, r: logit lcr years_since_found if patent_outlier == 0, vce(robust)
 _eststo energy, r: logit lcr energy_focus if patent_outlier == 0, vce(robust)
 
 		* (11) manufacturer
-_eststo manuf, r: logit lcr energy_focus if patent_outlier == 0, vce(robust)
+_eststo manuf, r: logit lcr manufacturer if patent_outlier == 0, vce(robust)
 
-		* (12) subsidiary
+		* (12) solar manufacturer
+_eststo manuf_solar, r: logit lcr manufacturer_solar if patent_outlier == 0, vce(robust)
+
+		* (13) subsidiary
 _eststo subsidiary, r: logit lcr subsidiary if patent_outlier == 0, vce(robust)
 
-		* (13) all
-_eststo all, r: logit lcr i.indian i.patentor pre_not_solar_patent sales employees lob soe_india years_since_found energy_focus manufacturer subsidiary if patent_outlier == 0, vce(robust)
+		* (14) all
+_eststo all, r: logit lcr i.indian i.patentor pre_not_solar_patent sales employees lob soe_india years_since_found energy_focus manufacturer manufacturer_solar subsidiary if patent_outlier == 0, vce(robust)
 
 
-local regressions indian /*india_state*/ india_capital patentor otherprepatents size1 size2 lob soe age energy manuf subsidiary all
+local regressions indian /*india_state*/ india_capital patentor otherprepatents size1 size2 lob soe age energy manuf manuf_solar subsidiary all
 esttab `regressions' using variable_choice2.csv, replace ///
 	title("Selection of variables used for PSM") ///
-	mtitles("Indian" /*"HQ Indian state"*/ "HQ in Delhi" "Pre Patentor" "Pre-patents" "Sales" "Employees" "Main business" "SOE" "Age" "Energy focus" "Manufacturer" "Subsidiary" "All") ///
+	mtitles("Indian" /*"HQ Indian state"*/ "HQ in Delhi" "Pre Patentor" "Pre-patents" "Sales" "Employees" "Main business" "SOE" "Age" "Energy focus" "Manufacturer" "Solar manufacturer" "Subsidiary" "All") ///
 	label ///
 	b(2) ///
 	se(2) ///

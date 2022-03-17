@@ -86,10 +86,65 @@ gr bar final_price_after_era if won == 1 & lcr_both == 1, over(lcr)
 
 ******************* auction-level statistics **************************
 preserve
-collapse (firstnm) n_competitors auction_year , by(auction)
+collapse (firstnm) n_competitors auction_year lcr contractual_arrangement quantity_total scope solarpark location climate_zone technology plant_type (min) maxprojectsize final_bid_after_era (mean) contractlength std_count_feb20 (sum) final_vgf_after_era, by(auction)
+	* do some data cleaning for visualisation
+lab var n_competitors "number of bidders"
+lab var auction_year "year"
+lab var contractual_arrangement "BOO+PPA vs. EPC+O&M"
+lab var quantity_total "total MW auctioned"
+lab var scope "international bidders invited"
+lab var solarpark "projects in solar park"
+lab var location "location in India"
+lab var climate_zone "climate zone of plant location"
+lab var technology "technology neutral"
+lab var plant_type "ground-mounted, rooftop or floating plant"
+lab var maxprojectsize "max. plant size"
+lab var final_bid_after_era "final bid price, INR/kwh"
+lab var contractlength "length of contract"
+lab var std_count_feb20 "international quality standards"
+lab var final_vgf_after_era "viability-gap-funding, INR"
+
+lab val lcr local_content_auction
 
 ***********************************************************************
-* 	PART 2: lcr & contractual arrangement 						
+* 	PART 2: lcr vs. no lcr auction characteristics balance table						
+***********************************************************************
+local auction_characteristics n_competitors auction_year contractual_arrangement quantity_total scope solarpark location climate_zone technology plant_type maxprojectsize final_bid_after_era contractlength std_count_feb20 final_vgf_after_era
+iebaltab `auction_characteristics', grpvar(lcr) save(baltab_auctions) replace ///
+			 vce(robust) pttest rowvarlabels balmiss(mean) onerow stdev notecombine ///
+			 format(%12.2fc)
+
+***********************************************************************
+* 	PART 3: evolution auctions over time						
+***********************************************************************
+gen one = 1
+replace quantity_total = quantity_total / 1000
+lab var quantity_total "total GB auctioned"
+lab var one "number of auctions"
+gr bar (sum) one quantity_total, over(auction_year) ///
+	blabel(total, format(%9.0g) size(vsmall)) ///
+	legend(rows(1) pos(6) label(1 "number of auctions") label(2 "GB auctioned")) ///
+	title("{bf:Over time evolution of India's National Solar Mission}") ///
+	subtitle("Number of auctions & total GB auctioned") ///
+	note("Authors own calculations based on documents SECI online archives.", size(small)) ///
+	name(auctions_evolution, replace)
+gr export auctions_evolution.png, replace
+
+gr bar (sum) one quantity_total, over(auction_year) over(lcr) ///
+	blabel(total, format(%9.0g) size(vsmall)) ///
+	legend(rows(1) pos(6) label(1 "number of auctions") label(2 "GB auctioned")) ///
+	title("{bf:Over time evolution of India's National Solar Mission}") ///
+	subtitle("Number of auctions & total GB auctioned LCR vs. no LCR auctions") ///
+	note("Authors own calculations based on documents SECI online archives.", size(small)) ///
+	name(auctions_evolution_lcr, replace)
+gr export auctions_evolution_lcr.png, replace
+
+gr bar (sum) one quantity_total n_competitors final_bid_after_era, over(auction_year)
+
+gr bar (sum) one quantity_total n_competitors final_bid_after_era final_vgf_after_era, over(auction_year)
+
+***********************************************************************
+* 	PART 4: lcr & contractual arrangement 						
 ***********************************************************************
 graph bar (count), over(lcr) over(contractual_arrangement) ///
 		blabel(total)

@@ -175,9 +175,32 @@ replace indian = 1 if company_name == "azure"
 
 
 	* manufacturer
+		* corrections
+replace manufacturer = 0 if company_name == "softbank"
+		* desktop research
+replace manufacturer = 1 if company_name == "photon" /* http://www.photonsolar.in/pv-modules.php*/
+replace manufacturer = 1 if company_name == "surana" /* http://suranasolar.com/downloads.html */
 
 
 
+	* solar module manufacturer
+		* classification based on: 
+			*https://solarquarter.com/wp-content/uploads/2021/03/file_f-1615380939218.pdf
+			* https://www.iitk.ac.in/solarlighting/files/Indian_Solar_Industry.pdf
+gen manufacturer_solar = 0
+			* indian solar module manufacturers
+replace manufacturer_solar = 1 if company_name == "vikram"
+replace manufacturer_solar = 1 if company_name == "tata"
+replace manufacturer_solar = 1 if company_name == "bharat"
+replace manufacturer_solar = 1 if company_name == "adani"
+replace manufacturer_solar = 1 if company_name == "swelect"
+replace manufacturer_solar = 1 if company_name == "renew"
+replace manufacturer_solar = 1 if company_name == "waree"
+*replace manufacturer_solar = 1 if company_name == "lanco" /* after background check not clear */
+replace manufacturer_solar = 1 if company_name == "photon" /* http://www.photonsolar.in/pv-modules.php*/
+replace manufacturer_solar = 1 if company_name == "surana" /* http://suranasolar.com/downloads.html */
+
+			* 
 
 
 ***********************************************************************

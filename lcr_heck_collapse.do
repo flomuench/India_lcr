@@ -37,7 +37,7 @@ foreach x in city state subsidiary lob  {
 	drop `x'
 	rename `x'1 `x'
 }
-collapse (firstnm) bidder totalemployees sales international dummy_firm_operation_india webaddress city state lob ultimateparent subsidiary indian soe_india empl manufacturer founded years_since_found energy_focus, by(company_name)
+collapse (sum) final_vgf_after_era (firstnm) bidder totalemployees sales international dummy_firm_operation_india webaddress city state lob ultimateparent subsidiary indian soe_india empl manufacturer* founded years_since_found energy_focus, by(company_name)
 save "firm_characteristics", replace
 restore
 
