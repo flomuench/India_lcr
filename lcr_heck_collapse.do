@@ -93,7 +93,7 @@ drop _merge
 * 	PART 4: Export Excel with variables for manual search to reduce missing values
 ***********************************************************************
 cd "$lcr_intermediate"
-export excel company_name subsidiary ultimateparent webaddress founded manufacturer totalemployees using missing.xlsx if founded == . | manufacturer == . | totalemployees == . , firstrow(var) replace
+export excel company_name bidder ultimateparent city state lob webaddress founded manufacturer totalemployees subsidiary using missing.xlsx if founded == . | manufacturer == . | totalemployees == . , firstrow(var) replace
 
 ***********************************************************************
 * 	PART 5: save cross-section data as raw
