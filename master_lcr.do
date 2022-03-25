@@ -175,14 +175,18 @@ if (1) do "${lcr_github}/lcr_ps_estimation.do"
 ----------------------------------------------------------------------*/
 if (1) do "${lcr_github}/lcr_common_support.do"
 /* --------------------------------------------------------------------
-	PART 5.5.: PSM estimation
+	PART 5.5.: power size calculations
+----------------------------------------------------------------------*/
+if (1) do "${lcr_github}/power.do"
+/* --------------------------------------------------------------------
+	PART 5.6.: PSM estimation
 ----------------------------------------------------------------------*/
 if (1) do "${lcr_github}/lcr_main_regression.do"
 /* --------------------------------------------------------------------
-	PART 5.6.: Assess quality of match in terms of reduction in bias
+	PART 5.7.: Assess quality of match in terms of reduction in bias
 ----------------------------------------------------------------------*/
 if (0) do "${lcr_github}/lcr_match_quality.do"
 /* --------------------------------------------------------------------
-	PART 5.7.: DiD combined with matching
+	PART 5.8.: DiD combined with matching
 ----------------------------------------------------------------------*/
 if (1) do "${lcr_github}/lcr_did_matching.do"
