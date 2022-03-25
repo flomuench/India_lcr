@@ -92,7 +92,7 @@ _eststo indian, r: logit lcr i.indian if patent_outlier == 0, vce(robust)
 *_eststo india_state, r: logit lcr i.hq_indian_state if patent_outlier == 0, vce(robust)
 _eststo india_capital, r: logit lcr i.capital if patent_outlier == 0, vce(robust)
 
-		* (4) pre patented non solar patents
+		* (4) pre patented
 _eststo patentor, r: logit lcr i.patentor if patent_outlier == 0, vce(robust)
 		
 		* (5) pre amount of other patents
@@ -147,7 +147,7 @@ esttab `regressions' using variable_choice2.csv, replace ///
 * 	PART 2:  explore pre-matching balance based on selected variables 			
 ***********************************************************************
 	* put variables for matching into a local
-local matching_var hq_indian_state won_total patentor pre_not_solar_patent sales employees total_plant_price_life_total
+local matching_var india_capital patentor otherprepatents size1 size2 lob soe age energy manuf manuf_solar subsidiary all
 
 set graphics on
 

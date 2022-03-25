@@ -177,7 +177,7 @@ if (1) do "${lcr_github}/lcr_common_support.do"
 /* --------------------------------------------------------------------
 	PART 5.5.: PSM estimation
 ----------------------------------------------------------------------*/
-if (0) do "${lcr_github}/lcr_main_regression.do"
+if (1) do "${lcr_github}/lcr_main_regression.do"
 /* --------------------------------------------------------------------
 	PART 5.6.: Assess quality of match in terms of reduction in bias
 ----------------------------------------------------------------------*/

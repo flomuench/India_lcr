@@ -24,7 +24,7 @@ use "${lcr_final}/lcr_final", clear
 cd "$lcr_psm"
 
 	* put variables for matching into a local
-local matching_var hq_indian_state won_total patentor pre_not_solar_patent sales employees total_plant_price_life_total
+local matching_var india_capital patentor otherprepatents size1 size2 lob soe age energy manuf manuf_solar subsidiary all
 
 
 ***********************************************************************
