@@ -18,7 +18,7 @@
 * 	PART 1:  set the scene  			
 ***********************************************************************
 use "${lcr_final}/lcr_final", clear
-
+drop pscore
 	* set the directory to propensity matching folder
 cd "$lcr_psm"
 
@@ -147,7 +147,7 @@ esttab `regressions' using variable_choice2.csv, replace ///
 * 	PART 2:  explore pre-matching balance based on selected variables 			
 ***********************************************************************
 	* put variables for matching into a local
-local matching_var india_capital patentor otherprepatents size1 size2 lob soe age energy manuf manuf_solar subsidiary all
+local matching_var indian patentor pre_not_solar_patent sales employees lob soe_india years_since_found energy_focus manufacturer manufacturer_solar subsidiary
 
 set graphics on
 

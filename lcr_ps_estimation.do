@@ -24,8 +24,9 @@ use "${lcr_final}/lcr_final", clear
 cd "$lcr_psm"
 
 	* put variables for matching into a local
-local matching_var india_capital patentor otherprepatents size1 size2 lob soe age energy manuf manuf_solar subsidiary all
-
+		* lob predicts perfecly failure or success for 
+local matching_var i.indian i.patentor pre_not_solar_patent sales employees i.soe_india energy_focus
+/*i.lob years_since_found*/ 
 
 ***********************************************************************
 * 	PART 1:  set the scene  			
