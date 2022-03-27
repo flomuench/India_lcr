@@ -77,7 +77,7 @@ matrix power1 = r(pss_table)
 
 			* export to Excel
 putexcel set power, replace
-putexcel A1 = matrix(power1), rownames colnames
+putexcel A1 = matrix(power1), colnames
 putexcel close
 
 		* scenario 2: matching reduces SD
