@@ -66,15 +66,26 @@ is certainly not comparable to low-income countries, comparing LCR to what
 would have possible through a popular, alternative policy, namely R&D support
 */
 	* Calculate hypothetical power
-		* take sample mean without 1 outlier
+		* scenario 1: take sample mean without 1 outlier
 			* m = .71, SD = 3.65
 sum solarpatents if patent_outlier == 0
 local m = r(mean)
 local sd = r(sd)
-power twomeans `m', diff(0.5 1 1.5 2 2.5) sd(`sd') n1(30) n2(54) ///
+power twomeans `m', diff(0.5 1.5 2.5 3.5 4.5) sd(1 2 3 4 5) n1(30 35 40) n2(54) ///
+	table
+matrix power1 = r(pss_table)
+
+			* export to Excel
+putexcel set power, replace
+putexcel A1 = matrix(power1), rownames colnames
+putexcel close
+
+		* scenario 2: matching reduces SD
+	
+/* coding for export of visualisation
 	graph(name(power_hypothetical, replace))
 gr export power_hypothetical.png, replace
-
+*/
 egen tsales = sum(sales) if solarpatents > 0 & solarpatents < .
 sum tsales 
 local sales = r(min)

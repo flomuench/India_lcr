@@ -18,7 +18,7 @@
 * 	PART 1:  set the scene  			
 ***********************************************************************
 use "${lcr_final}/lcr_final", clear
-drop pscore
+drop pscore common_support
 	* set the directory to propensity matching folder
 cd "$lcr_psm"
 
