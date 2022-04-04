@@ -112,7 +112,7 @@ _eststo lob, r: logit lcr lob if patent_outlier == 0, vce(robust)
 _eststo soe, r: logit lcr soe_india if patent_outlier == 0, vce(robust)
 
 		* (9) age
-_eststo age, r: logit lcr years_since_found if patent_outlier == 0, vce(robust)
+_eststo age, r: logit lcr age if patent_outlier == 0, vce(robust)
 
 		* (10) energy focus
 _eststo energy, r: logit lcr energy_focus if patent_outlier == 0, vce(robust)
@@ -127,7 +127,7 @@ _eststo manuf_solar, r: logit lcr manufacturer_solar if patent_outlier == 0, vce
 _eststo subsidiary, r: logit lcr subsidiary if patent_outlier == 0, vce(robust)
 
 		* (14) all
-_eststo all, r: logit lcr i.indian i.patentor pre_not_solar_patent sales employees lob soe_india years_since_found energy_focus manufacturer manufacturer_solar subsidiary if patent_outlier == 0, vce(robust)
+_eststo all, r: logit lcr i.indian i.patentor pre_not_solar_patent sales employees lob soe_india age energy_focus manufacturer manufacturer_solar subsidiary if patent_outlier == 0, vce(robust)
 
 
 local regressions indian /*india_state*/ india_capital patentor otherprepatents size1 size2 lob soe age energy manuf manuf_solar subsidiary all
@@ -147,7 +147,12 @@ esttab `regressions' using variable_choice2.csv, replace ///
 * 	PART 2:  explore pre-matching balance based on selected variables 			
 ***********************************************************************
 	* put variables for matching into a local
-local matching_var hq_indian_state won_total patentor pre_not_solar_patent sales employees total_plant_price_life_total
+local matching_var indian patentor pre_not_solar_patent sales employees soe age energy_focus manufacturer manufacturer_solar subsidiary
+local matching_var2 indian pre_not_solar_patent soe manufacturer manufacturer_solar
+local matching_var3 indian pre_not_solar_patent soe manufacturer
+local matching_var4 indian pre_not_solar_patent soe manufacturer sales employees age
+
+
 
 set graphics on
 

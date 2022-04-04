@@ -2,12 +2,19 @@
 * 			lcr India paper: import and merge with firm patent data						
 ***********************************************************************
 *																	   
-*	PURPOSE: import the GIZ-API contact list as prepared					  								  
-*	by Teo			  
+*	PURPOSE: 				  								  
+*				  
 *																	  
 *	OUTLINE:														  
-*	1)	import contact list as Excel or CSV														  
-*	2)	save the contact list as dta file in intermediate folder
+*	1)		import the list of patents											  
+*	2)		document unique identifier
+*	3) 		visualise over time evolution of patents
+* 	4) 		collapse the data on company-year-level	
+*	5) 		by company over time evolution of patents
+*	6) 		collapse to patent count pre & post treatment
+*	7) 		merge cross-section lcr_raw.dta file with patents
+*	8) 		merge with firm characteristics + avg, min, max patent level complexity for each firm
+*	9) 		
 *																	 																      *
 *	Author: Florian  														  
 *	ID variable: no id variable defined			  									  
@@ -54,7 +61,7 @@ gr export patent_evolution.png, replace
 
 
 ***********************************************************************
-* 	PART 3: collapse the data 	  						
+* 	PART 3: collapse the data on company-year-level						
 ***********************************************************************
 
 
@@ -134,7 +141,7 @@ drop _merge
 save "lcr_raw", replace
 
 ***********************************************************************
-* 	PART 7: merge with firm characteristics + avg, min, max patent level complexity for each firm		  						
+* 	PART 8: merge with firm characteristics + avg, min, max patent level complexity for each firm		  						
 ***********************************************************************
 use "solar_components_updated_HS", clear
 
@@ -242,7 +249,7 @@ save "lcr_raw", replace
 
 
 ***********************************************************************
-* 	PART 8: 			* merge lob complexity		  						
+* 	PART 9: 			* merge lob complexity		  						
 ***********************************************************************
 cd "$lcr_raw"
 import excel "cross_section_sumpatents_complexity", firstrow clear
@@ -272,7 +279,7 @@ lab var HS6_HS07 "hs code line of business"
 
 
 ***********************************************************************
-* 	PART 8: replace the existing lcr_raw.dta file		  						
+* 	PART 10: replace the existing lcr_raw.dta file		  						
 ***********************************************************************
 set graphics off
 save "lcr_raw", replace

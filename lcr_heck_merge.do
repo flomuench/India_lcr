@@ -85,7 +85,7 @@ lab var indian "indian firm = 1"
 
 
 ***********************************************************************
-* 	PART 2: manually replace mv for firms not included in Probst et al. 2020
+* 	PART 3: manually replace mv for firms not included in Probst et al. 2020
 ***********************************************************************
 	* energy focus
 format lob %-40.0g
@@ -200,7 +200,23 @@ replace manufacturer_solar = 1 if company_name == "waree"
 replace manufacturer_solar = 1 if company_name == "photon" /* http://www.photonsolar.in/pv-modules.php*/
 replace manufacturer_solar = 1 if company_name == "surana" /* http://suranasolar.com/downloads.html */
 
-			* 
+***********************************************************************
+* 	PART 4:  import missing values for manufacturer + year founded from desktop research	  			
+***********************************************************************
+preserve
+import excel "$lcr_raw/manufacturer_year_data_researched01042022.xlsx", firstrow clear
+save "manufacturer_year", replace
+restore
+merge m:1 company_name using "manufacturer_year", update replace
+erase "manufacturer_year.dta"
+
+drop if company_name == "rutherford" /* company renamed in lcr_heck_correct as subsidiary of canadian solar */
+
+format founded %9.0g
+drop years_since_found
+gen age = 2022 - founded
+format age %9.0g
+
 
 
 ***********************************************************************

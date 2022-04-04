@@ -37,7 +37,7 @@ foreach x in city state subsidiary lob  {
 	drop `x'
 	rename `x'1 `x'
 }
-collapse (sum) final_vgf_after_era (firstnm) bidder totalemployees sales international dummy_firm_operation_india webaddress city state lob ultimateparent subsidiary indian soe_india empl manufacturer* founded years_since_found energy_focus, by(company_name)
+collapse (sum) final_vgf_after_era (firstnm) bidder totalemployees sales international dummy_firm_operation_india webaddress city state lob ultimateparent subsidiary indian soe_india empl manufacturer* founded age energy_focus, by(company_name)
 save "firm_characteristics", replace
 restore
 
@@ -92,8 +92,10 @@ drop _merge
 ***********************************************************************
 * 	PART 4: Export Excel with variables for manual search to reduce missing values
 ***********************************************************************
+/*
 cd "$lcr_intermediate"
 export excel company_name bidder ultimateparent city state lob webaddress founded manufacturer totalemployees subsidiary using missing.xlsx if founded == . | manufacturer == . | totalemployees == . , firstrow(var) replace
+*/
 
 ***********************************************************************
 * 	PART 5: save cross-section data as raw
