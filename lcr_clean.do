@@ -81,7 +81,7 @@ label var international "foreign vs. indian company"
 label var lob "primary line of business"
 
 lab var energy_focus "main business is energy"
-lab var years_since_found "age"
+lab var age "age"
 lab var soe_india "Indian SOE"
 lab var empl "employees"
 lab var manufacturer "manufacturing company"

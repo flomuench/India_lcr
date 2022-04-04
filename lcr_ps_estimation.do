@@ -24,15 +24,16 @@ use "${lcr_final}/lcr_final", clear
 cd "$lcr_psm"
 
 	* put variables for matching into a local
-		* lob predicts perfecly failure or success for 
-local matching_var i.indian i.patentor pre_not_solar_patent sales employees i.soe_india energy_focus
-/*i.lob years_since_found*/ 
+local matching_var indian patentor pre_not_solar_patent sales employees soe age energy_focus manufacturer manufacturer_solar subsidiary
+local matching_var2 indian pre_not_solar_patent soe manufacturer manufacturer_solar
+local matching_var3 indian pre_not_solar_patent soe manufacturer
+local matching_var4 indian pre_not_solar_patent soe manufacturer sales employees age
 
 ***********************************************************************
 * 	PART 1:  set the scene  			
 ***********************************************************************
 	* estimate propensity (score) to participate in treatment
-logit lcr `matching_var' if patent_outliers == 0, vce(robust)
+logit lcr `matching_var4' if patent_outliers == 0, vce(robust)
 predict pscore, p
 sum pscore, d
 label var pscore "estimated propensity score to participate in LCR auctions"
