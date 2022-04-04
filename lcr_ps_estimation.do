@@ -29,7 +29,6 @@ local matching_var2 indian pre_not_solar_patent soe manufacturer manufacturer_so
 local matching_var3 indian pre_not_solar_patent soe manufacturer
 local matching_var4 indian pre_not_solar_patent soe manufacturer sales employees age
 
-
 ***********************************************************************
 * 	PART 1:  set the scene  			
 ***********************************************************************

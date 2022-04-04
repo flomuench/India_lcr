@@ -18,7 +18,7 @@
 * 	PART 1:  set the scene  			
 ***********************************************************************
 use "${lcr_final}/lcr_final", clear
-
+drop pscore common_support
 	* set the directory to propensity matching folder
 cd "$lcr_psm"
 
@@ -92,7 +92,7 @@ _eststo indian, r: logit lcr i.indian if patent_outlier == 0, vce(robust)
 *_eststo india_state, r: logit lcr i.hq_indian_state if patent_outlier == 0, vce(robust)
 _eststo india_capital, r: logit lcr i.capital if patent_outlier == 0, vce(robust)
 
-		* (4) pre patented non solar patents
+		* (4) pre patented
 _eststo patentor, r: logit lcr i.patentor if patent_outlier == 0, vce(robust)
 		
 		* (5) pre amount of other patents
@@ -151,8 +151,6 @@ local matching_var indian patentor pre_not_solar_patent sales employees soe age 
 local matching_var2 indian pre_not_solar_patent soe manufacturer manufacturer_solar
 local matching_var3 indian pre_not_solar_patent soe manufacturer
 local matching_var4 indian pre_not_solar_patent soe manufacturer sales employees age
-
-
 
 set graphics on
 

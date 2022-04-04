@@ -33,8 +33,8 @@ gen random = runiform(0,1)
 sort random
 	
 	* with replacement
-		* no common support, only nearest neighbor
-psmatch2 lcr if patent_outliers == 0, outcome(post_solar_patent) pscore(pscore)
+		* 1 nn ; no common support, only nearest neighbor
+psmatch2 lcr if patent_outliers == 0 & common_support == 1, outcome(post_solar_patent) pscore(pscore)
 scalar t = r(att)/ r(seatt)
 mat n1 = ( r(att) \ t )
 sort _id
