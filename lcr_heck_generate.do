@@ -234,6 +234,12 @@ format expected_annual_revenue %-20.2fc
 lab var expected_annual_revenue "expected total lifetime revenue for plant"
  
 ***********************************************************************
+* 	PART 13: expected revenue
+***********************************************************************
+ihstrans sales
+ 
+ 
+***********************************************************************
 * 	Save the changes made to the data		  			
 ***********************************************************************
 	* set export directory

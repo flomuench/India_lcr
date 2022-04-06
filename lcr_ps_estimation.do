@@ -28,12 +28,13 @@ local matching_var indian patentor pre_not_solar_patent sales employees soe age 
 local matching_var2 indian pre_not_solar_patent soe manufacturer manufacturer_solar
 local matching_var3 indian pre_not_solar_patent soe manufacturer
 local matching_var4 indian pre_not_solar_patent soe manufacturer sales employees age
+local matching_var5 patentor soe_india manufacturer_solar
 
 ***********************************************************************
 * 	PART 1:  set the scene  			
 ***********************************************************************
 	* estimate propensity (score) to participate in treatment
-logit lcr `matching_var4' if patent_outliers == 0, vce(robust)
+logit lcr `matching_var5' if patent_outliers == 0, vce(robust)
 predict pscore, p
 sum pscore, d
 label var pscore "estimated propensity score to participate in LCR auctions"

@@ -18,7 +18,7 @@
 * 	PART 1:  set the scene  			
 ***********************************************************************
 use "${lcr_final}/lcr_final", clear
-drop pscore common_support
+*drop pscore common_support
 	* set the directory to propensity matching folder
 cd "$lcr_psm"
 
@@ -93,47 +93,47 @@ _eststo indian, r: logit lcr i.indian if patent_outlier == 0, vce(robust)
 _eststo india_capital, r: logit lcr i.capital if patent_outlier == 0, vce(robust)
 
 		* (4) pre patented
-_eststo patentor, r: logit lcr i.patentor if patent_outlier == 0, vce(robust)
+_eststo patentor, r: logit lcr i.indian i.patentor if patent_outlier == 0, vce(robust)
 		
 		* (5) pre amount of other patents
-_eststo otherprepatents, r: logit lcr pre_not_solar_patent if patent_outlier == 0, vce(robust)
+_eststo otherprepatents, r: logit lcr i.indian pre_not_solar_patent if patent_outlier == 0, vce(robust)
 
 		* (6) sales
-_eststo size1, r: logit lcr sales if patent_outlier == 0, vce(robust)
+_eststo size1, r: logit lcr i.indian ihs_sales if patent_outlier == 0, vce(robust)
 
 		* (7) employees
-_eststo size2, r: logit lcr employees if patent_outlier == 0, vce(robust)
+_eststo size2, r: logit lcr i.indian employees if patent_outlier == 0, vce(robust)
 *_eststo size2, r: logit lcr sales empl if patent_outlier == 0, vce(robust)
 
-		* (7) lob
-_eststo lob, r: logit lcr lob if patent_outlier == 0, vce(robust)
+		* (7) sector
+_eststo lob, r: logit lcr i.indian i.sector if patent_outlier == 0, vce(robust)
 	
 		* (8) soe
-_eststo soe, r: logit lcr soe_india if patent_outlier == 0, vce(robust)
+_eststo soe, r: logit lcr i.indian i.soe_india if patent_outlier == 0, vce(robust)
 
 		* (9) age
-_eststo age, r: logit lcr age if patent_outlier == 0, vce(robust)
+_eststo age, r: logit lcr i.indian age if patent_outlier == 0, vce(robust)
 
 		* (10) energy focus
-_eststo energy, r: logit lcr energy_focus if patent_outlier == 0, vce(robust)
+_eststo energy, r: logit lcr i.indian i.energy_focus if patent_outlier == 0, vce(robust)
 
 		* (11) manufacturer
-_eststo manuf, r: logit lcr manufacturer if patent_outlier == 0, vce(robust)
+_eststo manuf, r: logit lcr i.indian i.manufacturer if patent_outlier == 0, vce(robust)
 
 		* (12) solar manufacturer
-_eststo manuf_solar, r: logit lcr manufacturer_solar if patent_outlier == 0, vce(robust)
+_eststo manuf_solar, r: logit lcr i.indian i.manufacturer i.manufacturer_solar if patent_outlier == 0, vce(robust)
 
 		* (13) subsidiary
-_eststo subsidiary, r: logit lcr subsidiary if patent_outlier == 0, vce(robust)
+_eststo subsidiary, r: logit lcr i.indian i.manufacturer_solar subsidiary if patent_outlier == 0, vce(robust)
 
 		* (14) all
-_eststo all, r: logit lcr i.indian i.patentor pre_not_solar_patent sales employees lob soe_india age energy_focus manufacturer manufacturer_solar subsidiary if patent_outlier == 0, vce(robust)
+_eststo all, r: logit lcr i.indian i.patentor pre_not_solar_patent ihs_sales employees sector i.soe_india age i.energy_focus i.manufacturer i.manufacturer_solar i.subsidiary if patent_outlier == 0, vce(robust)
 
 
 local regressions indian /*india_state*/ india_capital patentor otherprepatents size1 size2 lob soe age energy manuf manuf_solar subsidiary all
 esttab `regressions' using variable_choice2.csv, replace ///
 	title("Selection of variables used for PSM") ///
-	mtitles("Indian" /*"HQ Indian state"*/ "HQ in Delhi" "Pre Patentor" "Pre-patents" "Sales" "Employees" "Main business" "SOE" "Age" "Energy focus" "Manufacturer" "Solar manufacturer" "Subsidiary" "All") ///
+	mtitles("Indian" /*"HQ Indian state"*/ "HQ in Delhi" "Pre Patentor" "Pre-patents" "Sales" "Employees" "Sector" "SOE" "Age" "Energy focus" "Manufacturer" "Solar manufacturer" "Subsidiary" "All") ///
 	label ///
 	b(2) ///
 	se(2) ///
@@ -151,6 +151,8 @@ local matching_var indian patentor pre_not_solar_patent sales employees soe age 
 local matching_var2 indian pre_not_solar_patent soe manufacturer manufacturer_solar
 local matching_var3 indian pre_not_solar_patent soe manufacturer
 local matching_var4 indian pre_not_solar_patent soe manufacturer sales employees age
+		* with Fabi
+local matching_var5 patentor soe_india manufacturer_solar
 
 set graphics on
 

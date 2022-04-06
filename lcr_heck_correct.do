@@ -33,6 +33,7 @@ use "${lcr_intermediate}/lcr_bid_inter", clear
 ***********************************************************************
 * avaada & welspun
 replace company_name = "welspun" if company_name == "avaada"
+replace company_name = "tata" if company_name == "welspun" /* https://www.crunchbase.com/organization/welspun-renewables-energy */
 replace company_name = "acb" if company_name == "spectrum"
 * https://eden-re.com/ --> JF EDF + Total
 replace company_name = "canadian" if company_name == "rutherford"

@@ -105,11 +105,6 @@ replace energy_focus = 1 if lob == 37 /* storage batteries */
 replace energy_focus = 1 if lob == 40 /* water supply */
 replace energy_focus = 1 if lob == 12 /* gas production and/or distribution */
 
-
-replace energy_focus = 1 if company_name == "vikram"
-replace energy_focus = 1 if company_name == "acb"
-
-
 * tbd: 1) water supply, 2) gas production and/or distribution,
 			
 			* = 0
@@ -133,13 +128,20 @@ replace energy_focus = 0 if lob == 31 /* real estate agents & managers */
 replace energy_focus = 0 if lob == 26 /* newspapers */
 replace energy_focus = 0 if lob == 3 /* bridge, tunnel, highway */
 
-
+		* replace exception by company name
 replace energy_focus = 0 if company_name == "development corporation odisha"
 replace energy_focus = 0 if company_name == "grt jewellers"
 replace energy_focus = 0 if company_name == "lanco"
 replace energy_focus = 0 if company_name == "navayuga"
 replace energy_focus = 0 if company_name == "spectrum"
-replace energy_focus = 0 if company_name == "surana"
+
+replace energy_focus = 1 if company_name == "hiranandani"
+replace energy_focus = 1 if company_name == "vikram"
+replace energy_focus = 1 if company_name == "acb"
+replace energy_focus = 1 if company_name == "surana"
+replace energy_focus = 1 if company_name == "swelect"
+replace energy_focus = 1 if company_name == "sunedison"
+replace energy_focus = 1 if company_name == "photon"
 
 
 	* soe_india
@@ -180,6 +182,8 @@ replace manufacturer = 0 if company_name == "softbank"
 		* desktop research
 replace manufacturer = 1 if company_name == "photon" /* http://www.photonsolar.in/pv-modules.php*/
 replace manufacturer = 1 if company_name == "surana" /* http://suranasolar.com/downloads.html */
+replace manufacturer = 1 if company_name == "suzlon"
+replace manufacturer = 1 if company_name == "waaree"
 
 
 
@@ -194,14 +198,40 @@ replace manufacturer_solar = 1 if company_name == "tata"
 replace manufacturer_solar = 1 if company_name == "bharat"
 replace manufacturer_solar = 1 if company_name == "adani"
 replace manufacturer_solar = 1 if company_name == "swelect"
-replace manufacturer_solar = 1 if company_name == "renew"
-replace manufacturer_solar = 1 if company_name == "waree"
+*replace manufacturer_solar = 1 if company_name == "renew" /* rechecked on april 6th, seem EPC */
+replace manufacturer_solar = 1 if company_name == "waaree"
 *replace manufacturer_solar = 1 if company_name == "lanco" /* after background check not clear */
 replace manufacturer_solar = 1 if company_name == "photon" /* http://www.photonsolar.in/pv-modules.php*/
 replace manufacturer_solar = 1 if company_name == "surana" /* http://suranasolar.com/downloads.html */
+replace manufacturer_solar = 1 if company_name == "canadian" /*https://www.canadiansolar.com/  */
+
 
 ***********************************************************************
-* 	PART 4:  import missing values for manufacturer + year founded from desktop research	  			
+* 	PART 4: create sector dummy
+***********************************************************************
+lab def sectors 1 "real estate" 2 "industry" 3 "construction" 4 "business services" 5 "electrical services, EPC" ///
+	6 "electronics, component manufacturers" 7 "utility"
+	
+gen sector = .
+replace sector = 1 if lob == 1 | lob == 31 
+replace sector = 2 if lob == 2 | lob == 5 | lob == 13 | lob == 20 | lob == 25 | lob == 28
+replace sector = 3 if lob == 3 | lob == 14 | lob == 15 | lob == 24 | lob == 29 | lob == 32
+replace sector = 4 if lob == 4 | lob == 7 | lob == 6 | lob == 15 | lob == 17 | lob == 19 | lob == 21 | lob == 22 | lob == 23 | lob == 26 | lob == 34
+replace sector = 5 if lob == 10 | lob == 8 | lob == 16 | lob == 17 | lob == 18 | lob == 11 | lob == 22 | lob == 24 | lob == 27 | lob == 35 | lob == 38 | lob == 30
+replace sector = 6 if lob == 9  | lob == 37 | lob == 39 | lob == 36
+replace sector = 7 if lob == 12 | lob == 40
+
+replace sector = 6 if company_name == "swelect"  | company_name == "sunedision" | company_name == "adani" | company_name == "tata" | company_name == "waaree" | company_name == "photon" | company_name == "canadian"
+replace sector = 5 if company_name == "maheswari" | company_name == "talettutayi" | company_name == "sukhbir"
+replace sector = 7 if company_name == "hiranandani"
+replace sector = 4 if company_name == "softbank" | company_name == "sun"
+replace sector = 3 if company_name == "scc" | company_name == "r s food processes"
+
+lab val sector sectors
+lab var sector "sector"
+
+***********************************************************************
+* 	PART 5:  import missing values for manufacturer + year founded from desktop research	  			
 ***********************************************************************
 preserve
 import excel "$lcr_raw/manufacturer_year_data_researched01042022.xlsx", firstrow clear

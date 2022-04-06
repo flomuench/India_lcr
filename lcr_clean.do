@@ -88,6 +88,7 @@ lab var manufacturer "manufacturing company"
 lab var manufacturer_solar "solar manufacturing"
 lab var sales "total sales in INR"
 lab var subsidiary "subsidiary of mother company"
+lab var sector "sector"
 
 lab var vgf_total " total VGF in INR"
 ***********************************************************************
@@ -95,6 +96,11 @@ lab var vgf_total " total VGF in INR"
 ***********************************************************************
 lab def foreign 1 "international" 0 "indian"
 lab val international foreign
+
+lab def sectors 1 "real estate" 2 "industry" 3 "construction" 4 "business services" 5 "electrical services, EPC" ///
+	6 "electronics, component manufacturers" 7 "utility"
+lab val sector sectors
+
 
 ***********************************************************************
 * 	Save the changes made to the data		  			
