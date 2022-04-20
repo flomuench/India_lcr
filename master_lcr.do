@@ -190,3 +190,7 @@ if (0) do "${lcr_github}/lcr_match_quality.do"
 	PART 5.8.: DiD combined with matching
 ----------------------------------------------------------------------*/
 if (1) do "${lcr_github}/lcr_did_matching.do"
+/* --------------------------------------------------------------------
+	PART 5.9.: Robust 1: use "teffects psmatch" command
+----------------------------------------------------------------------*/
+if (1) do "${lcr_github}/lcr_teffects_psmatch.do"

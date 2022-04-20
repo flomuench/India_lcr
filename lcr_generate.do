@@ -60,6 +60,11 @@ lab val lcr_only just_lcr
 gen lcr_both = (total_auctions_lcr > 0 & total_auctions_lcr < . & total_auctions_no_lcr > 0 & total_auctions_no_lcr < .)
 lab var lcr_both "firm participated in lcr & no lcr auctions"
 
+
+		* won LCR
+gen lcr_won = (won_lcr > 0 & won_lcr < .)
+lab var lcr_won "firm won LCR auction or not"
+
 ***********************************************************************
 * 	PART 4: create dummy for firm having filed a solar patent
 ***********************************************************************
@@ -76,6 +81,9 @@ lab var total_patents "pre + post total patents"
 
 gen patentor = (pre_total_patent > 0 & pre_total_patent <.), b(pre_total_patent)
 lab var patentor "filed patent before 2012"
+
+	* create ihs of total pre not solar patents
+ihstrans pre_not_solar_patent
 
 
 ***********************************************************************
@@ -125,6 +133,13 @@ gr export outlier_solarpatents.png, replace
 	* define dummy for outliers
 gen patent_outliers = 0
 replace patent_outliers = 1 if company_name == "bosch" /* | company_name == "bharat" | company_name == "larsen" */
+
+***********************************************************************
+* 	PART 9: electronics vs. rest sector dummy
+***********************************************************************
+gen electronics = 0
+replace electronics = 1 if sector == 6
+
 
 ***********************************************************************
 * 	Save the changes made to the data		  			

@@ -34,7 +34,10 @@ sort random
 	
 	* with replacement
 		* 1 nn ; no common support, only nearest neighbor
-psmatch2 lcr if patent_outliers == 0 & common_support == 1, outcome(post_solar_patent) pscore(pscore)
+			* counterfactual = won
+psmatch2 lcr_won if patent_outliers == 0, outcome(post_solar_patent) pscore(pscore)
+			* counterfactual = participated
+psmatch2 lcr if patent_outliers == 0, outcome(post_solar_patent) pscore(pscore)
 scalar t = r(att)/ r(seatt)
 mat n1 = ( r(att) \ t )
 sort _id
@@ -47,7 +50,7 @@ codebook _n1
 	lots of sample/variation gets lost */
 	
 		* 2 nn
-psmatch2 lcr if patent_outliers == 0, outcome(post_solar_patent) pscore(pscore) neighbor(2)
+psmatch2 lcr if patent_outliers == 0, outcome(post_solar_patent) pscore(pscore) neighbor(2) caliper(0.1)
 scalar t = r(att)/ r(seatt)
 mat n2 = ( r(att) \ t )
 tab _weight lcr, missing
@@ -84,25 +87,24 @@ psmatch2 lcr if patent_outliers == 0, outcome(post_solar_patent) pscore(pscore) 
 * 	PART 3:  Radius matching
 ***********************************************************************
 		* caliper 0.1
+			* counterfactual = won
+psmatch2 lcr_won if patent_outliers == 0, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore)
+			* counterfactual = participated
 psmatch2 lcr if patent_outliers == 0, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore)
 br if _support == 0
 *we loose azure & today in the LCR group
 scalar t = r(att)/ r(seatt)
 mat c01 = ( r(att) \ t )
-		*
-		* caliper 0.25
-psmatch2 lcr if patent_outliers == 0, radius caliper(0.25) outcome(post_solar_patent) pscore(pscore)
+		
+		* caliper 0.05
+psmatch2 lcr if patent_outliers == 0, radius caliper(0.05) outcome(post_solar_patent) pscore(pscore)
 * azure & today are kept but effect remain insignificant due to high variance in SE
 scalar t = r(att)/ r(seatt)
-mat c025 = ( r(att) \ t )
+mat c005 = ( r(att) \ t )
 
-		* caliper 0.5
-psmatch2 lcr if patent_outliers == 0, radius caliper(0.5) outcome(post_solar_patent) pscore(pscore)
-scalar t = r(att)/ r(seatt)
-mat c05 = ( r(att) \ t )
 
-mat radius = c01, c025, c05
-mat colnames radius = "caliper = 0.1" "caliper = 0.25" "caliper = 0.5"
+mat radius = c01, c005
+mat colnames radius = "caliper = 0.1" "caliper = 0.05"
 mat rownames radius = att t
 
 
@@ -119,20 +121,13 @@ psmatch2 lcr if patent_outliers == 0, kernel outcome(post_solar_patent) pscore(p
 scalar t = r(att)/ r(seatt)
 mat kbw01 = ( r(att) \ t )
 
-psmatch2 lcr if patent_outliers == 0, kernel outcome(post_solar_patent) pscore(pscore) k(epan) bw(0.25)
+psmatch2 lcr if patent_outliers == 0, kernel outcome(post_solar_patent) pscore(pscore) k(epan) bw(0.05)
 scalar t = r(att)/ r(seatt)
 mat kbw025 = ( r(att) \ t )
 
-
-psmatch2 lcr if patent_outliers == 0, kernel outcome(post_solar_patent) pscore(pscore) k(epan) bw(0.5)
-scalar t = r(att)/ r(seatt)
-mat kbw05 = ( r(att) \ t )
-
-
-mat kernel = kbw01, kbw025, kbw05
-mat colnames kernel = "BW = 0.1" "BW = 0.25" "BW = 0.5"
+mat kernel = kbw01, kbw005
+mat colnames kernel = "BW = 0.1" "BW = 0.05"
 mat rownames kernel = att t
-
 
 esttab matrix(kernel, fmt(%9.2fc)) using kernelmatching.csv, replace ///
 	title("Results for kernel matching") ///
