@@ -194,3 +194,9 @@ if (1) do "${lcr_github}/lcr_did_matching.do"
 	PART 5.9.: Robust 1: use "teffects psmatch" command
 ----------------------------------------------------------------------*/
 if (1) do "${lcr_github}/lcr_teffects_psmatch.do"
+
+
+***********************************************************************
+* 	PART 6: 	Interpretation & explanation of results
+***********************************************************************
+if (1) do "${lcr_github}/post_power.do"
