@@ -28,13 +28,14 @@ cd "$lcr_rt"
 ***********************************************************************
 	* caliper = 0.25
 	* common support = 0.2 - 0.95
-psmatch2 lcr if patent_outliers == 0, radius caliper(0.25) outcome(post_solar_patent) pscore(pscore)
+psmatch2 lcr if patent_outliers == 0, radius caliper(0.05) outcome(post_solar_patent) pscore(pscore)
 
 ***********************************************************************
 * 	PART 3:  DiD estimation
 ***********************************************************************
+* counterfactual = participated
 	* without controls
-_eststo did_no_controls, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(robust)
+_eststo did_no_controls, r: reg dif_solar_patents i.lcr [iweight=_weight] if patent_outlier == 0, vce(robust)
 
 	* controls for variables that were still imbalanced after matching
 _eststo did_controls, r: reg dif_solar_patents i.lcr c.won_total c.pre_not_solar_patent [iweight=_weight], vce(robust)
@@ -51,6 +52,32 @@ esttab did_no_controls did_controls using did.csv, replace ///
 	nobaselevels ///
 	addnotes("DiD based on sum of solar patents 2012-2021 minus 1982-2011." "Radius matching with caliper = .25. & common support 0.2-0.95." "Robust standard errors in parentheses.", size(small))
 
+***********************************************************************
+* 	PART 4:  Radius matching to define sample of firms * counterfactual = won
+***********************************************************************
+	* caliper = 0.25
+	* common support = 0.2 - 0.95
+psmatch2 lcr_won if patent_outliers == 0, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore)
+
+***********************************************************************
+* 	PART 5:  DiD estimation
+***********************************************************************	
+_eststo did_no_controls, r: reg dif_solar_patents i.lcr_won [iweight=_weight] if patent_outlier == 0, vce(robust)
+
+	* controls for variables that were still imbalanced after matching
+_eststo did_controls, r: reg dif_solar_patents i.lcr_won c.won_total c.pre_not_solar_patent [iweight=_weight], vce(robust)
+
+	* export results in a table
+esttab did_no_controls did_controls using did_won.csv, replace ///
+	title("Difference-in-difference combined with matching") ///
+	mtitles("no controls" "imbalance controls") ///
+	label ///
+	b(2) ///
+	se(2) ///
+	width(0.8\hsize) ///
+	star(* 0.1 ** 0.05 *** 0.01) ///
+	nobaselevels ///
+	addnotes("DiD based on sum of solar patents 2012-2021 minus 1982-2011." "Radius matching with caliper = .25. & common support 0.2-0.95." "Robust standard errors in parentheses.", size(small))
 
 
 ***********************************************************************

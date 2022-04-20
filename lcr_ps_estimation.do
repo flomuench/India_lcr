@@ -28,16 +28,26 @@ local matching_var indian patentor pre_not_solar_patent sales employees soe age 
 local matching_var2 indian pre_not_solar_patent soe manufacturer manufacturer_solar
 local matching_var3 indian pre_not_solar_patent soe manufacturer
 local matching_var4 indian pre_not_solar_patent soe manufacturer sales employees age
-local matching_var5 patentor soe_india manufacturer_solar
+local matching_var5 ihs_pre_not_solar_patent soe_india indian manufacturer
 
 ***********************************************************************
-* 	PART 1:  set the scene  			
+* 	PART 1:  set the scene  - counterfactual: did not participate in LCR	
 ***********************************************************************
 	* estimate propensity (score) to participate in treatment
 logit lcr `matching_var5' if patent_outliers == 0, vce(robust)
-predict pscore, p
+predict pscore if patent_outlier == 0, p
 sum pscore, d
 label var pscore "estimated propensity score to participate in LCR auctions"
+
+
+***********************************************************************
+* 	PART 2:  counterfactual: did not win LCR
+***********************************************************************
+logit lcr_won `matching_var5' if patent_outliers == 0, vce(robust)
+predict pscore2 if patent_outlier == 0, p
+sum pscore2, d
+label var pscore2 "estimated propensity score to win LCR auction"
+
 
 ***********************************************************************
 * 	Save the changes made to the data		  			

@@ -184,8 +184,8 @@ replace manufacturer = 1 if company_name == "photon" /* http://www.photonsolar.i
 replace manufacturer = 1 if company_name == "surana" /* http://suranasolar.com/downloads.html */
 replace manufacturer = 1 if company_name == "suzlon"
 replace manufacturer = 1 if company_name == "waaree"
-
-
+replace manufacturer = 1 if company_name == "mahindra" /* https://www.mahindrasusten.com/products/module-mounting-structure/, https://www.mahindra.com/news-room/press-release/susten-and-mitsui-to-co-invest-in-distributed-solar-power-projects */
+replace manufacturer = 1 if company_name == "exide" /* https://www.exideindustries.com/products/solar-solutions/solar-pv-modules.aspx */
 
 	* solar module manufacturer
 		* classification based on: 
@@ -204,7 +204,8 @@ replace manufacturer_solar = 1 if company_name == "waaree"
 replace manufacturer_solar = 1 if company_name == "photon" /* http://www.photonsolar.in/pv-modules.php*/
 replace manufacturer_solar = 1 if company_name == "surana" /* http://suranasolar.com/downloads.html */
 replace manufacturer_solar = 1 if company_name == "canadian" /*https://www.canadiansolar.com/  */
-
+replace manufacturer_solar = 1 if company_name == "mahindra"
+replace manufacturer_solar = 1 if company_name == "exide" 
 
 ***********************************************************************
 * 	PART 4: create sector dummy
