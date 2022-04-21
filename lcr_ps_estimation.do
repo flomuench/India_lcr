@@ -34,19 +34,33 @@ local matching_var5 ihs_pre_not_solar_patent soe_india indian manufacturer
 * 	PART 1:  set the scene  - counterfactual: did not participate in LCR	
 ***********************************************************************
 	* estimate propensity (score) to participate in treatment
+
+* samepl: all
+logit lcr `matching_var5', vce(robust)
+predict pscore_all, p
+sum pscore_all, d
+label var pscore_all "estimated propensity score to participate in LCR auctions, all firms"
+
+* sample: only firms that won at least one auction
+logit lcr `matching_var5' if won_total > 0, vce(robust)
+predict pscore_won if won_total > 0, p
+sum pscore_won, d
+label var pscore_won "estimated propensity score to participate in LCR auctions, won only"
+
+* excluding outliers Bosch: 
 logit lcr `matching_var5' if patent_outliers == 0, vce(robust)
-predict pscore if patent_outlier == 0, p
-sum pscore, d
-label var pscore "estimated propensity score to participate in LCR auctions"
+predict pscore_nooutliers if patent_outliers == 0, p
+sum pscore_nooutliers, d
+label var pscore_nooutliers "estimated propensity score to participate in LCR auctions, no outliers"
 
 
 ***********************************************************************
 * 	PART 2:  counterfactual: did not win LCR
 ***********************************************************************
-logit lcr_won `matching_var5' if patent_outliers == 0, vce(robust)
-predict pscore2 if patent_outlier == 0, p
-sum pscore2, d
-label var pscore2 "estimated propensity score to win LCR auction"
+logit lcr_won `matching_var5', vce(robust)
+predict pscore_win, p
+sum pscore_win, d
+label var pscore_win "estimated propensity score to win LCR auction"
 
 
 ***********************************************************************

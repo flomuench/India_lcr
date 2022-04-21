@@ -92,6 +92,11 @@ xtset firm year_application
 *xtgraph solarpatent
 
 
+
+
+
+
+
 ***********************************************************************
 * 	PART 5: collapse to patent count pre & post treatment	  						
 ***********************************************************************
@@ -143,6 +148,9 @@ save "lcr_raw", replace
 ***********************************************************************
 * 	PART 8: merge with firm characteristics + avg, min, max patent level complexity for each firm		  						
 ***********************************************************************
+
+	**** add information about LCR participation
+
 use "solar_components_updated_HS", clear
 
 rename companyname_correct company_name

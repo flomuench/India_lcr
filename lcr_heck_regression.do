@@ -38,7 +38,8 @@ create SOE
 	* see Probst et al. 2020 p. 4 table 1 for first stage & table 2 p. 5 for second stage
 	* 1st stage variables, LDR = DV: employees, soe, manufacturer, indian, indian * manufacturer, energy focus, part 1 JNNSM,
 	* 2nd stage variables: price = DV: LCR, cumulative experience (MW), offtaker (SECI vs NTPC), log(competition), solar park, solar radiation state, time effects
-heckman final_price_after_era cum_mw competition i.solarpark i.flh_single_axis i.auction_year, select(lcr = ) twostep
+gen log_comp = log(competition)
+heckman final_price_after_era cum_mw competition i.solarpark i.flh_single_axis i.auction_year, select(lcr = totalemployees soe_india i.indian##i.manufacturer energy_focus) twostep
 	
 	
 	* add additional explanatory variables & see whether price gap remains
