@@ -37,6 +37,8 @@ sort random
 			* counterfactual = won
 psmatch2 lcr_won if patent_outliers == 0, outcome(post_solar_patent) pscore(pscore)
 			* counterfactual = participated
+psmatch2 lcr if won_total > 0, outcome(post_solar_patent) pscore(pscore)
+psmatch2 lcr, outcome(post_solar_patent) pscore(pscore)
 psmatch2 lcr if patent_outliers == 0, outcome(post_solar_patent) pscore(pscore)
 scalar t = r(att)/ r(seatt)
 mat n1 = ( r(att) \ t )
@@ -86,19 +88,20 @@ psmatch2 lcr if patent_outliers == 0, outcome(post_solar_patent) pscore(pscore) 
 ***********************************************************************
 * 	PART 3:  Radius matching
 ***********************************************************************
-		* caliper 0.1
-			* counterfactual = won
-psmatch2 lcr_won if patent_outliers == 0, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore)
-			* counterfactual = participated
-psmatch2 lcr if patent_outliers == 0, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore)
-br if _support == 0
-*we loose azure & today in the LCR group
+		* counterfactual = participated LCR vs. did not participate LCR
+			* sample = all
+psmatch2 lcr, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore_all)
+psmatch2 lcr, radius caliper(0.05) outcome(post_solar_patent) pscore(pscore_all)
+			* sample = won
+psmatch2 lcr if won_total > 0, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore_won)
+psmatch2 lcr if won_total > 0, radius caliper(0.05) outcome(post_solar_patent) pscore(pscore_won)
+			* sample = no outliers
+psmatch2 lcr if patent_outliers == 0, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore_nooutliers)
+psmatch2 lcr if patent_outliers == 0, radius caliper(0.05) outcome(post_solar_patent) pscore(pscore_nooutliers)
+
+
 scalar t = r(att)/ r(seatt)
 mat c01 = ( r(att) \ t )
-		
-		* caliper 0.05
-psmatch2 lcr if patent_outliers == 0, radius caliper(0.05) outcome(post_solar_patent) pscore(pscore)
-* azure & today are kept but effect remain insignificant due to high variance in SE
 scalar t = r(att)/ r(seatt)
 mat c005 = ( r(att) \ t )
 
@@ -112,11 +115,21 @@ esttab matrix(radius, fmt(%9.2fc)) using radiusmatching.csv, replace ///
 	title("Results for radius matching") ///
 	width(0.8\hsize) ///
 	addnotes("All estimtes are based on a Logit model with robust standard errors in parentheses.")
+	
+	
+		* counterfactual = won LCR vs. did not win LCR
+
 
 ***********************************************************************
 * 	PART 4:  Kernel matching
 ***********************************************************************
-
+	* counterfactual = participated
+		* sample = all
+psmatch2 lcr, kernel outcome(post_solar_patent) pscore(pscore) k(epan) bw(0.1)
+psmatch2 lcr, kernel outcome(post_solar_patent) pscore(pscore) k(epan) bw(0.05)
+		* sample = only winners
+		
+		* sample = without patent_outliers
 psmatch2 lcr if patent_outliers == 0, kernel outcome(post_solar_patent) pscore(pscore) k(epan) bw(0.1)
 scalar t = r(att)/ r(seatt)
 mat kbw01 = ( r(att) \ t )

@@ -132,7 +132,7 @@ gr export outlier_solarpatents.png, replace
 	
 	* define dummy for outliers
 gen patent_outliers = 0
-replace patent_outliers = 1 if company_name == "bosch" /* | company_name == "bharat" | company_name == "larsen" */
+replace patent_outliers = 1 if company_name == "bosch" | company_name == "sunedison" /* | company_name == "bharat" | company_name == "larsen" */
 
 ***********************************************************************
 * 	PART 9: electronics vs. rest sector dummy

@@ -40,7 +40,7 @@ foreach x of local strvars {
 	}
 		
 	* collapse on company-level to keep
-collapse (lastnm) indian soe_india empl manufacturer founded years_since_found energy_focus, by(bidder)
+collapse (lastnm) indian soe_india part_jnnsm_1 empl manufacturer founded years_since_found energy_focus, by(bidder)
 
 	* check if there are duplicates
 duplicates report bidder
