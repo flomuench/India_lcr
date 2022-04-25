@@ -28,6 +28,8 @@ cd "$lcr_raw"
 
 use "${lcr_raw}/firmpatent", clear
 
+*WE SHOULD MERGE HERE the info whether the patent is from LCR bidder or not*
+
 ***********************************************************************
 * 	PART 2: document unique identifier  						
 ***********************************************************************
