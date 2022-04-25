@@ -80,7 +80,7 @@ gr export bid_results_lcr.png, replace
 ***********************************************************************
 gr bar final_price_after_era if won == 1, over(lcr)
 
-gr bar final_price_after_era if won == 1 & lcr_both == 1, over(lcr)
+*gr bar final_price_after_era if won == 1 & lcr_both == 1, over(lcr)
 
 
 
@@ -109,7 +109,8 @@ lab val lcr local_content_auction
 ***********************************************************************
 * 	PART 2: lcr vs. no lcr auction characteristics balance table						
 ***********************************************************************
-local auction_characteristics n_competitors auction_year contractual_arrangement quantity_total scope solarpark location climate_zone technology plant_type maxprojectsize final_bid_after_era contractlength std_count_feb20 final_vgf_after_era
+local auction_characteristics n_competitors contractual_arrangement quantity_total scope solarpark location climate_zone technology plant_type maxprojectsize final_bid_after_era contractlength std_count_feb20 final_vgf_after_era
+cd "$final_figures"
 iebaltab `auction_characteristics', grpvar(lcr) save(baltab_auctions) replace ///
 			 vce(robust) pttest rowvarlabels balmiss(mean) onerow stdev notecombine ///
 			 format(%12.2fc)
@@ -117,6 +118,7 @@ iebaltab `auction_characteristics', grpvar(lcr) save(baltab_auctions) replace //
 ***********************************************************************
 * 	PART 3: evolution auctions over time						
 ***********************************************************************
+cd "$lcr_descriptives"
 gen one = 1
 replace quantity_total = quantity_total / 1000
 lab var quantity_total "total GB auctioned"
@@ -154,7 +156,7 @@ graph bar (count), over(lcr) over(contractual_arrangement) ///
 ***********************************************************************
 * 	PART 3: over time evolution of auctions  						
 ***********************************************************************
-gr bar (sum) auction_count quantity_allocated_mw, over(lcr, label(labs(small))) ///
+/*gr bar (sum) auction_count quantity_allocated_mw, over(lcr, label(labs(small))) ///
 	blabel(total, size(vsmall)) ///
 	title("{bf:Number of bids & MW allocated}") ///
 	subtitle("Solar auctions 2013-2020", size(small)) ///
@@ -162,9 +164,9 @@ gr bar (sum) auction_count quantity_allocated_mw, over(lcr, label(labs(small))) 
 	note("Authors own calculations based on data from SECI online archives.", size(vsmall)) ///
 	name(auctions_mw_lcr, replace)
 gr export auctions_mw_lcr.png, replace
-		
+	*/	
 		* per year
-gr bar (sum) lcr, over(year, label(labs(small))) ///
+gr bar (sum) lcr, over(auction_year, label(labs(small))) ///
 	blabel(total, size(vsmall)) ///
 	title("{bf:Annual solar patent applications in India: 1982-2021}") ///
 	subtitle("Firms that participated in SECI solar auctions between 2013-2020", size(small)) ///
@@ -175,17 +177,40 @@ gr export patent_evolution.png, replace
 
 
 ***********************************************************************
-* 	PART 4: collapse on firm level to create a cross-section 						
+* 	PART 4: create year-level dataset for auctions and patents					
 ***********************************************************************
-restore
-collapse (sum) one won quantity* total_plant_price total_plant_price_lifetime  lcr* ///
-	(firstnm) bidder (mean) final_price_after_era, by(companyname_correct) 
+gen no_bids = 1
+lab var no_bids "# of bids per year"
 
-rename one total_auctions
-rename won total_won
-rename lcr total_lcr
-label var total_won "total times firm won SECI auction 2013-2019"
-label var total_auctions "times firm participated in SECI auction 2013-2019" 
-label var total_lcr "times firm participated in lcr auction 2013-2019"
+*Somehow errors in collapse command when running from the start, but not when individually ran
+collapse (sum) no_bids won quantity* total_plant_price  lcr* ///
+	(mean) final_price_after_era n_competitors, by(auction_year) 
 
-save "cross_section_firms_auctions", replace
+rename auction_year year
+cd "$lcr_final"	
+save "year_level_data.dta", replace
+	
+*import firmpatent.dta, filter solar  and collapse on year-level
+use "${lcr_raw}/firmpatent", clear
+gen no_patents=1
+lab var no_patents "# of patents per year"
+collapse (sum) no_patents solarpatent , by (year_application)
+drop if year_application ==.
+rename year_application year
+save "patents_annual", replace
+
+*merge auction and patent year-level datasets
+use "${lcr_final}/year_level_data", clear
+merge 1:1 year using patents_annual 
+
+lab var no_bids "# of bids per year"
+
+cd "$final_figures"
+graph twoway (bar no_bids year if year>2010) (bar solarpatent year if year>2010 & year<2020) || (line final_price_after_era year if year >2010 & year<2020, yaxis(2) ytitle("Average bid price in INR",axis(2)) lc(black)), legend (pos(6)) ytitle("No. of bids/patent applications",axis(1))
+gr export patent_auction_evolution.png, replace
+
+
+*save year-level merged
+cd "$lcr_final"
+save "year_level_data.dta", replace
+

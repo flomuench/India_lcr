@@ -19,16 +19,25 @@
 ***********************************************************************
 use "${lcr_final}/lcr_final", clear
 
-	* set the directory to descriptive statistics
-cd "$lcr_descriptives"
 set graphics on
-	
+set scheme s1color	
 ***********************************************************************
 * 	PART 1: descriptive statistics about pre-post (solar) patents 	  						
-***********************************************************************
-	* sample level statistics
+************************************************************************
+*set working directory to final figures
+cd "$final_figures"
+* sample level statistics
+local firm_characteristics indian patentor pre_not_solar_patent pre_solar_patent post_solar_patent post_not_solar_patent soe age energy_focus manufacturer manufacturer_solar subsidiary 
+iebaltab `firm_characteristics', grpvar(lcr) save(baltab_firmlevel) replace ///
+			 vce(robust) pttest rowvarlabels balmiss(mean) onerow stdev notecombine ///
+			 format(%12.2fc)	
+			 
+graph pie, over (sector) plabel (_all sum) title("Participating firms by main sectors") ///
+note("Source: Authors' own aggregation based on Mergent Intellect data") 
+gr export firms_pie_sectors.png, replace
 	
 	* define local for pre-post comparisons
+cd "$lcr_descriptives"
 local prepostsolar pre_solar_patent post_solar_patent
 local prepostother pre_not_solar_patent post_not_solar_patent
 local preposttotal pre_total_patents post_total_patents
@@ -53,6 +62,7 @@ graph bar (sum)  `prepostsolar', ///
 	note("Authors own calculations based on patent application at Indian patent office.", size(vsmall)) ///
 	name(prepost_solar, replace)
 gr export prepost_solar.png, replace
+
 
 	* pre-post solar and non solar patents without outliers
 graph bar (sum)  `prepostsolar' `prepostother' if patent_outliers == 0, ///

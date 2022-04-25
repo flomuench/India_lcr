@@ -84,7 +84,7 @@ global lcr_checks = "${lcr_gdrive}/checks"
 global lcr_rt = "${lcr_gdrive_analysis}/regression-tables"
 global lcr_descriptives = "${lcr_gdrive_analysis}/descriptive-statistics-figures"
 global lcr_psm = "${lcr_gdrive_analysis}/propensity-score-matching"
-
+global final_figures = "${lcr_gdrive_analysis}/final_figures"
 			
 		* set seeds for replication
 set seed 8413195
