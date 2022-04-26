@@ -91,35 +91,46 @@ psmatch2 lcr if patent_outliers == 0, outcome(post_solar_patent) pscore(pscore) 
 		* counterfactual = participated LCR vs. did not participate LCR
 			* sample = all
 psmatch2 lcr, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore_all)
+_eststo all_caliper01, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(robust)
 psmatch2 lcr, radius caliper(0.05) outcome(post_solar_patent) pscore(pscore_all)
+_eststo all_caliper05, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(robust)
+
 			* sample = won
 psmatch2 lcr if won_total > 0, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore_won)
+_eststo won_caliper01, r: reg dif_solar_patents i.lcr [iweight=_weight] if won_total > 0, vce(robust)
 psmatch2 lcr if won_total > 0, radius caliper(0.05) outcome(post_solar_patent) pscore(pscore_won)
+_eststo won_caliper05, r: reg dif_solar_patents i.lcr [iweight=_weight] if won_total > 0, vce(robust)
+
 			* sample = no outliers
 psmatch2 lcr if patent_outliers == 0, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore_nooutliers)
+_eststo outliers_caliper01, r: reg dif_solar_patents i.lcr [iweight=_weight] if patent_outliers == 0, vce(robust)
 psmatch2 lcr if patent_outliers == 0, radius caliper(0.05) outcome(post_solar_patent) pscore(pscore_nooutliers)
+_eststo outliers_caliper05, r: reg dif_solar_patents i.lcr [iweight=_weight] if patent_outliers == 0, vce(robust)
 
-
-scalar t = r(att)/ r(seatt)
-mat c01 = ( r(att) \ t )
-scalar t = r(att)/ r(seatt)
-mat c005 = ( r(att) \ t )
-
-
-mat radius = c01, c005
-mat colnames radius = "caliper = 0.1" "caliper = 0.05"
-mat rownames radius = att t
-
-
-esttab matrix(radius, fmt(%9.2fc)) using radiusmatching.csv, replace ///
-	title("Results for radius matching") ///
+	* export results in a table
+esttab *caliper* using did.tex, replace ///
+	title("Difference-in-difference combined with matching"\label{main_regressions}) ///
+	mgroups("All firms" "Winner firms" "All w/o outliers", ///
+		pattern(1 0 1 0 1 0)) ///
+	mtitles("caliper = 0.1" "caliper = 0.05" "caliper = 0.1" "caliper = 0.05" "caliper = 0.1" "caliper = 0.05") ///
+	label ///
+	b(2) ///
+	se(2) ///
 	width(0.8\hsize) ///
-	addnotes("All estimtes are based on a Logit model with robust standard errors in parentheses.")
-	
+	star(* 0.1 ** 0.05 *** 0.01) ///
+	nobaselevels ///
+	booktabs ///
+	addnotes("DiD based on solar patents 2012-2021 minus 1982-2011." "Common support imposed in all specifications." "Robust standard errors in parentheses.")
+
+	/*	span prefix(\multicolumn{@span}{c}{) suffix(}) ///
+		erepeat(\cmidrule(lr){@span})) /// */
+
 	
 		* counterfactual = won LCR vs. did not win LCR
 
 
+		
+		
 ***********************************************************************
 * 	PART 4:  Kernel matching
 ***********************************************************************

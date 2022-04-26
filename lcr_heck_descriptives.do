@@ -183,7 +183,7 @@ gen no_bids = 1
 lab var no_bids "# of bids per year"
 
 *Somehow errors in collapse command when running from the start, but not when individually ran
-collapse (sum) no_bids won quantity* total_plant_price  lcr* ///
+collapse (sum) no_bids won quantity* total_plant_price  lcr ///
 	(mean) final_price_after_era n_competitors, by(auction_year) 
 
 rename auction_year year
@@ -206,7 +206,11 @@ merge 1:1 year using patents_annual
 lab var no_bids "# of bids per year"
 
 cd "$final_figures"
-graph twoway (bar no_bids year if year>2010) (bar solarpatent year if year>2010 & year<2020) || (line final_price_after_era year if year >2010 & year<2020, yaxis(2) ytitle("Average bid price in INR",axis(2)) lc(black)), legend (pos(6)) ytitle("No. of bids/patent applications",axis(1))
+graph twoway (bar no_bids year if year>2010) (bar solarpatent year if year>2010 & year<2020) ///
+	|| (line final_price_after_era year if year >2010 & year<2020, ///
+	yaxis(2) ytitle("Average bid price in INR",axis(2)) lc(black)), ///
+	legend (pos(6) lab(1 "Bids") lab(2 "Solar patents") lab(3 "Average bid price")) ///
+	ytitle("No. of bids/patent applications",axis(1))
 gr export patent_auction_evolution.png, replace
 
 

@@ -36,7 +36,8 @@ cd "$lcr_psm"
 			* attention: definition of bin size
 set graphics on
 forvalues x = 5(5)20 {
-	psgraph , treated(lcr) pscore(pscore) bin(`x') ///
+		* depending on sample change pscore
+	psgraph , treated(lcr) pscore(pscore_all) bin(`x') ///
 		title(Number of bins = `x') ///
 		xlabel(0(.05)1) ///
 		name(common_support`x', replace)
@@ -50,13 +51,13 @@ gr export common_support.png, replace
 
 
 	* range of propensity score in both groups
-bysort lcr: sum pscore 
+bysort lcr: sum pscore_all 
 /* LCR = 1 min: 0 ; max.: .95 
    LCR = 0 min: 0 ; max.: .72
 */
 	
 	* density distribution of propensity score in both groups
-kdensity pscore if lcr == 1 & patent_outliers == 0, addplot(kdensity pscore if lcr == 0 & patent_outliers == 0)	///
+kdensity pscore_all if lcr == 1 & patent_outliers == 0, addplot(kdensity pscore_all if lcr == 0 & patent_outliers == 0)	///
 	legend(ring(0) pos(2) label(1 "participated LCR") label(2 "no LCR")) ///
 	title("Propensity score density by LCR participation") ///
 	xlabel(0(.05)1) ///
@@ -67,14 +68,14 @@ gr export common_support_density.png, replace
 ***********************************************************************
 * 	PART 2:  generate dummy for observations within common support		
 ***********************************************************************
-gen common_support = (pscore >= 0.15 & pscore <= 0.8)
+gen common_support = (pscore_all >= 0.15 & pscore_all <= 0.8)
 label var common_support "=1 for firms within CS"
 
 
 ***********************************************************************
 * 	PART 3: who are the firms that fall outside the common support?	
 ***********************************************************************
-br company_name pscore solar_patentor pre_solar_patent post_solar_patent total_auctions total_auctions_lcr if pscore > 0.72 & lcr == 1
+br company_name pscore_all solar_patentor pre_solar_patent post_solar_patent total_auctions total_auctions_lcr if pscore_all > 0.72 & lcr == 1
 	/* 
 tata --> .86
 azure --> .95
@@ -82,14 +83,14 @@ today
 bharat	
 	*/
 	
-gr hbar pscore if pscore > .6 & pscore != ., over(company_name) ///
+gr hbar pscore_all if pscore_all > .6 & pscore_all != ., over(company_name) ///
 		by(lcr, title("{bf:Firms with propensity score > 0.6}") subtitle("Potential matches by LCR")) ///
 		blabel(total, format(%9.2fc)) ///
-		ytitle(pscore) ///
-		name(pscore_lcr, replace)
-gr export pscore_lcr.png, replace
+		ytitle(pscore_all) ///
+		name(pscore_all_lcr, replace)
+gr export pscore_all_lcr.png, replace
 
-br company_name pscore solar_patentor pre_solar_patent post_solar_patent total_auctions total_auctions_lcr if common_support == 0 & lcr == 1
+br company_name pscore_all solar_patentor pre_solar_patent post_solar_patent total_auctions total_auctions_lcr if common_support == 0 & lcr == 1
 /*
 company_name
 azure ---> highly important

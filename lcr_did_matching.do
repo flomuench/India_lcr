@@ -28,7 +28,7 @@ cd "$lcr_rt"
 ***********************************************************************
 	* caliper = 0.25
 	* common support = 0.2 - 0.95
-psmatch2 lcr if patent_outliers == 0, radius caliper(0.05) outcome(post_solar_patent) pscore(pscore)
+psmatch2 lcr if patent_outliers == 0, radius caliper(0.05) outcome(post_solar_patent) pscore(pscore_all)
 
 ***********************************************************************
 * 	PART 3:  DiD estimation
