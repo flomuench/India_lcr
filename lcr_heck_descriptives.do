@@ -28,7 +28,7 @@ use "${lcr_final}/lcr_bid_final", clear
 
 	* change directory to output folder for descriptive stats
 cd "$lcr_descriptives"
-
+set scheme s1color	
 set graphics on
 ******************* bid-level statistics ******************************
 
@@ -112,6 +112,10 @@ lab val lcr local_content_auction
 local auction_characteristics n_competitors contractual_arrangement quantity_total scope solarpark location climate_zone technology plant_type maxprojectsize final_bid_after_era contractlength std_count_feb20 final_vgf_after_era
 cd "$final_figures"
 iebaltab `auction_characteristics', grpvar(lcr) save(baltab_auctions) replace ///
+			 vce(robust) pttest rowvarlabels balmiss(mean) onerow stdev notecombine ///
+			 format(%12.2fc)
+			 
+iebaltab `auction_characteristics', grpvar(lcr) savetex(baltab_auctions) replace ///
 			 vce(robust) pttest rowvarlabels balmiss(mean) onerow stdev notecombine ///
 			 format(%12.2fc)
 
@@ -203,18 +207,20 @@ save "patents_annual", replace
 use "${lcr_final}/year_level_data", clear
 merge 1:1 year using patents_annual 
 
-lab var no_bids "# of bids per year"
+gen quantity_allocated_gw = quantity_allocated_mw/1000
+lab var quantity_allocated_gw "Quantity allocated in GW"
 
 cd "$final_figures"
-graph twoway (bar no_bids year if year>2010) (bar solarpatent year if year>2010 & year<2020) ///
-	|| (line final_price_after_era year if year >2010 & year<2020, ///
-	yaxis(2) ytitle("Average bid price in INR",axis(2)) lc(black)), ///
-	legend (pos(6) lab(1 "Bids") lab(2 "Solar patents") lab(3 "Average bid price")) ///
-	ytitle("No. of bids/patent applications",axis(1))
+graph twoway (bar quantity_allocated_gw year if year >=2011 & year<=2019, color(blue%20)) (bar solarpatent year if year >=2011 & year<=2019, color(blue%50)) ///
+	|| (line final_price_after_era year if year >=2011 & year<=2019, ///
+	yaxis(2) ytitle("Average bid price in INR/MWh",axis(2)) lc(black)), ///
+	legend (pos(6) lab(1 "Auctioned-off capacity in GW") lab(2 "Solar patents") lab(3 "Average bid price")) ///
+	ytitle("GW/ Patent applications",axis(1)) xtitle("")
 gr export patent_auction_evolution.png, replace
 
 
 *save year-level merged
+set graphics off
 cd "$lcr_final"
 save "year_level_data.dta", replace
 

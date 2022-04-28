@@ -18,9 +18,8 @@
 * 	PART 1:  set the scene  			
 ***********************************************************************
 use "${lcr_final}/lcr_final", clear
-
-set graphics on
 set scheme s1color	
+set graphics on
 ***********************************************************************
 * 	PART 1: descriptive statistics about pre-post (solar) patents 	  						
 ************************************************************************
@@ -29,6 +28,11 @@ cd "$final_figures"
 * sample level statistics
 local firm_characteristics indian patentor pre_not_solar_patent pre_solar_patent post_solar_patent post_not_solar_patent soe age energy_focus manufacturer manufacturer_solar subsidiary 
 iebaltab `firm_characteristics', grpvar(lcr) save(baltab_firmlevel) replace ///
+			 vce(robust) pttest rowvarlabels balmiss(mean) onerow stdev notecombine ///
+			 format(%12.2fc)	
+			 
+*export firm-balance table to latex
+iebaltab `firm_characteristics', grpvar(lcr) savetex(baltab_firmlevel) replace ///
 			 vce(robust) pttest rowvarlabels balmiss(mean) onerow stdev notecombine ///
 			 format(%12.2fc)	
 			 
