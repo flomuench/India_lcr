@@ -91,21 +91,21 @@ psmatch2 lcr if patent_outliers == 0, outcome(post_solar_patent) pscore(pscore) 
 		* counterfactual = participated LCR vs. did not participate LCR
 			* sample = all
 psmatch2 lcr, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore_all)
-_eststo all_caliper01, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(robust)
+_eststo all_caliper01, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(hc3)
 psmatch2 lcr, radius caliper(0.05) outcome(post_solar_patent) pscore(pscore_all)
-_eststo all_caliper05, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(robust)
+_eststo all_caliper05, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(hc3)
 
 			* sample = won
 psmatch2 lcr if won_total > 0, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore_won)
-_eststo won_caliper01, r: reg dif_solar_patents i.lcr [iweight=_weight] if won_total > 0, vce(robust)
+_eststo won_caliper01, r: reg dif_solar_patents i.lcr [iweight=_weight] if won_total > 0, vce(hc3)
 psmatch2 lcr if won_total > 0, radius caliper(0.05) outcome(post_solar_patent) pscore(pscore_won)
-_eststo won_caliper05, r: reg dif_solar_patents i.lcr [iweight=_weight] if won_total > 0, vce(robust)
+_eststo won_caliper05, r: reg dif_solar_patents i.lcr [iweight=_weight] if won_total > 0, vce(hc3)
 
 			* sample = no outliers
 psmatch2 lcr if patent_outliers == 0, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore_nooutliers)
-_eststo outliers_caliper01, r: reg dif_solar_patents i.lcr [iweight=_weight] if patent_outliers == 0, vce(robust)
+_eststo outliers_caliper01, r: reg dif_solar_patents i.lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
 psmatch2 lcr if patent_outliers == 0, radius caliper(0.05) outcome(post_solar_patent) pscore(pscore_nooutliers)
-_eststo outliers_caliper05, r: reg dif_solar_patents i.lcr [iweight=_weight] if patent_outliers == 0, vce(robust)
+_eststo outliers_caliper05, r: reg dif_solar_patents i.lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
 
 	* export results in a table
 esttab *caliper* using did.tex, replace ///

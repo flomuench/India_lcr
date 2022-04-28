@@ -28,7 +28,7 @@ capture program drop zscore /* drops the program programname */
 qui cap log c
 
 	* install packages
-	/*
+	
 ssc install ietoolkit /* for iebaltab */
 ssc install randtreat, replace /* for randtreat --> random allocation */
 ssc install blindschemes, replace /* for plotplain --> scheme for graphical visualisations */
@@ -46,7 +46,7 @@ ssc install psmatch2, replace
 ssc install table1
 ssc install estout
 ssc install ihstrans, replace
-*/
+
 
 
 
