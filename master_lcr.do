@@ -28,7 +28,7 @@ capture program drop zscore /* drops the program programname */
 qui cap log c
 
 	* install packages
-	
+/*
 ssc install ietoolkit /* for iebaltab */
 ssc install randtreat, replace /* for randtreat --> random allocation */
 ssc install blindschemes, replace /* for plotplain --> scheme for graphical visualisations */
@@ -46,7 +46,7 @@ ssc install psmatch2, replace
 ssc install table1
 ssc install estout
 ssc install ihstrans, replace
-
+*/
 
 
 
@@ -116,7 +116,7 @@ if (1) do "${lcr_github}/lcr_heck_merge.do"
 /* --------------------------------------------------------------------
 	PART 3.6: Descriptive statistics
 ----------------------------------------------------------------------*/	
-if (1) do "${lcr_github}/lcr_heck_descriptives.do"
+if (0) do "${lcr_github}/lcr_heck_descriptives.do"
 /* --------------------------------------------------------------------
 	PART 3.6: Heckman regression - replication of Probst
 ----------------------------------------------------------------------*/	

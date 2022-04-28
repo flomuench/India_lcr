@@ -35,15 +35,15 @@ sort random
 	* with replacement
 		* 1 nn ; no common support, only nearest neighbor
 			* counterfactual = won
-psmatch2 lcr_won if patent_outliers == 0, outcome(post_solar_patent) pscore(pscore)
+psmatch2 lcr_won if patent_outliers == 0, outcome(post_solar_patent) pscore(pscore_all)
 			* counterfactual = participated
-psmatch2 lcr if won_total > 0, outcome(post_solar_patent) pscore(pscore)
-psmatch2 lcr, outcome(post_solar_patent) pscore(pscore)
-psmatch2 lcr if patent_outliers == 0, outcome(post_solar_patent) pscore(pscore)
+psmatch2 lcr if won_total > 0, outcome(post_solar_patent) pscore(pscore_all)
+psmatch2 lcr, outcome(post_solar_patent) pscore(pscore_all)
+psmatch2 lcr if patent_outliers == 0, outcome(post_solar_patent) pscore(pscore_all)
 scalar t = r(att)/ r(seatt)
 mat n1 = ( r(att) \ t )
 sort _id
-br company_name post_solar_patent lcr pscore common_support _pscore-_pdif
+br company_name post_solar_patent lcr pscore_all common_support _pscore-_pdif
 	/*
 azure, tata & today are matched with mahindra
 	*/
@@ -52,7 +52,7 @@ codebook _n1
 	lots of sample/variation gets lost */
 	
 		* 2 nn
-psmatch2 lcr if patent_outliers == 0, outcome(post_solar_patent) pscore(pscore) neighbor(2) caliper(0.1)
+psmatch2 lcr if patent_outliers == 0, outcome(post_solar_patent) pscore(pscore_all) neighbor(2) caliper(0.1)
 scalar t = r(att)/ r(seatt)
 mat n2 = ( r(att) \ t )
 tab _weight lcr, missing
@@ -63,7 +63,7 @@ SE down to .68 & t-stat up to .48
 	*/
 
 		* 3 nn
-psmatch2 lcr if patent_outliers == 0, outcome(post_solar_patent) pscore(pscore) neighbor(3)
+psmatch2 lcr if patent_outliers == 0, outcome(post_solar_patent) pscore(pscore_all) neighbor(3)
 scalar t = r(att)/ r(seatt)
 mat n3 = ( r(att) \ t )
 
@@ -80,7 +80,7 @@ esttab matrix(nn, fmt(%9.2fc)) using nnmatching.csv, replace ///
 
 	* without replacement
 sort random
-psmatch2 lcr if patent_outliers == 0, outcome(post_solar_patent) pscore(pscore) noreplacement descending
+psmatch2 lcr if patent_outliers == 0, outcome(post_solar_patent) pscore(pscore_all) noreplacement descending
 /* almost identical with nn1 with replacement */
 
 	
@@ -136,16 +136,16 @@ esttab *caliper* using did.tex, replace ///
 ***********************************************************************
 	* counterfactual = participated
 		* sample = all
-psmatch2 lcr, kernel outcome(post_solar_patent) pscore(pscore) k(epan) bw(0.1)
-psmatch2 lcr, kernel outcome(post_solar_patent) pscore(pscore) k(epan) bw(0.05)
+psmatch2 lcr, kernel outcome(post_solar_patent) pscore(pscore_all) k(epan) bw(0.1)
+psmatch2 lcr, kernel outcome(post_solar_patent) pscore(pscore_all) k(epan) bw(0.05)
 		* sample = only winners
 		
 		* sample = without patent_outliers
-psmatch2 lcr if patent_outliers == 0, kernel outcome(post_solar_patent) pscore(pscore) k(epan) bw(0.1)
+psmatch2 lcr if patent_outliers == 0, kernel outcome(post_solar_patent) pscore(pscore_all) k(epan) bw(0.1)
 scalar t = r(att)/ r(seatt)
 mat kbw01 = ( r(att) \ t )
 
-psmatch2 lcr if patent_outliers == 0, kernel outcome(post_solar_patent) pscore(pscore) k(epan) bw(0.05)
+psmatch2 lcr if patent_outliers == 0, kernel outcome(post_solar_patent) pscore(pscore_all) k(epan) bw(0.05)
 scalar t = r(att)/ r(seatt)
 mat kbw025 = ( r(att) \ t )
 
