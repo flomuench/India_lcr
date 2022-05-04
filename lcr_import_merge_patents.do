@@ -28,7 +28,8 @@ cd "$lcr_raw"
 
 use "${lcr_raw}/firmpatent", clear
 
-*WE SHOULD MERGE HERE the info whether the patent is from LCR bidder or not*
+/*sort companyname_correct
+gen patent_id = _n, a(companyname_correct) */
 
 ***********************************************************************
 * 	PART 2: document unique identifier  						
@@ -36,6 +37,7 @@ use "${lcr_raw}/firmpatent", clear
 	* id or companyname_correct?
 gen id_dif = (id == companyname_correct), a(companyname_correct)
 codebook id_dif /* suggest different in 315 cases */
+rename companyname_correct company_name
 
 ***********************************************************************
 * 	PART 3: over time evolution of patents 	  						
@@ -60,25 +62,21 @@ graph bar (sum) solarpatent not_solar_patent, over(year_application, label(labs(
 	name(patent_evolution, replace)
 gr export patent_evolution.png, replace
 
-
-
 ***********************************************************************
 * 	PART 3: collapse the data on company-year-level						
 ***********************************************************************
-
-
 	* check missing values for company/year
-codebook companyname_correct
+codebook company_name
 codebook year_* /* 122 missing year values for both year of publication or application */
 tab solarpatent if year_publication == . /* no solar patent are concerned */
 
 drop if year_publication == .
 
 	* collapse data to company-year panel
-collapse (sum) solarpatent not_solar_patent onepatent, by(companyname_correct year_application)
+collapse (sum) solarpatent not_solar_patent onepatent, by(company_name year_application)
 
-	* collapse into pre-treatment period (1982-2011) or post-treatment period (2012-2020)
-gen post = (year_application > 2011 & year_application < .)
+	* collapse into pre-treatment period (1982-2012) or post-treatment period (2013-2020)
+gen post = (year_application > 2012 & year_application < .)
 	
 	* check whether time periods are correctly divided
 tab year_application if post == 1 /* 224 patents before treatment */
@@ -87,24 +85,17 @@ tab year_application if post == 0 /* 262 patents after after treatment */
 ***********************************************************************
 * 	PART 4: by company over time evolution of patents 	  						
 ***********************************************************************
-
-encode companyname_correct, gen(firm)
+encode company_name, gen(firm)
 xtset firm year_application
 *xtgraph onepatent
 *xtgraph solarpatent
-
-
-
-
-
-
 
 ***********************************************************************
 * 	PART 5: collapse to patent count pre & post treatment	  						
 ***********************************************************************
 
-collapse (sum) solarpatent not_solar_patent onepatent, by(companyname_correct post)
-reshape wide solarpatent not_solar_patent onepatent, i(companyname_correct) j(post)
+collapse (sum) solarpatent not_solar_patent onepatent, by(company_name post)
+reshape wide solarpatent not_solar_patent onepatent, i(company_name) j(post)
 foreach x in solarpatent0 not_solar_patent0 onepatent0 {
 	replace `x' = 0 if `x' == .
 }
@@ -115,14 +106,14 @@ rename not_solar_patent1 post_not_solar_patent
 rename onepatent0 pre_total_patent
 rename onepatent1 post_total_patent
 
-lab var pre_solar_patent "solar patents 1982-2011"
-lab var post_solar_patent "solar patents 2012-2021"
+lab var pre_solar_patent "solar patents 1982-2013"
+lab var post_solar_patent "solar patents 2014-2021"
 
-lab var pre_not_solar_patent "non-solar patents 1982-2011"
-lab var post_not_solar_patent "non-solar patents 2012-2021"
+lab var pre_not_solar_patent "non-solar patents 1982-2013"
+lab var post_not_solar_patent "non-solar patents 2014-2021"
 
-lab var pre_total_patent "total patents 1982-2011"
-lab var post_total_patent "total patents 2012-2021"
+lab var pre_total_patent "total patents 1982-2013"
+lab var post_total_patent "total patents 2014-2021"
 
 
 ***********************************************************************
@@ -130,9 +121,6 @@ lab var post_total_patent "total patents 2012-2021"
 ***********************************************************************
 * change directory to raw
 cd "$lcr_raw"
-
-rename companyname_correct company_name
-
 save "patents_pre_post", replace
 
 
@@ -148,15 +136,26 @@ drop _merge
 save "lcr_raw", replace
 
 ***********************************************************************
-* 	PART 8: merge with firm characteristics + avg, min, max patent level complexity for each firm		  						
+* 	PART 3: create descriptive statistics about patents in LCR vs. no LCR 						
 ***********************************************************************
-
-	**** add information about LCR participation
-
+	* import solar patents with information about IPC class of patent
 use "solar_components_updated_HS", clear
 
+	* merge information about firms auction participation
+		* define common identifier
 rename companyname_correct company_name
+		* sort by identifier to facilitate merging
+sort company_name
+		* merge
+merge m:1 company_name using lcr_raw, keepusing(won_no_lcr won_lcr quantity_allocated_mw_no_lcr quantity_allocated_mw_lcr total_auctions_no_lcr total_auctions_lcr)
+drop _merge
 
+/*	* merge information about year of patent application
+		* firmpatent: ipc, applicationnumber, applicationdatedv
+rename company_name companyname_correct
+rename ipcx ipc
+merge 1:m companyname_correct ipc using firmpatent, keepusing(year_application fieldofinvention title abstract)
+*/
 	* create some descriptive statistics
 cd "$lcr_descriptives"
 
@@ -170,16 +169,41 @@ gr hbar (count) , over(ipcgroups, sort(1)) ///
 	name(solarpatents_ipcgroup, replace)
 gr export solarpatents_ipcgroup.png, replace
 
+			* gen LCR dummy
+gen lcr = 0
+replace lcr = 1 if total_auctions_lcr > 0 & total_auctions_lcr < .
+lab def lcr_p 1 "firm participated in LCR" 0 "firm did not participate in LCR"
+lab val lcr lcr_p
+
+		* solar patents by LCR & ipc group
+gr hbar (count) , over(ipcgroups, sort(1)) over(lcr) ///
+	blabel(total) ///
+	title("{bf:Solar patents by LCR participation & IPC group category}", size(small)) ///
+	subtitle("filed by firms participating in SECI auctions", size(small)) ///
+	ytitle("number of patents") ///
+	note("Author's own calculation based on Indian patent office data.", size(vsmall)) ///
+	name(solarpatents_ipcgroup_lcr, replace)
+gr export solarpatents_ipcgroup_lcr.png, replace
+
 		* solar patents by ipc component
 gr hbar (count) , over(ipcsubgroupscomponents, sort(1)) ///
 	blabel(total) ///
-	title("{bf:Solar patents by IPC component category}") ///
+	title("{bf:Solar patents by IPC component category}",size(small)) ///
 	subtitle("filed by firms participating in SECI auctions", size(small)) ///
 	ytitle("number of patents") ///
 	note("Author's own calculation based on Indian patent office data.", size(vsmall)) ///
 	name(solarpatents_ipccomponent, replace)
 gr export solarpatents_ipccomponent.png, replace
 
+		* solar patents by LCR & by ipc component
+gr hbar (count) , over(ipcsubgroupscomponents, sort(1) lab(labs(vsmall))) over(lcr, lab(labs(vsmall))) ///
+	blabel(total) ///
+	title("{bf:Solar patents by LCR participation & IPC component category}",size(small)) ///
+	subtitle("filed by firms participating in SECI auctions", size(small)) ///
+	ytitle("number of patents") ///
+	note("Author's own calculation based on Indian patent office data.", size(vsmall)) ///
+	name(solarpatents_ipccomponent_lcr, replace)
+gr export solarpatents_ipccomponent_lcr.png, replace
 
 		* histogram of product complexity
 histogram pc_avg_17_19
@@ -233,6 +257,9 @@ graph combine `company', ///
 gr export byfirm_solarpatents_ipcgroup.png, replace
 */
 
+***********************************************************************
+* 	PART 8: merge with firm characteristics + avg, min, max patent level complexity for each firm		  						
+***********************************************************************
 	* create average patent complexity value
 
 egen min_pci = min(pc_avg_17_19), by(company_name)
