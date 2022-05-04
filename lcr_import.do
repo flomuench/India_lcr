@@ -22,7 +22,7 @@ cd "$lcr_raw"
 
 	* old code
 use "${lcr_raw}/cross_section_new", clear
-
+sort company_name
 
 ***********************************************************************
 * 	PART 2: save cross-section data as raw

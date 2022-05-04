@@ -78,10 +78,109 @@ gr export bid_results_lcr.png, replace
 ***********************************************************************
 * 	PART 3: price in lcr vs price outside lcr					
 ***********************************************************************
-gr bar final_price_after_era if won == 1, over(lcr)
+	* 
+gr bar final_price_after_era if contractual_arrangement == 1 & won == 1, over(lcr)
+
+	* restrict sample to firms that bid in both LCR & non LCR
+		* gen dummy for firms that participated in both LCR & non LCR auctions
+egen lcr_min = min(lcr), by(company_name)
+egen lcr_max = max(lcr), by(company_name)
+bysort company_name: gen lcr_only = (lcr_min == 1 & lcr_max == 1)
+bysort company_name: gen lcr_never = (lcr_min == 0 & lcr_max == 0)
+bysort company_name: gen lcr_both = (lcr_min == 0 & lcr_max == 1)
+
+codebook company_name if lcr_both == 1 /* 17 companies participated in both */
+
+gr bar (mean) final_price_after_era if contractual_arrangement == 1 & lcr_both == 1 & final_price_after_era > 0, ///
+	over(lcr, lab(labs(half_tiny))) over(auction_year) ///
+	blabel(total, format(%9.2fc)) ///
+	ytitle("average bid price, INR per kw/h") ///
+	title("{bf:How did LCR participants bid in non-LCR auctions?}") ///
+	subtitle("Sample = 17 firms that participated both in LCR & non-LCR auctions", size(small)) ///
+	note("In total, the 17 firms participated in 39 LCR or non-LCR Built-Own-Operate auctions.", size(vsmall)) ///
+	name(bid_price_lcr_nolcr, replace)
+gr export bid_price_lcr_nolcr.png, replace
+
+gr bar (mean) final_price_after_era if contractual_arrangement == 1 & lcr_both == 1 & won == 1, ///
+	over(lcr, lab(labs(half_tiny))) over(auction_year) ///
+	blabel(total, format(%9.2fc)) ///
+	ytitle("average bid price, INR per kw/h") ///
+	title("{bf:How did LCR participants bid in non-LCR auctions?}") ///
+	subtitle("Sample = 17 firms that participated both in LCR & non-LCR auctions", size(small)) ///
+	note("In total, the 17 firms participated in 39 LCR or non-LCR Built-Own-Operate auctions.", size(vsmall)) ///
+	name(bid_price_lcr_nolcr, replace)
+gr export bid_price_lcr_nolcr.png, replace	
+	
 
 *gr bar final_price_after_era if won == 1 & lcr_both == 1, over(lcr)
+***********************************************************************
+* 	PART 4: vgf in lcr vs price outside lcr					
+***********************************************************************
+gr bar (mean) final_vgf_after_era if contractual_arrangement == 1 & lcr_both == 1 & final_price_after_era > 0, ///
+	over(lcr, lab(labs(half_tiny))) over(auction_year) ///
+	blabel(total, format(%9.2fc)) ///
+	ytitle("average bid price, INR per kw/h") ///
+	title("{bf:How much Viability-Gap-Funding required LCR participants in non-LCR auctions?}") ///
+	subtitle("Sample = 17 firms that participated both in LCR & non-LCR auctions", size(small)) ///
+	note("In total, the 17 firms participated in 39 LCR or non-LCR Built-Own-Operate auctions.", size(vsmall)) ///
+	name(vgf_lcr_nolcr, replace)
+gr export vgf_lcr_nolcr.png, replace
 
+
+***********************************************************************
+* 	PART 5: size of demand shock				
+***********************************************************************
+	* quantity firm won in LCR
+egen lcr_total_quantity_allocated = sum(quantity_allocated_mw) if lcr==1, by(company_name)
+lab var lcr_total_quantity_allocated "mw per company in lcr"
+	
+	* quantity firm won in non-LCR
+egen total_quantity_allocated = sum(quantity_allocated_mw) if lcr==0, by(company_name)
+lab var total_quantity_allocated "mw per company in non-lcr"
+
+cd "$final_figures"
+	* visualisation quantity won per company in LCR
+gr bar (sum) quantity_allocated_mw if auction_year < 2018, over(lcr)  ///
+	blabel(total) ///
+	ytitle("MW won") ///
+	title("{bf:Size of demand shock LCR vs. no LCR auctions (2013-2017)}", size(small)) ///
+	subtitle("MW allocated in LCR vs. no LCR auctions (2013-2017)", size(vsmall)) ///
+	name(mw_lcr_nolcr, replace)
+gr export mw_lcr_nolcr.png, replace
+
+	* visualisation quantity won per company in LCR
+gr hbar (sum) quantity_allocated_mw if lcr == 1,  ///
+	over(company_name, sort(company_name) descending lab(labs(vsmall))) ///
+	blabel(total) ///
+	ytitle("MW won") ///
+	ylabel(0 100 200 300 400 500) ///
+	title("LCR auctions (2013-2017)") ///
+	name(mw_won_lcr, replace)
+
+	* visualisation quantity won per company in non-LCR
+		* until 2017
+gr hbar (sum) quantity_allocated_mw if lcr == 0 & auction_year < 2018 & lcr_both == 1 | lcr_only == 1, ///
+	over(company_name, sort(company_name) descending lab(labs(vsmall))) ///
+	blabel(total) ///
+	ytitle("MW won") ///
+	ylabel(0 100 200 300 400 500) ///
+	title("Non-LCR auctions (2013-2017)") ///
+	name(mw_won_nolcr17, replace)		
+		* until 2019
+gr hbar (sum) quantity_allocated_mw if lcr == 0 & lcr_both == 1 | lcr_only == 1, ///
+	over(company_name, sort(lcr_total_quantity_allocated) descending lab(labs(vsmall))) ///
+	blabel(total) ///
+	ytitle("MW won") ///
+	ylabel(0 100 200 300 400 500) ///
+	title("Non-LCR auctions (2013-2019)") ///
+	name(mw_won_nolcr19, replace)
+
+	* combined graph
+gr combine mw_won_lcr mw_won_nolcr17, ///
+	title("{bf:Size of demand shock LCR vs. no LCR auctions}") ///
+	subtitle("sample = firms that participated at least in one LCR auction",  size(vsmall)) ///
+	name(mw_lcr_vs_no_lcr, replace)
+gr export mw_lcr_vs_no_lcr.png, replace
 
 
 ******************* auction-level statistics **************************
