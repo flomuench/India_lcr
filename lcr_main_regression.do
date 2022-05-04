@@ -83,6 +83,7 @@ sort random
 psmatch2 lcr if patent_outliers == 0, outcome(post_solar_patent) pscore(pscore_all) noreplacement descending
 /* almost identical with nn1 with replacement */
 
+
 	
 	
 ***********************************************************************
@@ -158,7 +159,25 @@ esttab matrix(kernel, fmt(%9.2fc)) using kernelmatching.csv, replace ///
 	width(0.8\hsize) ///
 	addnotes("All estimtes are based on a Logit model with robust standard errors in parentheses.")
 
+***********************************************************************
+* 	PART 5:  Mahalanobis matching
+***********************************************************************
+	* counterfactual = participated
+		* sample = all
+psmatch2 lcr, mahalanobis(patentor soe_india manufacturer_solar) outcome(post_solar_patent)
+_eststo mahalanobis01, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(hc3)
 
+		* sample = without patent outliers
+psmatch2 lcr if patent_outliers == 0 , mahalanobis(patentor soe_india manufacturer_solar) outcome(post_solar_patent)
+_eststo mahalanobis02, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(hc3)	
+
+
+	* counterfactual = won
+		* sample = all
+psmatch2 lcr if won_total>0, mahalanobis(patentor soe_india manufacturer_solar) outcome(post_solar_patent)
+_eststo mahalanobis01, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(hc3)
+	
+	
 ***********************************************************************
 * 	PART 5:  Put it all into one table
 ***********************************************************************
@@ -171,6 +190,7 @@ esttab matrix(matching_all, fmt(%-9.2fc)) using matching_all.csv, replace ///
 	mtitles("NN" "Radius" "Kernel") ///
 	width(0.8\hsize) ///
 	addnotes("All estimtes are based on a Logit model with robust standard errors in parentheses.")
+
 	
 ***********************************************************************
 * 	Save the changes made to the data		  			
