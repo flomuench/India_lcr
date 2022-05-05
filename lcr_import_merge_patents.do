@@ -106,14 +106,14 @@ rename not_solar_patent1 post_not_solar_patent
 rename onepatent0 pre_total_patent
 rename onepatent1 post_total_patent
 
-lab var pre_solar_patent "solar patents 1982-2013"
-lab var post_solar_patent "solar patents 2014-2021"
+lab var pre_solar_patent "solar patents 1982-2012"
+lab var post_solar_patent "solar patents 2013-2021"
 
-lab var pre_not_solar_patent "non-solar patents 1982-2013"
-lab var post_not_solar_patent "non-solar patents 2014-2021"
+lab var pre_not_solar_patent "non-solar patents 1982-2012"
+lab var post_not_solar_patent "non-solar patents 2013-2021"
 
-lab var pre_total_patent "total patents 1982-2013"
-lab var post_total_patent "total patents 2014-2021"
+lab var pre_total_patent "total patents 1982-2012"
+lab var post_total_patent "total patents 2013-2021"
 
 
 ***********************************************************************

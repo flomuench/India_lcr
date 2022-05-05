@@ -148,7 +148,7 @@ mat kbw01 = ( r(att) \ t )
 
 psmatch2 lcr if patent_outliers == 0, kernel outcome(post_solar_patent) pscore(pscore_all) k(epan) bw(0.05)
 scalar t = r(att)/ r(seatt)
-mat kbw025 = ( r(att) \ t )
+mat kbw005 = ( r(att) \ t )
 
 mat kernel = kbw01, kbw005
 mat colnames kernel = "BW = 0.1" "BW = 0.05"
@@ -183,11 +183,11 @@ _eststo mahalanobis01, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(hc3
 ***********************************************************************
 
 
-mat matching_all = nn, radius, kernel
+mat matching_all = nn, kernel
 
 esttab matrix(matching_all, fmt(%-9.2fc)) using matching_all.csv, replace ///
 	title("Overview results with different matching algorithms") ///
-	mtitles("NN" "Radius" "Kernel") ///
+	mtitles("NN" "Kernel") ///
 	width(0.8\hsize) ///
 	addnotes("All estimtes are based on a Logit model with robust standard errors in parentheses.")
 

@@ -23,19 +23,25 @@ use "${lcr_final}/lcr_final", clear
 cd "$lcr_psm"
 
 ***********************************************************************
-* 	PART 2:  recall main matching specification to get mean & SD		
+* 	PART 2:   Calculate minimum detectable effect size 		
 ***********************************************************************
-psmatch2 lcr_won if patent_outliers == 0, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore)
+	* What to use as base for mean, SD in control group?
+		* Option 1: sample mean & SD
+		* Option 2: control group mean & SD
+		* Option 3: matched control group mean & SD
+	
+	* Option 3
+psmatch2 lcr if patent_outliers == 0, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore_all)
 bysort lcr: sum post_solar_patent
 sum post_solar_patent [iweight=_weight] if lcr == 1
 local ntreat = r(N)
-local sdtreat = r(sd)
+*local sdtreat = r(sd)
 sum post_solar_patent [iweight=_weight] if lcr == 0
 local ncontrol = r(N)
 local meancontrol = r(mean)
 local sdcontrol = r(sd)
 
-power twomeans `meancontrol', n1(`ncontrol') n2(`ntreat') alpha(0.05) sd1(`sdcontrol') sd2(`sdtreat') power(0.8)
+power twomeans `meancontrol', n1(`ncontrol') n2(`ntreat') alpha(0.05) sd1(`sdcontrol') sd2(`sdcontrol') power(0.8)
 	* MDE = 1.89 ~ 2
 
 	

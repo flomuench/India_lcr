@@ -181,7 +181,7 @@ if (1) do "${lcr_github}/lcr_main_regression.do"
 /* --------------------------------------------------------------------
 	PART 5.6.: power size calculations
 ----------------------------------------------------------------------*/
-if (1) do "${lcr_github}/power.do"
+if (0) do "${lcr_github}/power.do"
 /* --------------------------------------------------------------------
 	PART 5.7.: Assess quality of match in terms of reduction in bias
 ----------------------------------------------------------------------*/
@@ -189,11 +189,11 @@ if (0) do "${lcr_github}/lcr_match_quality.do"
 /* --------------------------------------------------------------------
 	PART 5.8.: DiD combined with matching
 ----------------------------------------------------------------------*/
-if (1) do "${lcr_github}/lcr_did_matching.do"
+if (0) do "${lcr_github}/lcr_did_matching.do"
 /* --------------------------------------------------------------------
 	PART 5.9.: Robust 1: use "teffects psmatch" command
 ----------------------------------------------------------------------*/
-if (1) do "${lcr_github}/lcr_teffects_psmatch.do"
+if (0) do "${lcr_github}/lcr_teffects_psmatch.do"
 
 
 ***********************************************************************
