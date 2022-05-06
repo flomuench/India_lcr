@@ -127,60 +127,7 @@ gr bar (mean) final_vgf_after_era if contractual_arrangement == 1 & lcr_both == 
 gr export vgf_lcr_nolcr.png, replace
 
 
-***********************************************************************
-* 	PART 5: size of demand shock				
-***********************************************************************
-	* quantity firm won in LCR
-egen lcr_total_quantity_allocated = sum(quantity_allocated_mw) if lcr==1, by(company_name)
-lab var lcr_total_quantity_allocated "mw per company in lcr"
-	
-	* quantity firm won in non-LCR
-egen total_quantity_allocated = sum(quantity_allocated_mw) if lcr==0, by(company_name)
-lab var total_quantity_allocated "mw per company in non-lcr"
 
-cd "$final_figures"
-	* visualisation quantity won per company in LCR
-gr bar (sum) quantity_allocated_mw if auction_year < 2018, over(lcr)  ///
-	blabel(total) ///
-	ytitle("MW won") ///
-	title("{bf:Size of demand shock LCR vs. no LCR auctions (2013-2017)}", size(small)) ///
-	subtitle("MW allocated in LCR vs. no LCR auctions (2013-2017)", size(vsmall)) ///
-	name(mw_lcr_nolcr, replace)
-gr export mw_lcr_nolcr.png, replace
-
-	* visualisation quantity won per company in LCR
-gr hbar (sum) quantity_allocated_mw if lcr == 1,  ///
-	over(company_name, sort(company_name) descending lab(labs(vsmall))) ///
-	blabel(total) ///
-	ytitle("MW won") ///
-	ylabel(0 100 200 300 400 500) ///
-	title("LCR auctions (2013-2017)") ///
-	name(mw_won_lcr, replace)
-
-	* visualisation quantity won per company in non-LCR
-		* until 2017
-gr hbar (sum) quantity_allocated_mw if lcr == 0 & auction_year < 2018 & lcr_both == 1 | lcr_only == 1, ///
-	over(company_name, sort(company_name) descending lab(labs(vsmall))) ///
-	blabel(total) ///
-	ytitle("MW won") ///
-	ylabel(0 100 200 300 400 500) ///
-	title("Non-LCR auctions (2013-2017)") ///
-	name(mw_won_nolcr17, replace)		
-		* until 2019
-gr hbar (sum) quantity_allocated_mw if lcr == 0 & lcr_both == 1 | lcr_only == 1, ///
-	over(company_name, sort(lcr_total_quantity_allocated) descending lab(labs(vsmall))) ///
-	blabel(total) ///
-	ytitle("MW won") ///
-	ylabel(0 100 200 300 400 500) ///
-	title("Non-LCR auctions (2013-2019)") ///
-	name(mw_won_nolcr19, replace)
-
-	* combined graph
-gr combine mw_won_lcr mw_won_nolcr17, ///
-	title("{bf:Size of demand shock LCR vs. no LCR auctions}") ///
-	subtitle("sample = firms that participated at least in one LCR auction",  size(vsmall)) ///
-	name(mw_lcr_vs_no_lcr, replace)
-gr export mw_lcr_vs_no_lcr.png, replace
 
 
 ******************* auction-level statistics **************************
