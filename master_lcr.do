@@ -46,8 +46,8 @@ ssc install psmatch2, replace
 ssc install table1
 ssc install estout
 ssc install ihstrans, replace
+net install http://www.stata.com/users/kcrow/tab2xl
 */
-
 
 
 	* define graph scheme for visual outputs
@@ -200,3 +200,8 @@ if (0) do "${lcr_github}/lcr_teffects_psmatch.do"
 * 	PART 6: 	Interpretation & explanation of results
 ***********************************************************************
 if (1) do "${lcr_github}/post_power.do"
+
+/* --------------------------------------------------------------------
+	PART 6.2: Check which type of solar patents were filed
+----------------------------------------------------------------------*/
+if (1) do "${lcr_github}/patent_analysis.do"
