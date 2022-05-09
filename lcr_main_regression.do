@@ -106,7 +106,7 @@ psmatch2 lcr if won_total > 0, radius caliper(0.05) outcome(post_solar_patent) p
 _eststo won_caliper05, r: reg dif_solar_patents i.lcr [iweight=_weight] if won_total > 0, vce(hc3)
 	rename _weight weight_won05
 	
-			* sample = no outliers
+			* sample = no outliers (bosch & sunedision dropped - high patents, only once participated)
 psmatch2 lcr if patent_outliers == 0, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore_nooutliers)
 _eststo outliers_caliper01, r: reg dif_solar_patents i.lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
 	rename _weight weight_outliers01

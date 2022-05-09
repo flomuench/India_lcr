@@ -51,7 +51,8 @@ net install http://www.stata.com/users/kcrow/tab2xl
 
 
 	* define graph scheme for visual outputs
-set scheme plotplain
+*set scheme plotplain
+set scheme s1color
 
 ***********************************************************************
 * 	PART 2: 	Prepare dynamic folder paths & globals			  	  *

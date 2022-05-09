@@ -63,15 +63,45 @@ graph hbar (sum) solarpatent if app_year>2012, over(lcr,lab(labs(vsmall))) over(
 *************************************************************************
 * 	PART 4:  (un-) conditional pre-and post trend in solar patents by lcr
 *************************************************************************
-
+set graphics on
 	* visualisation of solar patents over time - unconditional
 preserve
+			* unsmoothed
 collapse (sum) solarpatents, by(app_year lcr)
 lab var app_yea "year of application"
 lab var solarpatents "solar patents"
 graph twoway (line solarpatent app_year if lcr==1, lcolor(red)) ///
 (line solarpatent app_year if lcr==0, lcolor(blue)), legend (lab(1 "LCR firm") lab(2 "non-LCR firm")) xline(2013)
+
+			* smoothed
+				* pre-post
+graph twoway ///
+	(scatter solarpatents app_year if lcr == 1, lcolor(maroon)) ///
+	(scatter solarpatents app_year if lcr == 0, lcolor(navy)) ///
+	(lowess solarpatents app_year if lcr == 1, lcolor(maroon)) ///
+	(lowess solarpatent app_year if lcr == 0, lcolor(navy)), ///
+	legend (lab(1 "LCR group") lab(2 "non-LCR group") lab(3 "LWR LCR") lab(4 "LWR non-LCR")) ///
+	xline(2013) ///
+	title({bf:"Solar patents before and after LCR policy"}) ///
+	subtitle("unadjusted to propensity score", size(small)) ///
+	name(solarpatents_trend, replace)
+gr export solarpatents_trend.png, replace
+
+				* pre
+graph twoway ///
+	(scatter solarpatents app_year if lcr == 1 & app_year < 2013, lcolor(maroon)) ///
+	(scatter solarpatents app_year if lcr == 0 & app_year < 2013, lcolor(navy)) ///
+	(lowess solarpatents app_year if lcr == 1 & app_year < 2013, lcolor(maroon)) ///
+	(lowess solarpatent app_year if lcr == 0 & app_year < 2013, lcolor(navy)), ///
+	legend (lab(1 "LCR group") lab(2 "non-LCR group") lab(3 "LWR LCR") lab(4 "LWR non-LCR")) ///
+	title("Solar patents before LCR policy") ///
+	subtitle("unadjusted to propensity score") ///
+	name(solarpatents_pretrend, replace)
+gr export solarpatents_pretrend.png, replace
+
 restore
+
+
 
 	* visualisation of sollar patents over time - conditional on matching
 preserve
@@ -93,9 +123,10 @@ graph twoway ///
 	(lowess solarpatent app_year if lcr == 0, lcolor(navy)), ///
 	legend (lab(1 "LCR group") lab(2 "non-LCR group") lab(3 "LWR LCR") lab(4 "LWR non-LCR")) ///
 	xline(2013) ///
-	title("Solar patents before and after LCR policy") ///
-	name(solarpatents_trend, replace)
-gr export solarpatents_trend.png, replace
+	title({bf:"Solar patents before and after LCR policy"}) ///
+	subtitle("adjusted to propensity score", size(small)) ///
+	name(solarpatents_trend_adj, replace)
+gr export solarpatents_trend_adj.png, replace
 				* pre
 graph twoway ///
 	(scatter solarpatents app_year if lcr == 1 & app_year < 2013, lcolor(maroon)) ///
@@ -103,21 +134,23 @@ graph twoway ///
 	(lowess solarpatents app_year if lcr == 1 & app_year < 2013, lcolor(maroon)) ///
 	(lowess solarpatent app_year if lcr == 0 & app_year < 2013, lcolor(navy)), ///
 	legend (lab(1 "LCR group") lab(2 "non-LCR group") lab(3 "LWR LCR") lab(4 "LWR non-LCR")) ///
-	title("Solar patents before LCR policy") ///
-	name(solarpatents_pretrend, replace)
-gr export solarpatents_pretrend.png, replace
+	title({bf:"Solar patents before LCR policy"}) ///
+	subtitle("patent count adjusted to propensity score", size(small)) ///
+	name(solarpatents_pretrend_adj, replace)
+gr export solarpatents_pretrend_adj.png, replace
 
 
 *************************************************************************
 * 	PART 5:  (un-) conditional pre-and post trend in PATENTS by lcr
 *************************************************************************
 use "${lcr_raw}/firmpatent", clear
+set graphics on
 	* create common identifier
 rename companyname_correct company_name
 
 	* merge with combined_results to get lcr participation information
 cd "$lcr_final"
-merge m:1 company_name using lcr_final, keepusing(lcr)
+merge m:1 company_name using lcr_final, keepusing(lcr weight_outliers05)
 *br if _merge == 1 /* need to clarify problem with Welspun/Tata branch */
 drop if _merge == 1
 
@@ -130,6 +163,7 @@ drop if outlier == 1
 gen one = 1
 
 	* visualisation of total patents over time - unconditional
+preserve
 collapse (sum) one, by(year_application lcr)
 rename one total_patents
 lab var year_application "year of application"
@@ -143,12 +177,29 @@ graph twoway ///
 	legend (lab(1 "LCR group") lab(2 "non-LCR group") lab(3 "LWR LCR") lab(4 "LWR non-LCR")) ///
 	xline(2013) ///
 	title("Total patents before and after LCR policy") ///
+	subtitle("patent count unadjusted for PSM") ///
 	name(total_patents_trend, replace)
 gr export total_patents_trend.png, replace
 restore
 
 	* visualisation of total patents over time - conditional on matching
-
-collapse (sum) total_patents [iweight = weight_outliers05], by(app_year lcr)
+preserve
+collapse (sum) one [iweight = weight_outliers05], by(year_application lcr)
+rename one total_patents
+lab var year_application "year of application"
+lab var total_patents "total patents"
+cd "$final_figures"
+graph twoway ///
+	(scatter total_patents year_application if lcr == 1, lcolor(maroon)) ///
+	(scatter total_patents year_application if lcr == 0, lcolor(navy)) ///
+	(lowess total_patents year_application if lcr == 1, lcolor(maroon)) ///
+	(lowess total_patents year_application if lcr == 0, lcolor(navy)), ///
+	legend (lab(1 "LCR group") lab(2 "non-LCR group") lab(3 "LWR LCR") lab(4 "LWR non-LCR")) ///
+	xline(2013) ///
+	title("Total patents before and after LCR policy") ///
+	subtitle("Patent count adjusted for PSM") ///
+	name(total_patents_trend_adj, replace)
+gr export total_patents_trend_adj.png, replace
+restore
 
 
