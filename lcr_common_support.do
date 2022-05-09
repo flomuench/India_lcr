@@ -47,6 +47,7 @@ gr combine common_support5 common_support10 common_support15 common_support20, /
 		title("{bf:Is there common support for LCR & non-LCR firms?}") ///
 		subtitle(Min-max criterion: common support between [0.15-0.8]) ///
 		name(common_support, replace)
+cd "$final_figures"
 gr export common_support.png, replace
 
 
