@@ -185,7 +185,7 @@ if (0) do "${lcr_github}/power.do"
 /* --------------------------------------------------------------------
 	PART 5.7.: Assess quality of match in terms of reduction in bias
 ----------------------------------------------------------------------*/
-if (0) do "${lcr_github}/lcr_match_quality.do"
+if (1) do "${lcr_github}/lcr_match_quality.do"
 /* --------------------------------------------------------------------
 	PART 5.8.: DiD combined with matching
 ----------------------------------------------------------------------*/

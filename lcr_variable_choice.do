@@ -397,18 +397,18 @@ local matching_var indian patentor pre_not_solar_patent sales employees soe age 
 local matching_var2 indian pre_not_solar_patent soe manufacturer manufacturer_solar
 local matching_var3 indian pre_not_solar_patent soe manufacturer
 local matching_var4 indian pre_not_solar_patent soe manufacturer sales employees age
-		* with Fabi
-local matching_var5 patentor soe_india manufacturer_solar
+		* with Fabi (Final decision was to use IHS-transformed pre-treated patents)
+local matching_var5 ihs_pre_not_solar_patent soe_india indian manufacturer
 
 set graphics on
 
 	* pre-matching table 1 / balance table
-iebaltab `matching_var' if patent_outlier == 0, grpvar(lcr) save(baltab_lcr_pre) replace ///
+iebaltab `matching_var5' if patent_outlier == 0, grpvar(lcr) save(baltab_lcr_pre) replace ///
 			 vce(robust) pttest rowvarlabels balmiss(mean) onerow stdev notecombine ///
 			 format(%12.2fc)
 	
 	* pre-matching standardised bias
-pstest `matching_var' if patent_outlier == 0, raw rubin treated(lcr) graph ///
+pstest `matching_var5' if patent_outlier == 0, raw rubin treated(lcr) graph ///
 		title(Standardized bias LCR vs. no LCR firms) ///
 		subtitle(Pre-matching) ///
 		note(Standardised bias should between [-25%-25%]., size(small)) ///
