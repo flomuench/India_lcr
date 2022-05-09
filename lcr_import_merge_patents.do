@@ -62,6 +62,8 @@ graph bar (sum) solarpatent not_solar_patent, over(year_application, label(labs(
 	name(patent_evolution, replace)
 gr export patent_evolution.png, replace
 
+
+
 ***********************************************************************
 * 	PART 3: collapse the data on company-year-level						
 ***********************************************************************

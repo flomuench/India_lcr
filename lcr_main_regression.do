@@ -87,26 +87,32 @@ psmatch2 lcr if patent_outliers == 0, outcome(post_solar_patent) pscore(pscore_a
 	
 	
 ***********************************************************************
-* 	PART 3:  Radius matching
+* 	PART 3:  Radius/caliper matching
 ***********************************************************************
 		* counterfactual = participated LCR vs. did not participate LCR
 			* sample = all
 psmatch2 lcr, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore_all)
 _eststo all_caliper01, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(hc3)
+	rename _weight weight_all01
 psmatch2 lcr, radius caliper(0.05) outcome(post_solar_patent) pscore(pscore_all)
 _eststo all_caliper05, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(hc3)
+	rename _weight weight_all05
 
 			* sample = won
 psmatch2 lcr if won_total > 0, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore_won)
 _eststo won_caliper01, r: reg dif_solar_patents i.lcr [iweight=_weight] if won_total > 0, vce(hc3)
+	rename _weight weight_won01
 psmatch2 lcr if won_total > 0, radius caliper(0.05) outcome(post_solar_patent) pscore(pscore_won)
 _eststo won_caliper05, r: reg dif_solar_patents i.lcr [iweight=_weight] if won_total > 0, vce(hc3)
-
-			* sample = no outliers
+	rename _weight weight_won05
+	
+			* sample = no outliers (bosch & sunedision dropped - high patents, only once participated)
 psmatch2 lcr if patent_outliers == 0, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore_nooutliers)
 _eststo outliers_caliper01, r: reg dif_solar_patents i.lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
+	rename _weight weight_outliers01
 psmatch2 lcr if patent_outliers == 0, radius caliper(0.05) outcome(post_solar_patent) pscore(pscore_nooutliers)
 _eststo outliers_caliper05, r: reg dif_solar_patents i.lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
+	rename _weight weight_outliers05
 
 	* export results in a table
 esttab *caliper* using did.tex, replace ///
@@ -121,7 +127,7 @@ esttab *caliper* using did.tex, replace ///
 	star(* 0.1 ** 0.05 *** 0.01) ///
 	nobaselevels ///
 	booktabs ///
-	addnotes("DiD based on solar patents 2012-2021 minus 1982-2011." "Common support imposed in all specifications." "Robust standard errors in parentheses.")
+	addnotes("DiD based on solar patents 2013-2021 minus 1982-2012." "Common support imposed in all specifications." "Robust standard errors in parentheses.")
 
 	/*	span prefix(\multicolumn{@span}{c}{) suffix(}) ///
 		erepeat(\cmidrule(lr){@span})) /// */

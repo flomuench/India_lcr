@@ -47,7 +47,7 @@ predict pscore_won if won_total > 0, p
 sum pscore_won, d
 label var pscore_won "estimated propensity score to participate in LCR auctions, won only"
 
-* excluding outliers Bosch: 
+* excluding outliers Bosch/Sunedison: 
 logit lcr `matching_var5' if patent_outliers == 0, vce(robust)
 predict pscore_nooutliers if patent_outliers == 0, p
 sum pscore_nooutliers, d
