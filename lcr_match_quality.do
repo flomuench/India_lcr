@@ -28,25 +28,27 @@ local matching_var5 ihs_pre_not_solar_patent soe_india indian manufacturer
 	*
 set graphics on
 
+	*make additional local with all variable (not only the ones used for matching)
+local bias_table ihs_pre_not_solar_patent soe_india indian manufacturer pre_solar_patent patentor age energy_focus manufacturer_solar subsidiary
 ***********************************************************************
 * 	PART 2:  Nearest neighbor matching with replacement
 ***********************************************************************
 		* nn = 1-3
 forvalues x = 1(1)3 {
-	psmatch2 lcr if patent_outliers == 0, outcome(post_solar_patent) pscore(pscore_all) neighbor(`x')
+	psmatch2 lcr, outcome(post_solar_patent) pscore(pscore_all) neighbor(`x')
 
 		* pre-matching standardised bias
-	pstest `matching_var5' if patent_outlier == 0 & _weight != ., both rubin treated(lcr) graph ///
+	pstest `bias_table' if patent_outlier == 0 & _weight != ., both rubin treated(lcr) graph ///
 			title(Standardized bias LCR vs. no LCR firms: `x'- nearest neighbor) ///
 			subtitle(Post vs. pre-matching) ///
-			ylabel(-60(5)60) ///
+			ylabel(-60(5)60, labs(vsmall)) ///
 			note(Standardised bias should between [-25%-25%]., size(small)) ///
 			name(post_bias_nn`x', replace)
 	gr export post_bias_nn`x'.png, replace
 
 
 	* table 1 / balance table post matching
-iebaltab `matching_var5' if patent_outlier == 0 & _weight != ., grpvar(lcr) save(baltab_lcr_post_nn`x') replace ///
+iebaltab `bias_table' if patent_outlier == 0 & _weight != ., grpvar(lcr) save(baltab_lcr_post_nn`x') replace ///
 			 vce(robust) pttest rowvarlabels balmiss(mean) onerow stdev notecombine ///
 			 format(%12.2fc)
 
@@ -61,20 +63,20 @@ foreach x in 0.05 0.1 0.25 {
 	local ++i
 	
 		* caliper matching
-	psmatch2 lcr if patent_outliers == 0, radius caliper(`x') outcome(post_solar_patent) pscore(pscore_all)
+	psmatch2 lcr, radius caliper(`x') outcome(post_solar_patent) pscore(pscore_all)
 
 		* pre-matching standardised bias
-	pstest `matching_var5' if patent_outlier == 0 & _weight != ., both rubin treated(lcr) graph ///
+	pstest `bias_table' if patent_outlier == 0 & _weight != ., both rubin treated(lcr) graph ///
 			title(Standardized bias LCR vs. no LCR firms) ///
 			subtitle(Post vs. pre-matching on caliper = `x') ///
-			ylabel(-60(5)60) ///
+			ylabel(-60(5)60, labs(vsmall)) ///
 			note(Standardised bias should between [-25%-25%]., size(small)) ///
 			yline (-25 25) ///
 			name(post_bias_radius`i', replace)
 	gr export post_bias_radius`i'.png, replace
 
 		* table 1 / balance table post matching
-	iebaltab `matching_var5' if patent_outlier == 0 & _weight != ., grpvar(lcr) save(baltab_lcr_post_radius`i') replace ///
+	iebaltab `bias_table' if patent_outlier == 0 & _weight != ., grpvar(lcr) save(baltab_lcr_post_radius`i') replace ///
 			 vce(robust) pttest rowvarlabels balmiss(mean) onerow stdev notecombine ///
 			 format(%12.2fc)
 }
@@ -86,19 +88,19 @@ local i = 0
 foreach x in 0.1 0.25 0.5 {
 	local ++i
 		* kernel matching with varying bandwith
-	psmatch2 lcr if patent_outliers == 0, kernel outcome(post_solar_patent) pscore(pscore_all) k(epan) bw(`x')
+	psmatch2 lcr, kernel outcome(post_solar_patent) pscore(pscore_all) k(epan) bw(`x')
 
 			* pre-matching standardised bias
-	pstest `matching_var5' if patent_outlier == 0 & _weight != ., both rubin treated(lcr) graph ///
+	pstest `bias_table' if patent_outlier == 0 & _weight != ., both rubin treated(lcr) graph ///
 			title(Standardized bias LCR vs. no LCR firms) ///
 			subtitle(Post vs. pre-matching: epalechnikov kernel with bw = `x') ///
-			ylabel(-60(5)60) ///
+			ylabel(-60(5)60 labs(vsmall)) ///
 			note(Standardised bias should between [-25%-25%]., size(small)) ///
 			name(post_bias_kernel`i', replace)
 	gr export post_bias_kernel`i'.png, replace
 
 	* table 1 / balance table post matching
-	iebaltab `matching_var5' if patent_outlier == 0 & _weight != ., grpvar(lcr) save(baltab_lcr_post_kernel`i') replace ///
+	iebaltab `bias_table' if patent_outlier == 0 & _weight != ., grpvar(lcr) save(baltab_lcr_post_kernel`i') replace ///
 			 vce(robust) pttest rowvarlabels balmiss(mean) onerow stdev notecombine ///
 			 format(%12.2fc)
 }
