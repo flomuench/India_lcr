@@ -37,10 +37,32 @@ replace group= "cells or panels" if subgroups == "cells or panels"
 replace group = "H02N6/00" if subgroups == "H02N6/00"
 *rename some of the variables
 rename solarpatentx solarpatent
+lab var solarpatent "solar patents"
 
 *************************************************************************
 * 	PART 3:  IPC category of solar patents	
 *************************************************************************
+cd "$final_figures"
+
+		* count of solar patents by LCR and IPC groupd; no time dimension
+graph hbar (sum) solarpatent, over(lcr) over(group) blabel(bar)
+
+gen post = (app_year > 2012)
+
+		* count of solar patents by LCR and IPC groupd; 
+graph hbar (sum) solarpatent, over(post) over(lcr, lab(labs(small))) over(group) ///
+	blabel(bar) ///
+	legend(lab(1 "pre LCR") lab(2 "post LCR")) ///
+	name(solarpatents_ipcc_lcr_post, replace)
+gr export solarpatents_ipcc_lcr_post.png, replace
+
+
+	
+
+
+gr export patent_bar.png, replace 
+
+
 graph pie solarpatent, over(subgroups) plabel(_all sum)
 graph pie solarpatent, over(group) plabel(_all sum)
 graph pie solarpatent if lcr==1, over(group) plabel(_all sum)
@@ -50,14 +72,13 @@ tab2 group lcr, column
 return list
 
 
-*Export to latex
-*estpost tab lcr ipcgroup
-*esttab, cell("b pct(fmt(a))")  collab("Freq." "Percent")  noobs nonumb nomtitle tex
-cd "$final_figures"
-graph hbar (sum) solarpatent, over(lcr) over (group) blabel(bar)
+graph hbar (sum) solarpatents, over(lcr) over(group) blabel(bar)
 gr export patent_bar.png, replace 
 
-graph hbar (sum) solarpatent if app_year>2012, over(lcr) over (group) blabel(bar)
+
+
+graph hbar (sum) solarpatents if app_year<=2012, over(lcr) over(group) blabel(bar)
+
 graph hbar (sum) solarpatent if app_year>2012, over(lcr,lab(labs(vsmall))) over(subgroups,lab(labs(vsmall))) blabel(bar)
 
 *************************************************************************
