@@ -137,7 +137,7 @@ _eststo subsidiary, r: logit lcr i.indian i.manufacturer_solar subsidiary if pat
 _eststo all, r: logit lcr i.indian /*i.patentor*/ ihs_pre_not_solar_patent ihs_sales employees sector i.soe_india age i.energy_focus i.manufacturer i.manufacturer_solar i.subsidiary if patent_outlier == 0, vce(robust)
 
 local regressions indian /*india_state*/ india_capital /*patentor*/ otherprepatents size1 size2 lob electronics soe age energy manuf manuf_solar subsidiary all
-esttab `regressions' using variable_choice2.csv, replace ///
+esttab `regressions' using variable_choice2.tex, replace ///
 	title("Selection of variables used for PSM") ///
 	mtitles("Indian" /*"HQ Indian state"*/ "HQ in Delhi" /*"Pre Patentor"*/ "Pre-patents" "Sales" "Employees" "Sector" "Electronics" "SOE" "Age" "Energy focus" "Manufacturer" "Solar manufacturer" "Subsidiary" "All") ///
 	label ///

@@ -59,7 +59,7 @@ iebaltab `bias_table' if patent_outlier == 0 & _weight != ., grpvar(lcr) save(ba
 * 	PART 3:  Radius/caliper matching
 ***********************************************************************
 local i = 0
-foreach x in 0.05 0.1 0.25 {
+foreach x in 0.05 0.1 {
 	local ++i
 	
 		* caliper matching
