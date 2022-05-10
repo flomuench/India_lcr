@@ -22,7 +22,7 @@ use "${lcr_final}/lcr_final", clear
 
 	* set the directory to propensity matching folder
 cd "$lcr_rt"
-
+/*
 ***********************************************************************
 * 	PART 2:  Nearest neighbor matching
 ***********************************************************************
@@ -85,7 +85,7 @@ psmatch2 lcr if patent_outliers == 0, outcome(post_solar_patent) pscore(pscore_a
 
 
 	
-	
+*/	
 ***********************************************************************
 * 	PART 3:  Radius/caliper matching
 ***********************************************************************
@@ -115,6 +115,7 @@ _eststo outliers_caliper05, r: reg dif_solar_patents i.lcr [iweight=_weight] if 
 	rename _weight weight_outliers05
 
 	* export results in a table
+cd "$final_figures"	
 esttab *caliper* using did.tex, replace ///
 	title("Difference-in-difference combined with matching"\label{main_regressions}) ///
 	mgroups("All firms" "Winner firms" "All w/o outliers", ///
@@ -143,6 +144,7 @@ esttab *caliper* using did.tex, replace ///
 ***********************************************************************
 	* counterfactual = participated
 		* sample = all
+cd "$lcr_rt"
 psmatch2 lcr, kernel outcome(post_solar_patent) pscore(pscore_all) k(epan) bw(0.1)
 psmatch2 lcr, kernel outcome(post_solar_patent) pscore(pscore_all) k(epan) bw(0.05)
 		* sample = only winners
