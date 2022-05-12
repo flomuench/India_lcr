@@ -89,7 +89,9 @@ psmatch2 lcr if patent_outliers == 0, outcome(post_solar_patent) pscore(pscore_a
 ***********************************************************************
 * 	PART 3:  Radius/caliper matching
 ***********************************************************************
-		* counterfactual = participated LCR vs. did not participate LCR
+cd "$lcr_final"
+	* counterfactual = participated LCR vs. did not participate LCR
+		* outcome 1: solar patents
 			* sample = all
 psmatch2 lcr, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore_all)
 _eststo all_caliper01, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(hc3)
@@ -128,13 +130,54 @@ esttab *caliper* using did.tex, replace ///
 	star(* 0.1 ** 0.05 *** 0.01) ///
 	nobaselevels ///
 	booktabs ///
-	addnotes("DiD based on solar patents 2013-2021 minus 1982-2012." "Common support imposed in all specifications." "Robust standard errors in parentheses.")
-
-	/*	span prefix(\multicolumn{@span}{c}{) suffix(}) ///
-		erepeat(\cmidrule(lr){@span})) /// */
+	addnotes("DiD based on solar patents 2011-2020 minus 2001-2010." "Common support imposed in all specifications." "Robust standard errors in parentheses.")
 
 	
-		* counterfactual = won LCR vs. did not win LCR
+		* outcome 2: cell & module patents
+			* sample = all
+psmatch2 lcr, radius caliper(0.1) outcome(post_modcell_patent) pscore(pscore_all)
+_eststo all_caliper01_cell, r: reg dif_modcell_patents i.lcr [iweight=_weight], vce(hc3)
+	rename _weight weight_all01
+psmatch2 lcr, radius caliper(0.05) outcome(post_modcell_patent) pscore(pscore_all)
+_eststo all_caliper05_cell, r: reg dif_modcell_patents i.lcr [iweight=_weight], vce(hc3)
+	rename _weight weight_all05
+
+			* sample = won
+psmatch2 lcr if won_total > 0, radius caliper(0.1) outcome(post_modcell_patent) pscore(pscore_won)
+_eststo won_caliper01_cell, r: reg dif_modcell_patents i.lcr [iweight=_weight] if won_total > 0, vce(hc3)
+	rename _weight weight_won01
+psmatch2 lcr if won_total > 0, radius caliper(0.05) outcome(post_modcell_patent) pscore(pscore_won)
+_eststo won_caliper05_cell, r: reg dif_modcell_patents i.lcr [iweight=_weight] if won_total > 0, vce(hc3)
+	rename _weight weight_won05
+	
+			* sample = no outliers (bosch & sunedision dropped - high patents, only once participated)
+psmatch2 lcr if patent_outliers == 0, radius caliper(0.1) outcome(post_modcell_patent) pscore(pscore_nooutliers)
+_eststo outliers_caliper01_cell, r: reg dif_modcell_patents i.lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
+	rename _weight weight_outliers01
+psmatch2 lcr if patent_outliers == 0, radius caliper(0.05) outcome(post_modcell_patent) pscore(pscore_nooutliers)
+_eststo outliers_caliper05_cell, r: reg dif_modcell_patents i.lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
+	rename _weight weight_outliers05
+
+	* export results in a table
+cd "$final_figures"	
+local cell_models all_caliper01_cell all_caliper05_cell won_caliper01_cell won_caliper05_cell outliers_caliper01_cell outliers_caliper05_cell
+esttab `cell_models' using did_modcell.tex, replace ///
+	title("Difference-in-difference combined with matching"\label{main_regressions}) ///
+	mgroups("All firms" "Winner firms" "All w/o outliers", ///
+		pattern(1 0 1 0 1 0)) ///
+	mtitles("caliper = 0.1" "caliper = 0.05" "caliper = 0.1" "caliper = 0.05" "caliper = 0.1" "caliper = 0.05") ///
+	label ///
+	b(2) ///
+	se(2) ///
+	width(0.8\hsize) ///
+	star(* 0.1 ** 0.05 *** 0.01) ///
+	nobaselevels ///
+	booktabs ///
+	addnotes("DiD based on solar patents 2011-2020 minus 2001-2010." "Common support imposed in all specifications." "Robust standard errors in parentheses.")
+
+	
+	
+	* counterfactual = won LCR vs. did not win LCR
 
 
 		

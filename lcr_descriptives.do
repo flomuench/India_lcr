@@ -95,11 +95,23 @@ cd "$final_figures"
 graph bar (sum)  `prepostsolar' if patent_outliers == 0, over(lcr) ///
 	blabel(total, size(vsmall)) ///
 	title("{bf: Solar patents pre-and post LCR auctions in India}") ///
-	subtitle("Firms that participated in SECI solar auctions between 2013-2020", size(small)) ///
-	legend(label(1 "solar patents 1982-2012") label(2 "solar patents 2013-2020") rows(2) pos(6)) ///
+	subtitle("Firms that participated in SECI solar auctions between 2011-2020", size(small)) ///
+	legend(label(1 "solar patents 2001-2010") label(2 "solar patents 2011-2020") rows(2) pos(6)) ///
 	note("Authors own calculations based on patent application at Indian patent office.", size(vsmall)) ///
-	name(prepost_no_outlier, replace)
+	name(prepost_solar_LCR_no_outlier, replace)
 gr export prepost_solar_LCR_no_outlier.png, replace
+
+
+	* pre-post module/cell patents by LCR
+graph bar (sum) pre_modcell_patent post_modcell_patent if patent_outliers == 0, over(lcr) ///
+	blabel(total, size(vsmall)) ///
+	title("{bf: Module & cell patents pre & post LCR auctions in India}") ///
+	subtitle("Firms that participated in SECI solar auctions between 2011-2020", size(small)) ///
+	legend(label(1 "cell/module patents 2001-2010") label(2 "cell/module  patents 2011-2020") rows(2) pos(6)) ///
+	note("Authors own calculations based on patent application at Indian patent office.", size(vsmall)) ///
+	name(prepost_cellpatents_no_outlier, replace)
+gr export prepost_cellpatents_no_outlier.png, replace
+
 cd "$lcr_descriptives"
 
 

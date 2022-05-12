@@ -85,9 +85,8 @@ save solar_patents_addinfo, replace
 restore
 
 	* merge with firmsolarpatents
-merge 1:1 applicantname abstract using solar_patents_addinfo, keepusing(company_name groups subgroups subsubgroups)
+merge 1:1 applicantname abstract using solar_patents_addinfo, keepusing(groups subgroups subsubgroups)
 drop _merge
-rename company_name companyname_correct
 save firmpatentsolar, replace
 
 	* merge firmsolarpatents to firmpatent_final
@@ -136,8 +135,7 @@ news way of installing/using solar PV cells or moodules to max. efficiency or ad
 a specific situation; there are also some patents that use solar PV in other applications, such as
 electrical vehicles or  */
 	
-gen modcell_patent = .
-	replace modcell_patent = 0 if solarpatent == 1
+gen modcell_patent = 0
 	replace modcell_patent = 1 if subgroups == "Crystalline Silicon Cells"
 	replace modcell_patent = 1 if subgroups == "Multi-junction Cells"
 	replace modcell_patent = 1 if subgroups == "Roof Covering and Supporting Structures"
@@ -162,7 +160,7 @@ set graphics on
 sort year_application
 graph bar (sum) solarpatent not_solar_patent, over(year_application, label(labs(tiny))) ///
 	blabel(total, size(vsmall)) ///
-	title("{bf:Annual solar patent applications in India: 1982-2021}") ///
+	title("{bf:Annual solar patent applications in India: 1982-2020}") ///
 	subtitle("Firms that participated in SECI solar auctions between 2013-2020", size(small)) ///
 	legend(label(1 "Solar patents") label(2 "All other patents") rows(2) pos(6)) ///
 	note("Authors own calculations based on patent application at Indian patent office.", size(vsmall)) ///
@@ -201,7 +199,6 @@ tab year_application if post == 0 /* 262 patents after after treatment */
 ***********************************************************************
 * 	PART 9: create/collapse into pre-post solar patents	  						
 ***********************************************************************
-
 collapse (sum) solarpatent not_solar_patent onepatent modcell_patent, by(company_name post2)
 reshape wide solarpatent not_solar_patent onepatent modcell_patent, i(company_name) j(post2)
 forvalues z = 1(1)3 {
@@ -257,9 +254,8 @@ save "patents_pre_post", replace
 	* import lcr_raw.dta
 use "${lcr_raw}/lcr_raw", clear
 merge m:1 company_name using patents_pre_post /* results should indicate 27 firms merged */
+drop if _merge == 2 /* drop two firms - dehli & chloride - that were not identified in bidding data; we double-checked with hcr_import that these companies never figured in auction data */
 drop _merge
-
-replace 
 
 save "lcr_raw", replace
 

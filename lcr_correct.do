@@ -64,7 +64,7 @@ replace international = 0 if international == .
 ***********************************************************************
 * 	PART 6:  replace all MV = 0 for firms that did never patent
 ***********************************************************************
-foreach x in pre_solar_patent pre_not_solar_patent pre_total_patent post_solar_patent post_not_solar_patent post_total_patent{
+foreach x in pre_solar_patent pre_not_solar_patent pre_total_patent post_solar_patent post_not_solar_patent post_total_patent historic_solar_patent historic_not_solar_patent historic_modcell_patent pre_modcell_patent post_modcell_patent{
 	replace `x' = 0 if `x' == .
 }
 
