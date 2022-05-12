@@ -28,19 +28,126 @@ cd "$lcr_raw"
 
 use "${lcr_raw}/firmpatent", clear
 
-/*sort companyname_correct
-gen patent_id = _n, a(companyname_correct) */
-
-***********************************************************************
-* 	PART 2: document unique identifier  						
-***********************************************************************
-	* id or companyname_correct?
-gen id_dif = (id == companyname_correct), a(companyname_correct)
-codebook id_dif /* suggest different in 315 cases */
+drop if year_publication == . /* remove firms without patent */
+drop id inventiontitle
 rename companyname_correct company_name
 
 ***********************************************************************
-* 	PART 3: over time evolution of patents 	  						
+* 	PART 2: identify duplicates & unique identifier						
+***********************************************************************
+		* search for duplicate patents
+			* in terms of abstract (most detailed information we have)
+order title abstract, a(applicantname)
+format title abstract %-30s
+duplicates report abstract /* 8307 unique values but also 141 dups */
+duplicates tag abstract if abstract!="", gen(dup_abstract)
+sort company_name abstract
+*br if dup_abstract > 0
+
+			* in terms of abstract & title
+duplicates report abstract title /* only 12 observations, 6 pairs */
+duplicates tag abstract title, gen(dup_abstit)
+*br if dup_abstit > 0
+
+			* drop those obs that seem to be real duplicates
+drop if company_name == "bosch" & title == "COOLING APPLIANCE AND FAN ASSEMBLY THEREFOR" & applicationnumber == "1437/KOL/2010"
+drop if company_name == "bosch" & title == "PNEUMATICALLY ADJUSTABLE CONTINUOUSLY VARIABLE TRANSMISSION" & applicationdatedv == "22/12/2017"
+drop if company_name == "larsen" & title == "ELECTRONICALLY CONTROLLED UNDER VOLTAGE RELEASE DEVICE USED WITH CIRCUIT BREAKERS" & applicationnumber == "01188/MUM/2003"
+
+
+***********************************************************************
+* 	PART 3: merge with solar patents/ipc groups from Shubbak 2020 						
+***********************************************************************
+	* change format of abstract from strl (not possible for merger) to strmax = str2045
+// Figure out longest length
+gen len=length(abstract)
+summ len
+// Convert to a fixed-length string
+recast str2045 abstract, force  // If the longest is less than 2045, use that number instead of 2045; 51 values changed
+
+	* create a temporary firm patent file
+preserve
+drop if solarpatent == 1
+save firmpatent_final, replace
+restore
+
+	* keep only solarpatents & save in seperate dta file
+drop if solarpatent == 0
+save firmpatentsolar, replace
+
+	* import solarpatents data incl. ipc groups from Shubbak 2020
+preserve
+import delimited "${lcr_raw}/solar_patents_addinfo.csv", clear varn(1)
+rename solarpatentx solarpatent
+gen len=length(abstract)
+recast str2045 abstract, force 
+save solar_patents_addinfo, replace
+restore
+
+	* merge with firmsolarpatents
+merge 1:1 applicantname abstract using solar_patents_addinfo, keepusing(company_name groups subgroups subsubgroups)
+drop _merge
+rename company_name companyname_correct
+save firmpatentsolar, replace
+
+	* merge firmsolarpatents to firmpatent_final
+use firmpatent_final, clear
+append using firmpatentsolar
+
+save "firmpatent_final", replace
+
+***********************************************************************
+* 	PART 5: create a dummy for cell/module patents only (rather than solar patents)					
+***********************************************************************
+	* re-name some of the elements for better understanding
+replace subgroups = "cells or panels" if subgroups == "Combinations of the groups above"
+replace subgroups = "H02N6/00" if ipc == "H02N6/00"
+replace subgroups = "common cell elements" if subgroups == "Common Elements"
+replace group= "cells or panels" if subgroups == "cells or panels"
+replace group = "H02N6/00" if subgroups == "H02N6/00"
+replace subgroups = "Thin film technologies" if subgroups == "Thin-<U+FB01>lm Technologies"
+
+	* eye-ball the data to get better understanding of patents in different IPC subgroups
+format abstract %70s
+*br applicantname year_application title abstract groups subgroups subsubgroups if subgroups == "Crystalline Silicon Cells"
+	/* only Bharat, Bosch & Sunedision filed in crystalline silicon cells 
+		Bharat filed already before 2013/start of LCR policy ; Sunedison patented exclusively in ingots
+		The solar ingot is a raw material used for manufacturing solar cells. 
+		The ingots form the first step in the manufacturing of the solar wafers which are used as a base for the manufacturing of solar panels.*/
+
+*br applicantname year_application title abstract groups subgroups subsubgroups if subgroups == "Roof Covering and Supporting Structures"
+		
+		
+*br applicantname year_application title abstract groups subgroups subsubgroups if subgroups == "Testing after manufacturing"
+	/* all 5 testing after manufacturing patents come from larsen and toubro */
+
+*br applicantname year_application title abstract groups subgroups subsubgroups if subgroups == "cells or panels"
+	/* Tata filed all its patents in this group; T */
+
+*br applicantname year_application title abstract groups subgroups subsubgroups if subgroups == "common cell elements"
+
+*br applicantname year_application title abstract groups subgroups subsubgroups if subgroups == "Thin film technologies"
+	/* almost all filed before LCR policy */
+
+	
+/* general impressio
+apart from Bharat & Bosch, none of the patents relate to cell manufacturing but rather are
+news way of installing/using solar PV cells or moodules to max. efficiency or adapt to 
+a specific situation; there are also some patents that use solar PV in other applications, such as
+electrical vehicles or  */
+	
+gen modcell_patent = .
+	replace modcell_patent = 0 if solarpatent == 1
+	replace modcell_patent = 1 if subgroups == "Crystalline Silicon Cells"
+	replace modcell_patent = 1 if subgroups == "Multi-junction Cells"
+	replace modcell_patent = 1 if subgroups == "Roof Covering and Supporting Structures"
+	replace modcell_patent = 1 if subgroups == "cells or panels"
+	replace modcell_patent = 1 if subgroups == "common cell elements"
+
+
+
+***********************************************************************
+* 	PART 6: over time evolution of patents 	  						
 ***********************************************************************
 	* change directory to output folder for descriptive stats
 cd "$lcr_descriptives"
@@ -62,72 +169,89 @@ graph bar (sum) solarpatent not_solar_patent, over(year_application, label(labs(
 	name(patent_evolution, replace)
 gr export patent_evolution.png, replace
 
-
-
 ***********************************************************************
-* 	PART 3: collapse the data on company-year-level						
+* 	PART 7: collapse the data on company-year-level						
 ***********************************************************************
 	* check missing values for company/year
 codebook company_name
 codebook year_* /* 122 missing year values for both year of publication or application */
 tab solarpatent if year_publication == . /* no solar patent are concerned */
 
-drop if year_publication == .
 
 	* collapse data to company-year panel
-collapse (sum) solarpatent not_solar_patent onepatent, by(company_name year_application)
+collapse (sum) solarpatent not_solar_patent onepatent modcell_patent, by(company_name year_application)
 
+***********************************************************************
+* 	PART 8: create pre-post period dummy					
+***********************************************************************
 	* collapse into pre-treatment period (1982-2012) or post-treatment period (2013-2020)
-gen post = (year_application > 2012 & year_application < .)
+		* option 1: take whole pre-period == 30 years
+gen post = (year_application > 2010 & year_application < .)
+		* option 2: take same pre as post policy period == 8 years 
+			* --> pre-historic period = 1982-2000; pre-period = 2001-2010; post-period = 2011-2020
+gen post2 = .
+	replace post2 = 1 if year_application <= 2000
+	replace post2 = 2 if year_application > 2000 & year_application <= 2010
+	replace post2 = 3 if year_application >=2011
 	
 	* check whether time periods are correctly divided
 tab year_application if post == 1 /* 224 patents before treatment */
 tab year_application if post == 0 /* 262 patents after after treatment */
 
 ***********************************************************************
-* 	PART 4: by company over time evolution of patents 	  						
-***********************************************************************
-encode company_name, gen(firm)
-xtset firm year_application
-*xtgraph onepatent
-*xtgraph solarpatent
-
-***********************************************************************
-* 	PART 5: collapse to patent count pre & post treatment	  						
+* 	PART 9: create/collapse into pre-post solar patents	  						
 ***********************************************************************
 
-collapse (sum) solarpatent not_solar_patent onepatent, by(company_name post)
-reshape wide solarpatent not_solar_patent onepatent, i(company_name) j(post)
-foreach x in solarpatent0 not_solar_patent0 onepatent0 {
-	replace `x' = 0 if `x' == .
-}
-rename solarpatent0 pre_solar_patent
-rename solarpatent1 post_solar_patent
-rename not_solar_patent0 pre_not_solar_patent
-rename not_solar_patent1 post_not_solar_patent
-rename onepatent0 pre_total_patent
-rename onepatent1 post_total_patent
+collapse (sum) solarpatent not_solar_patent onepatent modcell_patent, by(company_name post2)
+reshape wide solarpatent not_solar_patent onepatent modcell_patent, i(company_name) j(post2)
+forvalues z = 1(1)3 {
+	foreach x in solarpatent`z' not_solar_patent`z' onepatent`z' modcell_patent`z' {
+		replace `x' = 0 if `x' == .
+	}
+}	
+rename solarpatent1 historic_solar_patent
+rename solarpatent2 pre_solar_patent
+rename solarpatent3 post_solar_patent
 
-lab var pre_solar_patent "solar patents 1982-2012"
-lab var post_solar_patent "solar patents 2013-2021"
+rename not_solar_patent1 historic_not_solar_patent
+rename not_solar_patent2 pre_not_solar_patent
+rename not_solar_patent3 post_not_solar_patent
 
-lab var pre_not_solar_patent "non-solar patents 1982-2012"
-lab var post_not_solar_patent "non-solar patents 2013-2021"
+rename onepatent1 historic_total_patent
+rename onepatent2 pre_total_patent
+rename onepatent3 post_total_patent
 
-lab var pre_total_patent "total patents 1982-2012"
-lab var post_total_patent "total patents 2013-2021"
+rename modcell_patent1 historic_modcell_patent
+rename modcell_patent2 pre_modcell_patent
+rename modcell_patent3 post_modcell_patent
+
+lab var historic_solar_patent "solar patents 1982-2000"
+lab var pre_solar_patent "solar patents 2001-2010"
+lab var post_solar_patent "solar patents 2011-2020"
+
+lab var historic_not_solar_patent "non-solar patents 1982-2000"
+lab var pre_not_solar_patent "non-solar patents 2005-2010"
+lab var post_not_solar_patent "non-solar patents 2011-2020"
+
+lab var historic_total_patent "total patents 1982-2000"
+lab var pre_total_patent "total patents 2005-2010"
+lab var post_total_patent "total patents 2011-2020"
+
+lab var historic_modcell_patent "module & cell patents 1982-2000"
+lab var pre_modcell_patent "module & cell patents 2005-2010"
+lab var post_modcell_patent "module & cell patents 2011-2020"
 
 
 ***********************************************************************
-* 	PART 6: save file of pre-post treatment in raw folder		  						
+* 	PART 10: save file of pre-post treatment in raw folder		  						
 ***********************************************************************
 * change directory to raw
 cd "$lcr_raw"
 save "patents_pre_post", replace
 
 
-***********************************************************************
-* 	PART 7: merge cross-section lcr_raw.dta file with patents			  						
+**********************************************************************
+* 	PART 11: merge cross-section lcr_raw.dta file with patents			  						
 ***********************************************************************
 	* companyname_correct is the common unique identifier
 	* import lcr_raw.dta
@@ -135,10 +259,12 @@ use "${lcr_raw}/lcr_raw", clear
 merge m:1 company_name using patents_pre_post /* results should indicate 27 firms merged */
 drop _merge
 
+replace 
+
 save "lcr_raw", replace
 
 ***********************************************************************
-* 	PART 3: create descriptive statistics about patents in LCR vs. no LCR 						
+* 	PART 12: create descriptive statistics about patents in LCR vs. no LCR 						
 ***********************************************************************
 	* import solar patents with information about IPC class of patent
 use "solar_components_updated_HS", clear
@@ -260,7 +386,7 @@ gr export byfirm_solarpatents_ipcgroup.png, replace
 */
 
 ***********************************************************************
-* 	PART 8: merge with firm characteristics + avg, min, max patent level complexity for each firm		  						
+* 	PART 13: merge with firm characteristics + avg, min, max patent level complexity for each firm		  						
 ***********************************************************************
 	* create average patent complexity value
 
@@ -288,7 +414,7 @@ save "lcr_raw", replace
 
 
 ***********************************************************************
-* 	PART 9: 			* merge lob complexity		  						
+* 	PART 14: 			* merge lob complexity		  						
 ***********************************************************************
 cd "$lcr_raw"
 import excel "cross_section_sumpatents_complexity", firstrow clear
@@ -318,7 +444,7 @@ lab var HS6_HS07 "hs code line of business"
 
 
 ***********************************************************************
-* 	PART 10: replace the existing lcr_raw.dta file		  						
+* 	PART 15: replace the existing lcr_raw.dta file		  						
 ***********************************************************************
 set graphics off
 save "lcr_raw", replace
