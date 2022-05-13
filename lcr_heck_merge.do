@@ -87,6 +87,13 @@ lab var indian "indian firm = 1"
 ***********************************************************************
 * 	PART 3: manually replace mv for firms not included in Probst et al. 2020
 ***********************************************************************
+	* participated/in JNNSM phase 1 batch 1 or batch 2
+br company_name bidder part_jnnsm_1 missing_probst if part_jnnsm_1 == .
+	* manually search and all firms with missing have not participated in the first phase
+replace part_jnnsm_1 = 0 if part_jnnsm_1 == .
+
+
+
 	* energy focus
 format lob %-40.0g
 format indian city %-15.0g
