@@ -78,7 +78,6 @@ save firmpatentsolar, replace
 	* import solarpatents data incl. ipc groups from Shubbak 2020
 preserve
 import delimited "${lcr_raw}/solar_patents_addinfo.csv", clear varn(1)
-rename solarpatentx solarpatent
 gen len=length(abstract)
 recast str2045 abstract, force 
 save solar_patents_addinfo, replace

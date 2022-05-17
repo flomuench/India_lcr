@@ -6,13 +6,12 @@
 *	density along the propensity score distribution  
 *																	  
 *	OUTLINE:														  
-
 *
-*																	  															      
-*	Author:  	Florian Muench & Kais Jomaa							  
-*	ID varialcre: 	id (example: f101)			  					  
-*	Requires: lcr_inter.dta 	  								  
-*	Creates:  lcr_inter.dta			                          
+*																	  								      
+*	Author:  	Florian Muench & Fabian Scheifele						  
+*	ID varialcre: 	company_name			  					  
+*	Requires: lcr_final.dta 	  								  
+*	Creates:  lcr_final.dta			                          
 *																	  
 ***********************************************************************
 * 	PART 1:  set the scene  			
@@ -30,33 +29,34 @@ cd "$lcr_psm"
 			* trimming
 			* threshold amount q (density at x > q)
 			
-			
-	* option 1: min-max
-		* visualisation 
+	* visualisation 
 			* attention: definition of bin size
 set graphics on
-forvalues x = 5(5)20 {
-		* depending on sample change pscore
-	psgraph , treated(lcr) pscore(pscore_all) bin(`x') ///
-		title(Number of bins = `x') ///
-		xlabel(0(.05)1) ///
-		name(common_support`x', replace)
-}
-
-gr combine common_support5 common_support10 common_support15 common_support20, ///
+foreach sample in all won nooutliers {
+	forvalues binwidth = 5(5)20 {
+			* depending on sample change pscore
+		psgraph , treated(lcr) pscore(pscore_`sample') bin(`binwidth') ///
+			title(Number of bins = `binwidth') ///
+			subtitle(sample = `sample') ///
+			xlabel(0(.05)1) ///
+			name(common_support_`sample'`binwidth', replace)
+		}
+	gr combine common_support_`sample'5 common_support_`sample'10 common_support_`sample'15 common_support_`sample'20, ///
 		title("{bf:Is there common support for LCR & non-LCR firms?}") ///
-		subtitle(Min-max criterion: common support between [0.15-0.8]) ///
-		name(common_support, replace)
+		name(common_support_`sample', replace)
 cd "$final_figures"
-gr export common_support.png, replace
+gr export common_support_`sample'.png, replace
+}
 
 
 	* range of propensity score in both groups
-bysort lcr: sum pscore_all 
+foreach sample in all won nooutliers {
+bysort lcr: sum pscore_`sample'
 /* LCR = 1 min: 0 ; max.: .95 
    LCR = 0 min: 0 ; max.: .72
 */
-	
+}
+
 	* density distribution of propensity score in both groups
 kdensity pscore_all if lcr == 1 & patent_outliers == 0, addplot(kdensity pscore_all if lcr == 0 & patent_outliers == 0)	///
 	legend(ring(0) pos(2) label(1 "participated LCR") label(2 "no LCR")) ///
@@ -66,15 +66,14 @@ kdensity pscore_all if lcr == 1 & patent_outliers == 0, addplot(kdensity pscore_
 gr export common_support_density.png, replace
 
 	
-***********************************************************************
-* 	PART 2:  generate dummy for observations within common support		
-***********************************************************************
-gen common_support = (pscore_all >= 0.15 & pscore_all <= 0.8)
-label var common_support "=1 for firms within CS"
+	* eye-balling the firms & their pscores
+local matching_var5 ihs_pre_not_solar_patent soe_india indian manufacturer part_jnnsm_1
+	* sample in all won nooutliers 
+	sort pscore_all
+	br company_name pscore_all lcr pre_solar_patent post_solar_patent `matching_var5'
 
-
 ***********************************************************************
-* 	PART 3: who are the firms that fall outside the common support?	
+* 	PART 2: who are the firms that fall outside the common support?	
 ***********************************************************************
 br company_name pscore_all solar_patentor pre_solar_patent post_solar_patent total_auctions total_auctions_lcr if pscore_all > 0.72 & lcr == 1
 	/* 
