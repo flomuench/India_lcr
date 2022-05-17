@@ -89,6 +89,7 @@ lab var manufacturer_solar "solar manufacturing"
 lab var sales "total sales in INR"
 lab var subsidiary "subsidiary of mother company"
 lab var sector "sector"
+lab var part_jnnsm_1 "part 1 NSM"
 
 lab var vgf_total " total VGF in INR"
 ***********************************************************************
