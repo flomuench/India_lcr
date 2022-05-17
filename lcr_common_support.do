@@ -19,7 +19,7 @@
 use "${lcr_final}/lcr_final", clear
 
 	* set the directory to propensity matching folder
-cd "$lcr_psm"
+cd "$final_figures"
 
 ***********************************************************************
 * 	PART 2:  Evaluation of common support			
@@ -44,7 +44,6 @@ foreach sample in all won nooutliers {
 	gr combine common_support_`sample'5 common_support_`sample'10 common_support_`sample'15 common_support_`sample'20, ///
 		title("{bf:Is there common support for LCR & non-LCR firms?}") ///
 		name(common_support_`sample', replace)
-cd "$final_figures"
 gr export common_support_`sample'.png, replace
 }
 
@@ -56,6 +55,9 @@ bysort lcr: sum pscore_`sample'
    LCR = 0 min: 0 ; max.: .72
 */
 }
+
+	* change directory to bundled psm 
+cd "$lcr_psm"
 
 	* density distribution of propensity score in both groups
 kdensity pscore_all if lcr == 1 & patent_outliers == 0, addplot(kdensity pscore_all if lcr == 0 & patent_outliers == 0)	///
@@ -75,30 +77,20 @@ local matching_var5 ihs_pre_not_solar_patent soe_india indian manufacturer part_
 ***********************************************************************
 * 	PART 2: who are the firms that fall outside the common support?	
 ***********************************************************************
-br company_name pscore_all solar_patentor pre_solar_patent post_solar_patent total_auctions total_auctions_lcr if pscore_all > 0.72 & lcr == 1
-	/* 
-tata --> .86
-azure --> .95
-today
-bharat	
-	*/
-	
-gr hbar pscore_all if pscore_all > .6 & pscore_all != ., over(company_name) ///
-		by(lcr, title("{bf:Firms with propensity score > 0.6}") subtitle("Potential matches by LCR")) ///
-		blabel(total, format(%9.2fc)) ///
-		ytitle(pscore_all) ///
-		name(pscore_all_lcr, replace)
-gr export pscore_all_lcr.png, replace
+*br company_name pscore_all solar_patentor pre_solar_patent post_solar_patent total_auctions total_auctions_lcr if pscore_all > 0.72 & lcr == 1
 
-br company_name pscore_all solar_patentor pre_solar_patent post_solar_patent total_auctions total_auctions_lcr if common_support == 0 & lcr == 1
-/*
-company_name
-azure ---> highly important
-bharat --> dropped before because outlier
-bosch --> dropped before because outlier
-harsha --> not so relevant
-today --> not relevant
-*/
+
+foreach sample in `sample' all won nooutliers {
+gr hbar pscore_`sample' if pscore_`sample' > .6 & pscore_`sample' != ., over(company_name) ///
+		by(lcr, title("{bf:Firms with propensity score > 0.6}") subtitle("Potential matches by LCR") note(sample = `sample')) ///
+		blabel(total, format(%9.2fc)) ///
+		ytitle(pscore_`sample') ///
+		name(pscore_`sample'_lcr, replace)
+gr export pscore_`sample'_lcr.png, replace
+}
+
+*br company_name pscore_all solar_patentor pre_solar_patent post_solar_patent total_auctions total_auctions_lcr if pscore_all > 0.6 & lcr == 0
+
 
 
 ***********************************************************************

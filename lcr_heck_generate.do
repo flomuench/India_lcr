@@ -234,10 +234,14 @@ format expected_annual_revenue %-20.2fc
 lab var expected_annual_revenue "expected total lifetime revenue for plant"
  
 ***********************************************************************
-* 	PART 13: expected revenue
+* 	PART 14: inverse hyperbolic sine transformation of sales
 ***********************************************************************
 ihstrans sales
  
+***********************************************************************
+* 	PART 15: total MW auctioned in all observed auctions
+***********************************************************************
+egen total_mw_all = sum(quantity_allocated_mw)
  
 ***********************************************************************
 * 	Save the changes made to the data		  			

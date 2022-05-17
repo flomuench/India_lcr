@@ -118,7 +118,7 @@ _eststo outliers_caliper05, r: reg dif_solar_patents i.lcr [iweight=_weight] if 
 
 	* export results in a table
 cd "$final_figures"	
-esttab *caliper* using did.tex, replace ///
+esttab *caliper* using did.csv, replace ///
 	title("Difference-in-difference combined with matching"\label{main_regressions}) ///
 	mgroups("All firms" "Winner firms" "All w/o outliers", ///
 		pattern(1 0 1 0 1 0)) ///
@@ -241,6 +241,18 @@ esttab matrix(matching_all, fmt(%-9.2fc)) using matching_all.csv, replace ///
 	mtitles("NN" "Kernel") ///
 	width(0.8\hsize) ///
 	addnotes("All estimtes are based on a Logit model with robust standard errors in parentheses.")
+	
+	
+***********************************************************************
+* 	PART 6: simple DiD
+***********************************************************************
+
+
+***********************************************************************
+* 	PART 7: simple DiD
+***********************************************************************
+	
+reg dif_solar_patents i.lcr, vce(hc3)
 
 	
 ***********************************************************************
