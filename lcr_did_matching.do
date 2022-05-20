@@ -50,14 +50,14 @@ esttab did_no_controls did_controls using did.csv, replace ///
 	width(0.8\hsize) ///
 	star(* 0.1 ** 0.05 *** 0.01) ///
 	nobaselevels ///
-	addnotes("DiD based on sum of solar patents 2012-2021 minus 1982-2011." "Radius matching with caliper = .25. & common support 0.2-0.95." "Robust standard errors in parentheses.", size(small))
+	addnotes("DiD based on sum of solar patents 2011-2020 minus 2001-2010." "Radius matching with caliper = .1 and .05 & common support 0.2-0.95." "Robust standard errors in parentheses.", size(small))
 
 ***********************************************************************
 * 	PART 4:  Radius matching to define sample of firms * counterfactual = won
 ***********************************************************************
 	* caliper = 0.25
 	* common support = 0.2 - 0.95
-psmatch2 lcr_won if patent_outliers == 0, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore)
+psmatch2 lcr_won if patent_outliers == 0, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore_won)
 
 ***********************************************************************
 * 	PART 5:  DiD estimation
@@ -77,7 +77,7 @@ esttab did_no_controls did_controls using did_won.csv, replace ///
 	width(0.8\hsize) ///
 	star(* 0.1 ** 0.05 *** 0.01) ///
 	nobaselevels ///
-	addnotes("DiD based on sum of solar patents 2012-2021 minus 1982-2011." "Radius matching with caliper = .25. & common support 0.2-0.95." "Robust standard errors in parentheses.", size(small))
+	addnotes("DiD based on sum of solar patents 2011-2020 minus 2001-2010." "Radius matching with caliper = .1 and .05 & common support 0.2-0.95." "Robust standard errors in parentheses.", size(small))
 
 
 ***********************************************************************
