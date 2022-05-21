@@ -60,6 +60,7 @@ iebaltab `bias_table' if patent_outlier == 0 & _weight != ., grpvar(lcr) save(ba
 * 	PART 3:  Radius/caliper matching
 ***********************************************************************
 cd "$final_figures"
+	
 	* sample = all
 local i = 0
 foreach x in 0.05 0.1 {
@@ -103,18 +104,18 @@ psmatch2 lcr if won_total > 0, radius caliper(`x') outcome(post_solar_patent) ps
 	gr export bias_won_radius`i'.png, replace
 
 		* table 1 / balance table post matching
-	iebaltab `bias_table' & _weight != ., grpvar(lcr) save(baltab_post_all_radius`i') replace ///
+	iebaltab `bias_table' if won_total > 0 & _weight != ., grpvar(lcr) save(baltab_post_all_radius`i') replace ///
 			 vce(robust) pttest rowvarlabels balmiss(mean) onerow stdev notecombine ///
 			 format(%12.2fc)
 }		
 	
-	* sample = outliers
+	* sample = no outliers
 local i = 0
 foreach x in 0.05 0.1 {
 	local ++i
 	
 		* caliper matching
-	psmatch2 lcr if patent_outlier == 0, radius caliper(`x') outcome(post_solar_patent) pscore(pscore_outliers)
+	psmatch2 lcr if patent_outlier == 0, radius caliper(`x') outcome(post_solar_patent) pscore(pscore_nooutliers)
 
 		* pre-matching standardised bias
 	pstest `bias_table' if patent_outlier == 0 & _weight != ., both rubin treated(lcr) graph ///
@@ -123,11 +124,11 @@ foreach x in 0.05 0.1 {
 			ylabel(-60(5)60, labs(vsmall)) ///
 			note(Standardised bias should between [-25%-25%]., size(small)) ///
 			yline (-25 25) ///
-			name(bias_outliers_radius`i', replace)
-	gr export bias_outliers_radius`i'.png, replace
+			name(bias_nooutliers_radius`i', replace)
+	gr export bias_nooutliers_radius`i'.png, replace
 
 		* table 1 / balance table post matching
-	iebaltab `bias_table' if patent_outlier == 0 & _weight != ., grpvar(lcr) save(baltab_lcr_post_radius`i') replace ///
+	iebaltab `bias_table' if patent_outlier == 0 & _weight != ., grpvar(lcr) save(baltab_post_nooutliers_radius`i') replace ///
 			 vce(robust) pttest rowvarlabels balmiss(mean) onerow stdev notecombine ///
 			 format(%12.2fc)
 }

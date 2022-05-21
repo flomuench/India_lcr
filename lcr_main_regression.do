@@ -233,7 +233,7 @@ _eststo mahalanobis01, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(hc3
 * 	PART 5:  Put it all into one table
 ***********************************************************************
 
-
+/*
 mat matching_all = nn, kernel
 
 esttab matrix(matching_all, fmt(%-9.2fc)) using matching_all.csv, replace ///
@@ -241,7 +241,7 @@ esttab matrix(matching_all, fmt(%-9.2fc)) using matching_all.csv, replace ///
 	mtitles("NN" "Kernel") ///
 	width(0.8\hsize) ///
 	addnotes("All estimtes are based on a Logit model with robust standard errors in parentheses.")
-	
+*/
 	
 ***********************************************************************
 * 	PART 6: simple DiD
