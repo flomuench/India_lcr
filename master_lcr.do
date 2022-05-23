@@ -203,7 +203,7 @@ if (0) do "${lcr_github}/lcr_teffects_psmatch.do"
 /* --------------------------------------------------------------------
 	PART 6.1: Check which type of solar patents were filed
 ----------------------------------------------------------------------*/
-if (1) do "${lcr_github}/post_power.do"
+if (1) do "${lcr_github}/lcr_post_power.do"
 /* --------------------------------------------------------------------
 	PART 6.2: Check which type of solar patents were filed
 ----------------------------------------------------------------------*/

@@ -79,6 +79,7 @@ label var city "primary city"
 label var state "primary state"
 label var international "foreign vs. indian company"
 label var lob "primary line of business"
+lab var indian "indian company"
 
 lab var energy_focus "main business is energy"
 lab var age "age"
@@ -92,6 +93,8 @@ lab var sector "sector"
 lab var part_jnnsm_1 "part 1 NSM"
 
 lab var vgf_total " total VGF in INR"
+
+lab var ihs_sales "sales, ihs transformed"
 ***********************************************************************
 * 	PART 7: 	Label varialcres values	  			
 ***********************************************************************

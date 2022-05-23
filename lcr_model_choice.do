@@ -30,10 +30,16 @@ use "${lcr_final}/lcr_final", clear
 ***********************************************************************
 * 	PART 1: visualise the distribution of the DV solar patents  			
 ***********************************************************************
-	* possible or better to use count model?
-
+	* OLS possible or better to use count model?
+		* Visualise distribution
 kdensity solarpatents
+kdensity solarpatents if lcr == 1, addplot(kdensity solarpatents if lcr == 0)
+kdensity post_solar_patent
 
+		* Check the (unconditional) variance
+sum post_solar_patent
+scalar patent_variance = r(sd)^2
+	
 probit solarpatents
 margins, predict(xb)
 

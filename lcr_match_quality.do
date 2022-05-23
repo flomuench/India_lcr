@@ -33,7 +33,7 @@ local bias_table ihs_pre_not_solar_patent soe_india indian part_jnnsm_1 manufact
 ***********************************************************************
 * 	PART 2:  Nearest neighbor matching with replacement
 **********************************************************************
-
+/*
 		* nn = 1-3
 forvalues x = 1(1)3 {
 	psmatch2 lcr, outcome(post_solar_patent) pscore(pscore_all) neighbor(`x')
@@ -54,7 +54,7 @@ iebaltab `bias_table' if patent_outlier == 0 & _weight != ., grpvar(lcr) save(ba
 			 format(%12.2fc)
 
 }
-
+*/
 
 ***********************************************************************
 * 	PART 3:  Radius/caliper matching
@@ -111,7 +111,7 @@ psmatch2 lcr if won_total > 0, radius caliper(`x') outcome(post_solar_patent) ps
 	
 	* sample = no outliers
 local i = 0
-foreach x in 0.05 0.1 {
+foreach x in 0.05 /* 0.1 for some reason does not converge */ {
 	local ++i
 	
 		* caliper matching
@@ -135,7 +135,8 @@ foreach x in 0.05 0.1 {
 
 ***********************************************************************
 * 	PART 4:  Kernel matching
-**********************************************************************
+***********************************************************************
+/*
 cd "$lcr_psm"
 *
 local i = 0
@@ -158,7 +159,7 @@ foreach x in 0.1 0.25 0.5 {
 			 vce(robust) pttest rowvarlabels balmiss(mean) onerow stdev notecombine ///
 			 format(%12.2fc)
 }
-
+*/
 
 ***********************************************************************
 * 	Save the changes made to the data		  			

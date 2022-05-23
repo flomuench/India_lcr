@@ -34,6 +34,12 @@ gen dif_solar_patents = post_solar_patent-pre_solar_patent
 gen dif_modcell_patents = post_modcell_patent - pre_modcell_patent
 *br company_name dif_solar_patents post_solar_patent pre_solar_patent
 
+
+kdensity dif_solar_patents
+sum dif_solar_patents
+scalar patent_dif_variance = r(sd)^2
+display patent_dif_variance /* variance about 10x mean */
+
 ***********************************************************************
 * 	PART 3: encode factor variables			  										  
 ***********************************************************************
@@ -85,6 +91,7 @@ lab var patentor "filed patent before 2012"
 
 	* create ihs of total pre not solar patents
 ihstrans pre_not_solar_patent
+lab var ihs_pre_not_solar_patent "not solar patents, ihs transformed"
 
 
 ***********************************************************************
@@ -140,6 +147,7 @@ replace patent_outliers = 1 if company_name == "bosch" | company_name == "sunedi
 ***********************************************************************
 gen electronics = 0
 replace electronics = 1 if sector == 6
+lab var electronics "electronics sector"
 
 
 ***********************************************************************
