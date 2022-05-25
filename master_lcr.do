@@ -212,3 +212,12 @@ if (1) do "${lcr_github}/patent_analysis.do"
 	PART 6.3: demand shock from LCRs in MW & financial value of modules
 ----------------------------------------------------------------------*/
 if (1) do "${lcr_github}/lcr_demand_shock.do"
+
+
+***********************************************************************
+* 	PART 7: 	Robustness check: Firm-year level dataset/Event-study design
+***********************************************************************
+if (0) do "${lcr_github}/merge_firmyeardata.do"
+
+if (0) do "${lcr_github}/event_study.do"
+
