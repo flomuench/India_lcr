@@ -178,6 +178,13 @@ tab solarpatent if year_publication == . /* no solar patent are concerned */
 	* collapse data to company-year panel
 collapse (sum) solarpatent not_solar_patent onepatent modcell_patent, by(company_name year_application)
 
+*NEXT STEPS: 
+*SAVE firm-year dataset and create new do file structure Part 7 for firm-year analysis
+cd "$lcr_final"
+save firmyear_patents, replace
+
+	* change back to directory to output folder for descriptive stats
+cd "$lcr_descriptives"
 ***********************************************************************
 * 	PART 8: create pre-post period dummy					
 ***********************************************************************
