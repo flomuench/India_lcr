@@ -25,16 +25,20 @@ cd "$lcr_final"
 
 use "${lcr_final}/firmyear_patents", clear	
 
+
 ***********************************************************************
-* 	PART 3: merging company data	  						
+* 	PART 2: merging company data	  						
 ***********************************************************************
 merge m:1 company_name using lcr_final, keepusing (company_name)
+drop if _merge == 1 /* drop two firms - dehli & chloride - that were not identified in bidding data; we double-checked with hcr_import that these companies never figured in auction data */
 drop _merge
 *replace application_year with 2004 for companies with zero patents
 *to have at least one year so that tsfill works
 replace year_application = 2004 if year_application==.
+
+
 ***********************************************************************
-* 	PART 2: expand to have balanced panel		  						
+* 	PART 3: expand to have balanced panel		  						
 ***********************************************************************
 *Cut off all years before 2004, as there are only 2 patents before 2005 (1982 and 2000)
 drop if year_application<2004
@@ -55,7 +59,6 @@ drop company_name
 decode company_name2, gen (company_name)
 
 
-
 ***********************************************************************
 * 	PART 4: creating event study dummies	  						
 ***********************************************************************
@@ -64,12 +67,19 @@ gen t_`t' = 0
 replace t_`t' = 1 if year_application == `t'
 }
 
+forvalues t = 2004 (1) 2020 {
+lab var t_`t' "`t'"
+}
+
 
 ***********************************************************************
-* 	PART 4: merge company information again, now to fully expanded dataset				
+* 	PART 6 : merge company information again, now to fully expanded dataset				
 ***********************************************************************
 merge m:1 company_name using lcr_final
 
+*gen event study variable for xtevent
+gen event = 0
+replace event = 1 if year >2010 & lcr ==1
 
 ***********************************************************************
 * 	PART 5: save event study dataset	  						
