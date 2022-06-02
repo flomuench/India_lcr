@@ -35,21 +35,27 @@ xtset company_name2 year_application
 * 	PART 2: event study without controls	  						
 ***********************************************************************
 *simple OLS with interaction term of event study and treatment dummy without controls and fixed effects
-reg solarpatent t_20*##lcr, vce(hc3)
-coefplot, vertical drop(_cons 1.t_2004 1.t_2005 1.t_2006 1.t_2007 1.t_2008 1.t_2009 1.t_2010 1.t_2011 1.t_2012 1.t_2013 1.t_2014 1.t_2015 1.t_2016 1.t_2017 1.t_2018 1.t_2019 1.t_2020 1.lcr) yline(0) plotlabel(2004(1)2020)
+reg solarpatent lcr##i.year_application
+
+levelsof year_application, local(levels)
+foreach l of local levels {
+    local mylist "`mylist' `l'.year_application"
+}
+coefplot, xline (0) drop(_cons lcr `mylist' ) rename(^1.lcr#([0-9]+)year_application$ = \1, regex)
+
 *with firm-fixed effects (treatment alone is omitted now, but interaction terms still there)
-xtreg solarpatent t_20*##lcr, fe
+xtreg solarpatent i.year##lcr, fe
 coefplot, vertical drop(_cons 1.t_2004 1.t_2005 1.t_2006 1.t_2007 1.t_2008 1.t_2009 1.t_2010 1.t_2011 1.t_2012 1.t_2013 1.t_2014 1.t_2015 1.t_2016 1.t_2017 1.t_2018 1.t_2019 1.t_2020 1.lcr) yline(0) plotlabel(2004(1)2020)
 
 *FE poisson model
-xtpoisson solarpatent t_20*##lcr, fe
+xtpoisson solarpatent i.year_application*##lcr, fe
 
 *normal poisson without fixed effects
-poisson solarpatent t_20*##lcr
+poisson solarpatent i.year_application*##lcr
 
 *zero-inflated model (does not converge
 *solarpatent is zero for 1911/1955 firm-year instances (97%) so zero inflated model needed
-*zinb solarpatent t_20*, inflate (t_20*)
+zinb solarpatent i.year_application##lcr, inflate (i.year_application##lcr)
 
 ***********************************************************************
 * 	PART 3: event study conditional on matching 						
