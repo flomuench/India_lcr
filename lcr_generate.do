@@ -80,6 +80,9 @@ lab var solarpatents "pre + post solar patents"
 
 gen solar_patentor = (solarpatents > 0 & solarpatents <.), b(solarpatents)
 
+gen post_solar_patentor = 0
+replace post_solar_patentor =1 if post_solar_patent>0 & post_solar_patent<.
+lab var post_solar_patentor "dummy if patent after LCR policy start"
 ***********************************************************************
 * 	PART 5: create dummy for firm having filed a patent
 ***********************************************************************

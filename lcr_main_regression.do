@@ -116,6 +116,9 @@ psmatch2 lcr if patent_outliers == 0, radius caliper(0.05) outcome(post_solar_pa
 _eststo outliers_caliper05, r: reg dif_solar_patents i.lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
 	rename _weight weight_outliers05
 
+	
+	
+	
 	* export results in a table
 cd "$final_figures"	
 esttab *caliper* using did.csv, replace ///
@@ -158,7 +161,35 @@ psmatch2 lcr if patent_outliers == 0, radius caliper(0.05) outcome(post_modcell_
 _eststo outliers_caliper05_cell, r: reg dif_modcell_patents i.lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
 	rename _weight weight_cell_outliers05
 
-	* export results in a table
+/*	Eststo command says "too many specified?"
+	* outcome 3: Binary post-patent indicator (1 if at least one patent post-2010)
+			* sample = all
+psmatch2 lcr, radius caliper(0.1) outcome(post_solar_patentor) pscore(pscore_all)
+_eststo all_caliper01_bin r: reg post_solar_patentor i.lcr [iweight=_weight], vce(hc3)
+	rename _weight weight_binary_all01
+	
+psmatch2 lcr, radius caliper(0.05) outcome(post_solar_patentor) pscore(pscore_all)
+_eststo all_caliper05_bin, r: reg post_solar_patentor i.lcr [iweight=_weight], vce(hc3)
+	rename _weight weight_binary_all05
+
+			* sample = won
+psmatch2 lcr if won_total > 0, radius caliper(0.1) outcome(post_solar_patentor) pscore(pscore_won)
+_eststo won_caliper01_bin, r: reg post_solar_patentor i.lcr [iweight=_weight] if won_total > 0, vce(hc3)
+	rename _weight weight_binary_won01
+psmatch2 lcr if won_total > 0, radius caliper(0.05) outcome(post_solar_patentor) pscore(pscore_won)
+_eststo won_caliper05_bin, r: reg post_solar_patentor i.lcr [iweight=_weight] if won_total > 0, vce(hc3)
+	rename _weight weight_binary_won05
+	
+			* sample = no outliers (bosch & sunedision dropped - high patents, only once participated)
+psmatch2 lcr if patent_outliers == 0, radius caliper(0.1) outcome(post_solar_patentor) pscore(pscore_nooutliers)
+_eststo outliers_caliper01_bin, r: reg post_solar_patentor i.lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
+	rename _weight weight_binary_outlier01
+psmatch2 lcr if patent_outliers == 0, radius caliper(0.05) outcome(post_solar_patentor) pscore(pscore_nooutliers)
+_eststo outliers_caliper05_bin, r: reg post_solar_patentor i.lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
+	rename _weight weight_cell_outliers05
+	*/
+	
+* export results in a table
 cd "$final_figures"	
 local cell_models all_caliper01_cell all_caliper05_cell won_caliper01_cell won_caliper05_cell outliers_caliper01_cell outliers_caliper05_cell
 esttab `cell_models' using did_modcell.tex, replace ///
@@ -174,7 +205,6 @@ esttab `cell_models' using did_modcell.tex, replace ///
 	nobaselevels ///
 	booktabs ///
 	addnotes("DiD based on solar patents 2011-2020 minus 2001-2010." "Common support imposed in all specifications." "Robust standard errors in parentheses.")
-
 	
 	
 	* counterfactual = won LCR vs. did not win LCR
