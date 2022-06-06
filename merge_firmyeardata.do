@@ -25,11 +25,13 @@ cd "$lcr_final"
 
 use "${lcr_final}/firmyear_patents", clear	
 
+codebook company_name /* 27 firms that patentend */
 
 ***********************************************************************
-* 	PART 2: merging company data	  						
+* 	PART 2: add firms that never patented but participated in auctions  						
 ***********************************************************************
-merge m:1 company_name using lcr_final, keepusing (company_name)
+merge m:1 company_name using lcr_final, keepusing(company_name)
+codebook company_name /* 115 firms */
 drop if _merge == 1 /* drop two firms - dehli & chloride - that were not identified in bidding data; we double-checked with hcr_import that these companies never figured in auction data */
 drop _merge
 *replace application_year with 2004 for companies with zero patents
@@ -56,12 +58,13 @@ foreach var of local patents {
 	
 *drop and rename encoded variable for merging*
 drop company_name
-decode company_name2, gen (company_name)
+decode company_name2, gen(company_name)
 
 
 ***********************************************************************
 * 	PART 4: creating event study dummies	  						
 ***********************************************************************
+/*
 forvalues t = 2004 (1) 2020 {
 gen t_`t' = 0
 replace t_`t' = 1 if year_application == `t'
@@ -71,15 +74,17 @@ forvalues t = 2004 (1) 2020 {
 lab var t_`t' "`t'"
 }
 
-
+*/
 ***********************************************************************
 * 	PART 6 : merge company information again, now to fully expanded dataset				
 ***********************************************************************
 merge m:1 company_name using lcr_final
 
+/*
 *gen event study variable for xtevent
 gen event = 0
 replace event = 1 if year >2010 & lcr ==1
+*/
 
 ***********************************************************************
 * 	PART 5: save event study dataset	  						
