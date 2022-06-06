@@ -31,11 +31,12 @@ use "${lcr_final}/event_study", clear
 ***********************************************************************
 xtset company_name2 year_application
 *xtevent solarpatent, pol(event) w(8)
+
 ***********************************************************************
 * 	PART 2: event study without controls	  						
 ***********************************************************************
 *simple OLS with interaction term of event study and treatment dummy without controls and fixed effects
-reg solarpatent lcr##i.year_application
+reg solarpatent i.lcr##ib2010.year_application, vce(hc3)
 
 levelsof year_application, local(levels)
 foreach l of local levels {
@@ -62,7 +63,7 @@ zinb solarpatent i.year_application##lcr, inflate (i.year_application##lcr)
 ***********************************************************************
 *caliper =0.1
 psmatch2 lcr, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore_all)
-reg solarpatent t_20*##lcr [iweight=_weight], vce(hc3)
+reg solarpatent i.lcr##ib2010.year_application [iweight=_weight], vce(hc3)
 
 *caliper =0.05
 psmatch2 lcr, radius caliper(0.05) outcome(post_solar_patent) pscore(pscore_all)
