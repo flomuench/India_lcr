@@ -43,14 +43,14 @@ reg solarpatent i.lcr##ib2010.year_application, vce(hc3)
 poisson solarpatent i.lcr##ib2010.year_application, vce(robust)
 	
 	* firm fixed effects
-xtreg solarpatent i.lcr##ib2010.year_application, fe vce(robust)
+*xtreg solarpatent i.lcr##ib2010.year_application, fe vce(robust)
 
 	*FE poisson model
-xtpoisson solarpatent i.lcr##ib2010.year_application, fe vce(robust)
+*xtpoisson solarpatent i.lcr##ib2010.year_application, fe vce(robust)
 
 	*zero-inflated model (does not converge
 		*solarpatent is zero for 1911/1955 firm-year instances (97%) so zero inflated model needed
-zinb solarpatent i.lcr##ib2010.year_application, inflate(i.year_application##lcr)
+*zinb solarpatent i.lcr##ib2010.year_application, inflate(i.year_application##lcr)
 
 
 	* visualisation of the treatment effect (LCR-year dummy)
@@ -70,6 +70,8 @@ forvalues year = 2004(1)2020 {
 gen ci_top = coef + se_high * 1.96
 gen ci_bottom =  coef - se_low * 1.96
 
+cd "$final_figures"	
+set graphics on
 		* keep only variables for visualisation
 preserve 
 keep year_application coef ci_* se_*
@@ -87,7 +89,7 @@ keep year_application coef ci_* se_*
 			ytitle("filed patents") ///
 			legend(off) ///
 			name(event_unmatched, replace)
-	*graph export event_unmatched.png, replace
+	graph export event_unmatched.png, replace
 		
 restore
 		
@@ -114,11 +116,11 @@ foreach weight in weight_all01 weight_all05 weight_won01 weight_won05 weight_out
 	_eststo `weight'_reg: reg solarpatent i.lcr##ib2010.year_application [iweight=`weight'], vce(hc3)
 	
 			* Poisson
-	*_eststo `weight'_poi: poisson solarpatent i.lcr##ib2010.year_application [iweight=`weight'], vce(robust)
+	*_eststo `weight'_poi: poisson solarpatent i.lcr##ib2010.year_application [iweight=`weight'], vce(robust) technique(bfgs)
 }
 
 	* export results in a table
-cd "$final_figures"	
+
 foreach model in reg /*poi*/ {
 	esttab *_`model' using event_did_psm_`model'.tex, replace ///
 		keep(1.lcr#*.year_application) ///
@@ -136,5 +138,45 @@ foreach model in reg /*poi*/ {
 		addnotes("DiD estimates based on X model." "DiD based on solar patents 2011-2020 minus 2001-2010." "Common support imposed in all specifications through caliper." "Robust standard errors in parentheses.")
 }
 
-	* visualise the results
+	* visualise the results of matched regression (here with caliper =0.1)
+	
+reg solarpatent i.lcr##ib2010.year_application [iweight=weight_all01], vce(hc3)	
+
+		* create confidence intervals
+gen coef_m = . 
+gen se_low_m = . 
+gen se_high_m = .
+
+		* replace variables with coeff + SE for each year
+forvalues year = 2004(1)2020 {
+	replace coef_m = _b[1.lcr#`year'.year_application] if year_application == `year'
+	replace se_low_m = _se[1.lcr#`year'.year_application] if year_application == `year'
+	replace se_high_m = _se[1.lcr#`year'.year_application] if year_application == `year'
+}
+
+gen ci2__up_m = coef_m + se_high_m * 1.96
+gen ci2_low_m =  coef_m - se_low_m * 1.96
+
+
+		* keep only variables for visualisation
+preserve 
+keep year_application coef_m ci2_* se_low_m se_high_m
+
+		* visualize in scatter plot with overlaid ci
+	twoway (sc coef_m year_application) ///
+		(rcap ci2__up_m ci2_low_m year_application, vertical),	///
+			xtitle("year") ///
+			xline(2010, lpattern(dash)) ///
+			xlabel(2004(1)2020, labsize(vsmall)) ///
+			yline(0, lcolor(black)) ///
+			caption("95% Confidence Intervals Shown", size(vsmall)) ///
+			title("{bf: Event study difference-in-difference}") ///
+			subtitle("{it:Matched (OLS Model)}") ///
+			ytitle("filed patents") ///
+			legend(off) ///
+			name(event_matched, replace)
+	graph export event_matched.png, replace
+		
+restore
+		
 

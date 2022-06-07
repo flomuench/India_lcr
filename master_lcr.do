@@ -203,7 +203,7 @@ if (0) do "${lcr_github}/lcr_teffects_psmatch.do"
 /* --------------------------------------------------------------------
 	PART 6.1: Check which type of solar patents were filed
 ----------------------------------------------------------------------*/
-if (1) do "${lcr_github}/lcr_post_power.do"
+if (0) do "${lcr_github}/lcr_post_power.do"
 /* --------------------------------------------------------------------
 	PART 6.2: Check which type of solar patents were filed
 ----------------------------------------------------------------------*/
@@ -217,7 +217,7 @@ if (1) do "${lcr_github}/lcr_demand_shock.do"
 ***********************************************************************
 * 	PART 7: 	Robustness check: Firm-year level dataset/Event-study design
 ***********************************************************************
-if (0) do "${lcr_github}/merge_firmyeardata.do"
+if (1) do "${lcr_github}/merge_firmyeardata.do"
 
 if (0) do "${lcr_github}/event_study.do"
 
