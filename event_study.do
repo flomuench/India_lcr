@@ -29,6 +29,10 @@ xtset company_name2 year_application
 
 rename year_application year
 
+cd "$final_figures"	
+
+set graphics on
+
 ***********************************************************************
 * 	PART 2: estimation with xtevent package (DOES NOT WORK)		  						
 ***********************************************************************
@@ -37,28 +41,6 @@ rename year_application year
 ***********************************************************************
 * 	PART 2: unmatched event study	  						
 ***********************************************************************
-
-*simple OLS with interaction term of event study and treatment dummy without controls and fixed effects
-	* OLS
-reg solarpatent i.lcr##ib2010.year_application, vce(hc3)
-
-	*normal poisson without fixed effects
-poisson solarpatent i.lcr##ib2010.year_application, vce(robust)
-	
-	* firm fixed effects
-*xtreg solarpatent i.lcr##ib2010.year_application, fe vce(robust)
-
-	*FE poisson model
-*xtpoisson solarpatent i.lcr##ib2010.year_application, fe vce(robust)
-
-	*zero-inflated model (does not converge
-		*solarpatent is zero for 1911/1955 firm-year instances (97%) so zero inflated model needed
-*zinb solarpatent i.lcr##ib2010.year_application, inflate(i.year_application##lcr)
-
-cd "$final_figures"	
-
-set graphics on
-
 foreach model in reg poisson {
 		* regression estimate: OLS & Poisson
 	`model' solarpatent i.lcr##ib2010.year, vce(robust)
@@ -151,8 +133,6 @@ forvalues year = 2004(1)2020 {
 gen ci_top_all01 = coef_all01 + se_high_all01 * 1.96
 gen ci_bottom_all01 =  coef_all01 - se_low_all01 * 1.96
 
-cd "$final_figures"	
-set graphics on
 		* keep only variables for visualisation
 preserve 
 keep year coef_* ci_* se_*
@@ -171,7 +151,7 @@ keep year coef_* ci_* se_*
 			legend(off) ///
 			name(event_unmatched_all01, replace)
 	graph export event_unmatched_all01.png, replace
-
+		
 restore
 	
 	
