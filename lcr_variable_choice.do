@@ -101,6 +101,19 @@ esttab `regressions' using variable_choice2_all.csv, replace ///
 	nobaselevels ///
 	addnotes("All estimtes are based on a Logit model with robust standard errors in parentheses.")
 	
+*creating tex file
+local regressions indian /*india_state*/ india_capital /*patentor*/ otherprepatents solarprepatents size1 size2 lob electronics soe age energy manuf subsidiary phase all
+esttab `regressions' using variable_choice2_all.tex, replace ///
+	title("Selection of variables used for PSM") ///
+	mtitles("Indian" /*"HQ Indian state"*/ "HQ in Delhi" /*"Pre Patentor"*/ "Pre-patents" "Pre solar patents""Sales" "Employees" "Sector" "Electronics" "SOE" "Age" "Energy focus" "Manufacturer" "Subsidiary" "Phase 1" "All") ///
+	label ///
+	b(2) ///
+	se(2) ///
+	width(0.8\hsize) ///
+	star(* 0.1 ** 0.05 *** 0.01) ///
+	nobaselevels ///
+	addnotes("All estimtes are based on a Logit model with robust standard errors in parentheses.")	
+	
 ***********************************************************************
 * 	PART 2: variable selection: iteratively test-up	- excluding patent_outlier Bharat, Sunedison	
 ***********************************************************************

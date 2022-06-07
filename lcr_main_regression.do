@@ -99,6 +99,10 @@ _eststo all_caliper01, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(hc3
 psmatch2 lcr, radius caliper(0.05) outcome(post_solar_patent) pscore(pscore_all)
 _eststo all_caliper05, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(hc3)
 	rename _weight weight_all05
+	
+	psmatch2 lcr, radius caliper(0.2) outcome(post_solar_patent) pscore(pscore_all)
+_eststo all_caliper02, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(hc3)
+	rename _weight weight_all02
 
 			* sample = won
 psmatch2 lcr if won_total > 0, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore_won)
