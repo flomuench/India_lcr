@@ -191,6 +191,52 @@ gr bar (sum) one quantity_total, over(auction_year) over(lcr) ///
 	name(auctions_evolution_lcr, replace)
 gr export auctions_evolution_lcr.png, replace
 
+	* auctions + MW allocated during treatment period by LCR
+preserve
+cd "$final_figures"
+collapse one quantity_total , by(auction_year lcr)
+reshape wide one quantity_total, i(auction_year) j(lcr)
+rename auction_year year
+lab var year "auction year"
+rename one0 no_lcr_auction
+lab var no_lcr_auction "number of no-LCR auctions"
+rename one1 lcr_auction
+lab var lcr_auction "number of LCR auctions"
+rename quantity_total0 mw_no_lcr
+lab var gw_no_lcr "GW auctioned no-LCR auctions"
+rename quantity_total1 mw_lcr
+lab var gw_lcr "GW auctioned LCR auctions"
+
+foreach var in no_lcr_auction lcr_auction gw_no_lcr gw_lcr {
+	replace `var' = 0 if `var' == .
+	egen sum_`var' = sum(`var') if year < 2018
+}
+
+gr bar (asis) no_lcr_auction lcr_auction if year < 2018, over(year) ///
+		blabel(total, format(%9.0g) size(vsmall)) ///
+		subtitle("{bf:number of auctions}") ///
+		legend(label(1 "no-LCR") label(2 "LCR")) ///
+	name(tperiod_auctions, replace)
+	
+gr bar (asis) gw_no_lcr gw_lcr if year < 2018, over(year) ///
+		blabel(total, format(%9.0g) size(vsmall)) ///
+		legend(off) ///
+		subtitle("{bf:GW auctioned}") ///
+	name(tperiod_gw, replace)
+	
+grc1leg tperiod_auctions tperiod_gw, ///
+	title("Treatment period 2013-2017: LCR & no-LCR auctions") ///
+	legendfrom(tperiod_auctions) ///
+	rows(1) ycommon xcommon ///
+	note("Note: In 11 LCR auctions 547 MW were auctioned, while 5.05 GW were auctioned in 17 no-LCR auctions.") ///
+	name(treatmentperiod, replace)
+gr export treatmentperiod.png, replace
+
+
+
+restore
+
+cd "$lcr_descriptives"
 gr bar (sum) one quantity_total n_competitors final_bid_after_era, over(auction_year)
 
 gr bar (sum) one quantity_total n_competitors final_bid_after_era final_vgf_after_era, over(auction_year)

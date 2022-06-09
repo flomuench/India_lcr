@@ -47,6 +47,8 @@ ssc install table1
 ssc install estout
 ssc install ihstrans, replace
 net install http://www.stata.com/users/kcrow/tab2xl
+net describe grc1leg, from(http://www.stata.com/users/vwiggins)
+net install grc1leg.pkg
 */
 
 
