@@ -39,6 +39,16 @@ iebaltab `firm_characteristics', grpvar(lcr) savetex(baltab_firmlevel) replace /
 graph pie, over (sector) plabel (_all sum) title("Participating firms by main sectors") ///
 note("Source: Authors' own aggregation based on Mergent Intellect data") 
 gr export firms_pie_sectors.png, replace
+
+
+*Table 1 descriptive statistics
+
+local table1 post_solar_patent pre_solar_patent lcr indian patentor pre_not_solar_patent   post_not_solar_patent soe age energy_focus manufacturer manufacturer_solar subsidiary total_auctions won_total part_jnnsm_1
+estpost tabstat `table1', listwise ///
+        statistics(mean sd min max) columns(statistics)
+esttab . using table1.tex, cells("mean(fmt(a3)) sd(fmt(a3)) min(fmt(a3)) max(fmt(a3))") replace /// 
+	title("Descriptive Statistics"\label{table1}) ///
+	label
 	
 	* define local for pre-post comparisons
 cd "$lcr_descriptives"
