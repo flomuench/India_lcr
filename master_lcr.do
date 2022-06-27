@@ -94,7 +94,32 @@ set seed 8413195
 set sortseed 8413195
 		
 ***********************************************************************
-* 	PART 3: 	Run do-files for bid-level cleaning + analysis
+* 	PART 3: 	Run do-files for employees + sales data 
+***********************************************************************
+/* --------------------------------------------------------------------
+	PART 3.1: Import & raw data
+----------------------------------------------------------------------*/		
+if (1) do "${lcr_github}/lcr_sales_import.do"	
+/* --------------------------------------------------------------------
+	PART 3.2: Clean raw data 
+----------------------------------------------------------------------*/		
+if (1) do "${lcr_github}/lcr_sales_clean.do"	
+/* --------------------------------------------------------------------
+	PART 3.3: Correct, generate, transform intermediate data
+----------------------------------------------------------------------*/		
+if (1) do "${lcr_github}/lcr_sales_transform.do"	
+/* --------------------------------------------------------------------
+	PART 3.4: Visualise employees + sales data 
+----------------------------------------------------------------------*/		
+if (1) do "${lcr_github}/lcr_sales_visualise.do"	
+/* --------------------------------------------------------------------
+	PART 3.4: Collapse on firm level for pre-treatment control 
+----------------------------------------------------------------------*/		
+if (1) do "${lcr_github}/lcr_sales_collapse.do"
+	
+		
+***********************************************************************
+* 	PART 4: 	Run do-files for bid-level cleaning + analysis
 ***********************************************************************
 /* --------------------------------------------------------------------
 	PART 3.1: Import & raw data
@@ -142,15 +167,19 @@ if (1) do "${lcr_github}/lcr_import.do"
 ----------------------------------------------------------------------*/		
 if (1) do "${lcr_github}/lcr_import_merge_patents.do"
 /* --------------------------------------------------------------------
-	PART 4.2: Clean raw data & save as intermediate data
+	PART 4.2: Import & merge sales and employees data
+----------------------------------------------------------------------*/		
+if (1) do "${lcr_github}/lcr_import_merge_sales.do"
+/* --------------------------------------------------------------------
+	PART 4.3: Clean raw data & save as intermediate data
 ----------------------------------------------------------------------*/	
 if (1) do "${lcr_github}/lcr_clean.do"
 /* --------------------------------------------------------------------
-	PART 4.3: Correct & save intermediate data
+	PART 4.4: Correct & save intermediate data
 ----------------------------------------------------------------------*/	
 if (1) do "${lcr_github}/lcr_correct.do"
 /* --------------------------------------------------------------------
-	PART 4.4: Generate variables for analysis or implementation
+	PART 4.5: Generate variables for analysis or implementation
 ----------------------------------------------------------------------*/	
 if (1) do "${lcr_github}/lcr_generate.do"
 
