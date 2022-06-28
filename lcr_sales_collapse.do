@@ -31,15 +31,25 @@ sort company_name year
 
 	* sales
 preserve
-collapse (firstnm) year ihs_total_revenue total_revenue, by(company_name)
+		* take the average revenue for firms with observed sales before policy start
+egen pre_revenue = mean(total_revenue) if year < 2013, by(company_name)
+		* take the first non-missing year for firms with observed sales after policy started
+collapse (firstnm) year pre_revenue ihs_total_revenue total_revenue, by(company_name)
 rename year source_year_revenu
+replace total_revenue = pre_revenue if pre_revenue != .
+drop pre_revenue
+drop ihs_total_revenue
 
 save "firm_sales", replace
 restore
 
 	* employees
 preserve
+egen pre_employees = mean(total_employees) if year < 2013, by(company_name)
 collapse (firstnm) year log_total_employees total_employees, by(company_name)
+replace total_employees = pre_employees if pre_employees != .
+drop pre_employees
+drop log_total_employees
 rename year source_year_employees
 
 save "firm_employees", replace

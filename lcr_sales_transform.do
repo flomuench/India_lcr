@@ -25,6 +25,8 @@ use "${lcr_intermediate}/lcr_sales_inter", clear
 ihstrans total_revenue
 kdensity total_revenue
 kdensity ihs_total_revenue
+kdensity ihs_total_revenue if year == 2019
+
 
 		* employees
 gen log_total_employees = log(total_employees)

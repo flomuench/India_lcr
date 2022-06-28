@@ -20,6 +20,16 @@ use "${lcr_final}/lcr_sales_final", clear
 
 
 ***********************************************************************
+* 	PART 1: year of incorporations
+***********************************************************************
+preserve 
+collapse (firstnm) founded, by(company_name)
+histogram founded if founded >= 2000, frequency addl ///
+	xlabel(2000(1)2020, labs(vsmall)) width(1)
+restore
+	/* only 24 firms were founded after lcr or 31 if one includes 2013 */
+
+***********************************************************************
 * 	PART 1: investigate missing values for sales
 ***********************************************************************
 	*
@@ -30,6 +40,24 @@ gen one = 1
 graph bar (sum) one, over(year, label(labs(small))) ///
 	blabel(total)
 	
+
+	* generate dummy for firms with founding year >= 2013
+gen founded_after_lcr = (founded >= 2013 & founded != .)
+
+
+	* create 
+egen minyear = min(year), by(company_name)
+		* show firms created before 2013 but with revenue data only after 2013
+br company_name year minyear founded total_revenue total_employees if minyear > 2013 & founded_after_lcr == 0
+codebook company_name if minyear > 2013 & founded_after_lcr == 0
+export excel company_name year minyear founded total_revenue total_employees using created_before_2013_but_no_revenue if minyear > 2013 & founded_after_lcr == 0, replace firstrow(var)
+			/* shows 27 firms 
+manual control: 
+ACME --> created solar holdings company in 2015 while ACME already existed since 2003
+ADANI --> created solar energy arm in ? although already existed since 1988
+Amplus --> 
+				
+				*/
 	
 	* what is the earliest available year of employee data per company?
 preserve 

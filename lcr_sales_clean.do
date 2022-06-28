@@ -25,7 +25,7 @@
 use "${lcr_raw}/lcr_sales_raw", clear
 
 		* keep only important variables
-keep company_name year total_employees total_revenueinINR
+keep company_name year total_employees total_revenueinINR founded
 
 		* keep only actual observations
 sum year
@@ -36,7 +36,7 @@ keep in 1/`r(N)'
 * 	PART 3: 	Format string & numerical & date variables
 ***********************************************************************
 	* destring numerical variables + correct missing values
-foreach var in total_revenueinINR total_employees {
+foreach var in /* total_revenueinINR */ total_employees {
 	replace `var' = "" if `var' == "-"
 	destring `var', replace
 }
@@ -54,6 +54,8 @@ format %-25.2fc `numvars'
 foreach x of local strvars {
 	replace `x' = lower(stritrim(strtrim(`x')))
 	}
+	
+format %9.0g founded
 
 ***********************************************************************
 * 	PART 3: 	Make all variables names lower case		  			
