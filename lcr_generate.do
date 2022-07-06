@@ -83,6 +83,7 @@ gen solar_patentor = (solarpatents > 0 & solarpatents <.), b(solarpatents)
 gen post_solar_patentor = 0
 replace post_solar_patentor =1 if post_solar_patent>0 & post_solar_patent<.
 lab var post_solar_patentor "dummy if patent after LCR policy start"
+
 ***********************************************************************
 * 	PART 5: create dummy for firm having filed a patent
 ***********************************************************************
@@ -152,6 +153,17 @@ gen electronics = 0
 replace electronics = 1 if sector == 6
 lab var electronics "electronics sector"
 
+
+***********************************************************************
+* 	PART 10: transform sales & employees variables	  					  			
+***********************************************************************
+	* sales: ihs transformation used given both zeros and extreme values
+ihstrans total_revenue
+kdensity ihs_total_revenue
+
+	* employees: log-transformation given no zeros but extreme values
+gen log_total_employees = log(total_employees)
+kdensity log_total_employees
 
 ***********************************************************************
 * 	Save the changes made to the data		  			

@@ -55,7 +55,7 @@ foreach x of local strvars {
 	replace `x' = lower(stritrim(strtrim(`x')))
 	}
 	
-format %9.0g founded
+format %9.0g founded total_employees
 
 ***********************************************************************
 * 	PART 3: 	Make all variables names lower case		  			

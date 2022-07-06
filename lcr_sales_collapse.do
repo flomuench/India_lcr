@@ -46,7 +46,7 @@ restore
 	* employees
 preserve
 egen pre_employees = mean(total_employees) if year < 2013, by(company_name)
-collapse (firstnm) year log_total_employees total_employees, by(company_name)
+collapse (firstnm) year pre_employees log_total_employees total_employees, by(company_name)
 replace total_employees = pre_employees if pre_employees != .
 drop pre_employees
 drop log_total_employees

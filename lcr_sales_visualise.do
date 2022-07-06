@@ -62,12 +62,14 @@ Amplus -->
 	* what is the earliest available year of employee data per company?
 preserve 
 collapse (min) year (firstnm) total_revenue, by(company_name)
-histogram year, frequency addl ///
+histogram year, frequency addl width(1) ///
 	xlabel(2000(1)2021, labsize(vsmall)) ///
-	xline(2013)
+	xline(2014)
 
-		/* for 59 companies we have data before or in 2013
-			for 51 companies we have data from 2014 onwards
+		/* for 75 companies we have data before or in 2013
+			for 38 companies we have data from 2014 onwards
+				2015 --> 11 companies
+				2016 --> 15 companies
 		
 																	*/
 restore

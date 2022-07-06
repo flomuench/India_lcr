@@ -32,7 +32,7 @@ cd "$lcr_psm"
 		*2: propensity to file solar patent (outcome)
 			* ever patented other patent
 			* other, non solar patents
-			* size of company: sales & employees
+			* size of company: total_revenue & total_employees
 			* level of economic complexity of company lob
 			* lob
 			* subsidiary
@@ -51,12 +51,12 @@ _eststo otherprepatents, r: logit lcr i.indian ihs_pre_not_solar_patent , vce(ro
 		* (6) pre solar patents
 _eststo solarprepatents, r: logit lcr i.indian pre_solar_patent , vce(robust)
 
-		* (7) sales
+		* (7) total_revenue
 _eststo size1, r: logit lcr i.indian ihs_sales , vce(robust)
 
-		* (8) employees
-_eststo size2, r: logit lcr i.indian employees , vce(robust)
-*_eststo size2, r: logit lcr sales empl , vce(robust)
+		* (8) total_employees
+_eststo size2, r: logit lcr i.indian log_total_employees , vce(robust)
+*_eststo size2, r: logit lcr total_revenue empl , vce(robust)
 
 		* (9) sector
 _eststo lob, r: logit lcr i.indian i.sector , vce(robust)
@@ -87,12 +87,12 @@ _eststo subsidiary, r: logit lcr i.indian i.manufacturer_solar subsidiary , vce(
 _eststo phase, r: logit lcr i.indian i.manufacturer_solar i.part_jnnsm_1 , vce(robust)
 
 		* (18) all
-_eststo all, r: logit lcr i.indian /*i.patentor*/ ihs_pre_not_solar_patent pre_solar_patent ihs_sales employees sector i.soe_india age i.energy_focus i.manufacturer /*i.manufacturer_solar*/ i.subsidiary i.part_jnnsm_1 , vce(robust)
+_eststo all, r: logit lcr i.indian /*i.patentor*/ ihs_pre_not_solar_patent pre_solar_patent ihs_sales log_total_employees sector i.soe_india age i.energy_focus i.manufacturer /*i.manufacturer_solar*/ i.subsidiary i.part_jnnsm_1 , vce(robust)
 
 local regressions indian /*india_state*/ india_capital /*patentor*/ otherprepatents solarprepatents size1 size2 lob electronics soe age energy manuf subsidiary phase all
 esttab `regressions' using variable_choice2_all.csv, replace ///
 	title("Selection of variables used for PSM") ///
-	mtitles("Indian" /*"HQ Indian state"*/ "HQ in Delhi" /*"Pre Patentor"*/ "Pre-patents" "Pre solar patents""Sales" "Employees" "Sector" "Electronics" "SOE" "Age" "Energy focus" "Manufacturer" "Subsidiary" "Phase 1" "All") ///
+	mtitles("Indian" /*"HQ Indian state"*/ "HQ in Delhi" /*"Pre Patentor"*/ "pre-LCR patents" "pre-LCR solar patents""pre-LCR sales" "pre-LCR revenue" "Sector" "Electronics" "SOE" "Age" "Energy focus" "Manufacturer" "Subsidiary" "Phase 1" "All") ///
 	label ///
 	b(2) ///
 	se(2) ///
@@ -105,7 +105,7 @@ esttab `regressions' using variable_choice2_all.csv, replace ///
 local regressions indian /*india_state*/ india_capital /*patentor*/ otherprepatents solarprepatents size1 size2 lob electronics soe age energy manuf subsidiary phase all
 esttab `regressions' using variable_choice2_all.tex, replace ///
 	title("Selection of variables used for PSM") ///
-	mtitles("Indian" /*"HQ Indian state"*/ "HQ in Delhi" /*"Pre Patentor"*/ "Pre-patents" "Pre solar patents""Sales" "Employees" "Sector" "Electronics" "SOE" "Age" "Energy focus" "Manufacturer" "Subsidiary" "Phase 1" "All") ///
+	mtitles("Indian" /*"HQ Indian state"*/ "HQ in Delhi" /*"Pre Patentor"*/ "pre-LCR patents" "pre-LCR solar patents""pre-LCR sales" "pre-LCR employees" "Sector" "Electronics" "SOE" "Age" "Energy focus" "Manufacturer" "Subsidiary" "Phase 1" "All") ///
 	label ///
 	b(2) ///
 	se(2) ///
@@ -131,12 +131,12 @@ _eststo otherprepatents, r: logit lcr i.indian ihs_pre_not_solar_patent if paten
 		* (6) pre solar patents
 _eststo solarprepatents, r: logit lcr i.indian pre_solar_patent if patent_outlier == 0, vce(robust)
 
-		* (7) sales
-_eststo size1, r: logit lcr i.indian ihs_sales if patent_outlier == 0, vce(robust)
+		* (7) total_revenue
+_eststo size1, r: logit lcr i.indian ihs_total_revenue if patent_outlier == 0, vce(robust)
 
-		* (8) employees
-_eststo size2, r: logit lcr i.indian employees if patent_outlier == 0, vce(robust)
-*_eststo size2, r: logit lcr sales empl if patent_outlier == 0, vce(robust)
+		* (8) total_employees
+_eststo size2, r: logit lcr i.indian log_total_employees if patent_outlier == 0, vce(robust)
+*_eststo size2, r: logit lcr total_revenue empl if patent_outlier == 0, vce(robust)
 
 		* (9) sector
 _eststo lob, r: logit lcr i.indian i.sector if patent_outlier == 0, vce(robust)
@@ -167,12 +167,12 @@ _eststo subsidiary, r: logit lcr i.indian i.manufacturer_solar subsidiary if pat
 _eststo phase, r: logit lcr i.indian i.manufacturer_solar i.part_jnnsm_1 if patent_outlier == 0, vce(robust)
 
 		* (18) all
-_eststo all, r: logit lcr i.indian /*i.patentor*/ ihs_pre_not_solar_patent pre_solar_patent ihs_sales employees sector i.soe_india age i.energy_focus i.manufacturer /*i.manufacturer_solar*/ i.subsidiary i.part_jnnsm_1 if patent_outlier == 0, vce(robust)
+_eststo all, r: logit lcr i.indian /*i.patentor*/ ihs_pre_not_solar_patent pre_solar_patent ihs_total_revenue log_total_employees sector i.soe_india age i.energy_focus i.manufacturer /*i.manufacturer_solar*/ i.subsidiary i.part_jnnsm_1 if patent_outlier == 0, vce(robust)
 
 local regressions indian /*india_state*/ india_capital /*patentor*/ otherprepatents solarprepatents size1 size2 lob electronics soe age energy manuf subsidiary phase all
 esttab `regressions' using variable_choice2_nooutlier.csv, replace ///
 	title("Selection of variables used for PSM") ///
-	mtitles("Indian" /*"HQ Indian state"*/ "HQ in Delhi" /*"Pre Patentor"*/ "Pre-patents" "Pre solar patents""Sales" "Employees" "Sector" "Electronics" "SOE" "Age" "Energy focus" "Manufacturer" "Subsidiary" "Phase 1" "All") ///
+	mtitles("Indian" /*"HQ Indian state"*/ "HQ in Delhi" /*"Pre Patentor"*/ "pre-LCR patents" "pre-LCR solar patents" "pre-LCR sales" "pre-LCR employees" "Sector" "Electronics" "SOE" "Age" "Energy focus" "Manufacturer" "Subsidiary" "Phase 1" "All") ///
 	label ///
 	b(2) ///
 	se(2) ///
@@ -198,12 +198,12 @@ _eststo otherprepatents, r: logit lcr i.indian ihs_pre_not_solar_patent if won_t
 		* (6) pre solar patents
 _eststo solarprepatents, r: logit lcr i.indian pre_solar_patent if won_total == 1, vce(robust)
 
-		* (7) sales
-_eststo size1, r: logit lcr i.indian ihs_sales if won_total == 1, vce(robust)
+		* (7) total_revenue
+_eststo size1, r: logit lcr i.indian ihs_total_revenue if won_total == 1, vce(robust)
 
-		* (8) employees
-_eststo size2, r: logit lcr i.indian employees if won_total == 1, vce(robust)
-*_eststo size2, r: logit lcr sales empl if won_total == 1, vce(robust)
+		* (8) total_employees
+_eststo size2, r: logit lcr i.indian log_total_employees if won_total == 1, vce(robust)
+*_eststo size2, r: logit lcr total_revenue empl if won_total == 1, vce(robust)
 
 		* (9) sector
 _eststo lob, r: logit lcr i.indian i.sector if won_total == 1, vce(robust)
@@ -234,12 +234,12 @@ _eststo subsidiary, r: logit lcr i.indian i.manufacturer_solar subsidiary if won
 _eststo phase, r: logit lcr i.indian i.manufacturer_solar i.part_jnnsm_1 if won_total == 1, vce(robust)
 
 		* (18) all
-_eststo all, r: logit lcr i.indian /*i.patentor*/ ihs_pre_not_solar_patent pre_solar_patent ihs_sales employees sector i.soe_india age i.energy_focus i.manufacturer /*i.manufacturer_solar*/ i.subsidiary i.part_jnnsm_1 if won_total == 1, vce(robust)
+_eststo all, r: logit lcr i.indian /*i.patentor*/ ihs_pre_not_solar_patent pre_solar_patent ihs_total_revenue log_total_employees sector i.soe_india age i.energy_focus i.manufacturer /*i.manufacturer_solar*/ i.subsidiary i.part_jnnsm_1 if won_total == 1, vce(robust)
 
 local regressions indian /*india_state*/ india_capital /*patentor*/ otherprepatents solarprepatents size1 size2 lob electronics soe age energy manuf subsidiary phase all
 esttab `regressions' using variable_choice2_won_total.csv, replace ///
 	title("Selection of variables used for PSM") ///
-	mtitles("Indian" /*"HQ Indian state"*/ "HQ in Delhi" /*"Pre Patentor"*/ "Pre-patents" "Pre solar patents""Sales" "Employees" "Sector" "Electronics" "SOE" "Age" "Energy focus" "Manufacturer" "Subsidiary" "Phase 1" "All") ///
+	mtitles("Indian" /*"HQ Indian state"*/ "HQ in Delhi" /*"Pre Patentor"*/ "pre-LCR patents" "pre-LCR solar patents" "pre-LCR sales" "pre-LCR employees" "Sector" "Electronics" "SOE" "Age" "Energy focus" "Manufacturer" "Subsidiary" "Phase 1" "All") ///
 	label ///
 	b(2) ///
 	se(2) ///
@@ -249,7 +249,7 @@ esttab `regressions' using variable_choice2_won_total.csv, replace ///
 	addnotes("All estimtes are based on a Logit model with robust standard errors in parentheses.")
 	
 ***********************************************************************
-* 	PART 4: variable selection: iteratively test-up	- counterfactual changed: won lcr vs. did not win lcr
+* 	PART 4: variable selection: iteratively test-up	- counterfactual changed: won lcr vs. did not win lcr (sample: w/o outlier Barat, Sunedison)
 ***********************************************************************
 		* (1-3) indian
 _eststo indian, r: logit lcr_won i.indian if patent_outlier == 0, vce(robust)
@@ -262,12 +262,12 @@ _eststo patentor, r: logit lcr_won i.indian i.patentor if patent_outlier == 0, v
 		* (5) pre amount of other patents
 _eststo otherprepatents, r: logit lcr_won i.indian ihs_pre_not_solar_patent if patent_outlier == 0, vce(robust)
 
-		* (6) sales
-_eststo size1, r: logit lcr_won i.indian ihs_sales if patent_outlier == 0, vce(robust)
+		* (6) total_revenue
+_eststo size1, r: logit lcr_won i.indian ihs_total_revenue if patent_outlier == 0, vce(robust)
 
-		* (7) employees
-_eststo size2, r: logit lcr_won i.indian employees if patent_outlier == 0, vce(robust)
-*_eststo size2, r: logit lcr_won sales empl if patent_outlier == 0, vce(robust)
+		* (7) total_employees
+_eststo size2, r: logit lcr_won i.indian log_total_employees if patent_outlier == 0, vce(robust)
+*_eststo size2, r: logit lcr_won total_revenue empl if patent_outlier == 0, vce(robust)
 
 		* (8) sector
 _eststo lob, r: logit lcr_won i.indian i.sector if patent_outlier == 0, vce(robust)
@@ -295,13 +295,13 @@ _eststo manuf_solar, r: logit lcr_won i.indian i.manufacturer i.manufacturer_sol
 _eststo subsidiary, r: logit lcr_won i.indian i.manufacturer_solar subsidiary if patent_outlier == 0, vce(robust)
 
 		* (14) all
-_eststo all, r: logit lcr_won i.indian /*i.patentor*/ ihs_pre_not_solar_patent ihs_sales employees sector i.soe_india age i.energy_focus i.manufacturer i.manufacturer_solar i.subsidiary if patent_outlier == 0, vce(robust)
+_eststo all, r: logit lcr_won i.indian /*i.patentor*/ ihs_pre_not_solar_patent ihs_sales total_employees sector i.soe_india age i.energy_focus i.manufacturer i.manufacturer_solar i.subsidiary if patent_outlier == 0, vce(robust)
 
 
 local regressions indian /*india_state*/ india_capital /*patentor*/ otherprepatents size1 size2 lob electronics soe age energy manuf manuf_solar subsidiary all
 esttab `regressions' using variable_choice3.csv, replace ///
 	title("Selection of variables used for PSM") ///
-	mtitles("Indian" /*"HQ Indian state"*/ "HQ in Delhi" /*"Pre Patentor"*/ "Pre-patents" "Sales" "Employees" "Sector" "Electronics" "SOE" "Age" "Energy focus" "Manufacturer" "Solar manufacturer" "Subsidiary" "All") ///
+	mtitles("Indian" /*"HQ Indian state"*/ "HQ in Delhi" /*"Pre Patentor"*/ "pre-LCR patents" "pre-LCR sales" "pre-LCR employees" "Sector" "Electronics" "SOE" "Age" "Energy focus" "Manufacturer" "Solar manufacturer" "Subsidiary" "All") ///
 	label ///
 	b(2) ///
 	se(2) ///
@@ -315,10 +315,10 @@ esttab `regressions' using variable_choice3.csv, replace ///
 * 	PART 5:  explore pre-matching balance based on selected variables 			
 ***********************************************************************
 	* put variables for matching into a local
-local matching_var indian patentor pre_not_solar_patent sales employees soe age energy_focus manufacturer manufacturer_solar subsidiary
+local matching_var indian patentor pre_not_solar_patent total_revenue total_employees soe age energy_focus manufacturer manufacturer_solar subsidiary
 local matching_var2 indian pre_not_solar_patent soe manufacturer manufacturer_solar
 local matching_var3 indian pre_not_solar_patent soe manufacturer
-local matching_var4 indian pre_not_solar_patent soe manufacturer sales employees age
+local matching_var4 indian pre_not_solar_patent soe manufacturer total_revenue total_employees age
 local matching_var5 ihs_pre_not_solar_patent pre_solar_patent soe_india indian manufacturer part_jnnsm_1
 
 set graphics on
