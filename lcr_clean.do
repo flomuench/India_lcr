@@ -96,9 +96,7 @@ lab var vgf_total " total VGF in INR"
 
 lab var ihs_sales "sales, ihs transformed"
 lab var total_revenue "pre-LCR sales"
-lab var ihs_total_revenue "ihs transf. pre-LCR sales"
 lab var total_employees "pre-LCR employees"
-lab var ihs_total_employees "ihs transf. pre-LCR employees"
 
 ***********************************************************************
 * 	PART 7: 	Label varialcres values	  			

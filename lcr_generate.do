@@ -159,6 +159,7 @@ lab var electronics "electronics sector"
 ***********************************************************************
 	* sales: ihs transformation used given both zeros and extreme values
 ihstrans total_revenue
+lab var ihs_total_revenue "ihs transf. pre-LCR sales"
 kdensity ihs_total_revenue
 
 	* employees: log-transformation given no zeros but extreme values

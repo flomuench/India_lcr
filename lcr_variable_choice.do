@@ -52,7 +52,7 @@ _eststo otherprepatents, r: logit lcr i.indian ihs_pre_not_solar_patent , vce(ro
 _eststo solarprepatents, r: logit lcr i.indian pre_solar_patent , vce(robust)
 
 		* (7) total_revenue
-_eststo size1, r: logit lcr i.indian ihs_sales , vce(robust)
+_eststo size1, r: logit lcr i.indian ihs_total_revenue, vce(robust)
 
 		* (8) total_employees
 _eststo size2, r: logit lcr i.indian log_total_employees , vce(robust)
@@ -87,12 +87,12 @@ _eststo subsidiary, r: logit lcr i.indian i.manufacturer_solar subsidiary , vce(
 _eststo phase, r: logit lcr i.indian i.manufacturer_solar i.part_jnnsm_1 , vce(robust)
 
 		* (18) all
-_eststo all, r: logit lcr i.indian /*i.patentor*/ ihs_pre_not_solar_patent pre_solar_patent ihs_sales log_total_employees sector i.soe_india age i.energy_focus i.manufacturer /*i.manufacturer_solar*/ i.subsidiary i.part_jnnsm_1 , vce(robust)
+_eststo all, r: logit lcr i.indian /*i.patentor*/ ihs_pre_not_solar_patent pre_solar_patent ihs_total_revenue log_total_employees sector i.soe_india age i.energy_focus i.manufacturer /*i.manufacturer_solar*/ i.subsidiary i.part_jnnsm_1 , vce(robust)
 
 local regressions indian /*india_state*/ india_capital /*patentor*/ otherprepatents solarprepatents size1 size2 lob electronics soe age energy manuf subsidiary phase all
 esttab `regressions' using variable_choice2_all.csv, replace ///
 	title("Selection of variables used for PSM") ///
-	mtitles("Indian" /*"HQ Indian state"*/ "HQ in Delhi" /*"Pre Patentor"*/ "pre-LCR patents" "pre-LCR solar patents""pre-LCR sales" "pre-LCR revenue" "Sector" "Electronics" "SOE" "Age" "Energy focus" "Manufacturer" "Subsidiary" "Phase 1" "All") ///
+	mtitles("Indian" /*"HQ Indian state"*/ "HQ in Delhi" /*"Pre Patentor"*/ "pre-LCR patents" "pre-LCR solar patents""pre-LCR sales" "pre-LCR employees" "Sector" "Electronics" "SOE" "Age" "Energy focus" "Manufacturer" "Subsidiary" "Phase 1" "All") ///
 	label ///
 	b(2) ///
 	se(2) ///
@@ -319,7 +319,7 @@ local matching_var indian patentor pre_not_solar_patent total_revenue total_empl
 local matching_var2 indian pre_not_solar_patent soe manufacturer manufacturer_solar
 local matching_var3 indian pre_not_solar_patent soe manufacturer
 local matching_var4 indian pre_not_solar_patent soe manufacturer total_revenue total_employees age
-local matching_var5 ihs_pre_not_solar_patent pre_solar_patent soe_india indian manufacturer part_jnnsm_1
+local matching_var5 log_total_employees ihs_total_revenue pre_solar_patent indian manufacturer part_jnnsm_1
 
 set graphics on
 
