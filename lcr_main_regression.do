@@ -21,75 +21,61 @@
 use "${lcr_final}/lcr_final", clear
 
 	* set the directory to propensity matching folder
-cd "$lcr_rt"
-/*
+*cd "$lcr_rt"
+cd "$lcr_final"
+
 ***********************************************************************
 * 	PART 2:  Nearest neighbor matching
 ***********************************************************************
-	* nn-matching is default in psmatch2 hence requires no option (default)
-	
-	* make sure the sort order is random (but replicable as sort seed set)
-gen random = runiform(0,1)
-sort random
-	
-	* with replacement
-		* 1 nn ; no common support, only nearest neighbor
-			* counterfactual = won
-psmatch2 lcr_won if patent_outliers == 0, outcome(post_solar_patent) pscore(pscore_all)
-			* counterfactual = participated
-psmatch2 lcr if won_total > 0, outcome(post_solar_patent) pscore(pscore_all)
-psmatch2 lcr, outcome(post_solar_patent) pscore(pscore_all)
-psmatch2 lcr if patent_outliers == 0, outcome(post_solar_patent) pscore(pscore_all)
-scalar t = r(att)/ r(seatt)
-mat n1 = ( r(att) \ t )
-sort _id
-br company_name post_solar_patent lcr pscore_all common_support _pscore-_pdif
-	/*
-azure, tata & today are matched with mahindra
-	*/
-codebook _n1 
-/* suggests only 21 obs from treatment, hence total of 32 + 21 = 53 obs used.
-	lots of sample/variation gets lost */
-	
-		* 2 nn
-psmatch2 lcr if patent_outliers == 0, outcome(post_solar_patent) pscore(pscore_all) neighbor(2) caliper(0.1)
-scalar t = r(att)/ r(seatt)
-mat n2 = ( r(att) \ t )
-tab _weight lcr, missing
-	/*
-mean in control group down to .54
-SE down to .68 & t-stat up to .48
-35 observations from control used
-	*/
+* C1: Simple post-difference
+_eststo post_nn, r:reg post_solar_patent i.lcr
 
-		* 3 nn
-psmatch2 lcr if patent_outliers == 0, outcome(post_solar_patent) pscore(pscore_all) neighbor(3)
-scalar t = r(att)/ r(seatt)
-mat n3 = ( r(att) \ t )
+* C2: DiD
+_eststo did_nn, r:reg dif_solar_patents i.lcr, vce(hc3)
+	
+* 1: 1nn with replacement
+		* sample = all
+psmatch2 lcr, neighbor(1) outcome(post_solar_patent) pscore(pscore_all)
+_eststo all_nn, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(hc3)
+	rename _weight weight_nn_all
+_eststo all_nn_ate, r: reg post_solar_patent i.lcr
+_eststo all_nn_att, r: reg post_solar_patent i.lcr [iweight= weight_nn_all]
 
-mat nn = n1, n2, n3
-mat colnames nn = "nn = 1" "nn = 2" "nn = 3"
-mat rownames nn = att t
-
-		* puts results from nn1-nn3 into one output
-esttab matrix(nn, fmt(%9.2fc)) using nnmatching.csv, replace ///
-	title("Results for nearest neighbor with replacement") ///
+		
+		* sample = won
+psmatch2 lcr if won_total > 0, neighbor(1) outcome(post_solar_patent) pscore(pscore_won)
+_eststo won_nn, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(hc3)
+	rename _weight weight_nn_won
+	
+		* sample = no outliers
+psmatch2 lcr if patent_outliers == 0, neighbor(1) outcome(post_solar_patent) pscore(pscore_nooutliers)
+_eststo outlier_nn, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(hc3)
+	rename _weight weight_nn_outlier
+	
+	* export results in a table
+cd "$final_figures"	
+esttab *_nn using did_robust_nn.tex, replace ///
+	title("Difference-in-difference combined with PSM: Nearest Neighbor"\label{nn_robust}) ///
+	mtitles("DiD" "All firms" "Winner firms" "All w/o outliers") ///
+	label ///
+	b(2) ///
+	se(2) ///
 	width(0.8\hsize) ///
-	addnotes("All estimtes are based on a Logit model with robust standard errors in parentheses.")
-	
-
-	* without replacement
-sort random
-psmatch2 lcr if patent_outliers == 0, outcome(post_solar_patent) pscore(pscore_all) noreplacement descending
-/* almost identical with nn1 with replacement */
+	star(* 0.1 ** 0.05 *** 0.01) ///
+	nobaselevels ///
+	booktabs ///
+	addnotes("All estimates based on nearest neighbor matching." "DiD based on solar patents 2011-2020 minus 2001-2010." "Common support imposed in all specifications." "Robust standard errors in parentheses.")
 
 
-	
-*/	
 ***********************************************************************
 * 	PART 3:  Radius/caliper matching
 ***********************************************************************
-cd "$lcr_final"
+
+* C1: Simple post-difference
+_eststo post_nn, r:reg post_solar_patent i.lcr
+
+* C2: DiD
+_eststo did_nn, r:reg dif_solar_patents i.lcr, vce(hc3)
 	* counterfactual = participated LCR vs. did not participate LCR
 		* outcome 1: solar patents
 			* sample = all
@@ -121,11 +107,9 @@ _eststo outliers_caliper05, r: reg dif_solar_patents i.lcr [iweight=_weight] if 
 	rename _weight weight_outliers05
 
 	
-	
-	
 	* export results in a table
 cd "$final_figures"	
-esttab *caliper* using did.csv, replace ///
+esttab *caliper* using did.tex, replace ///
 	title("Difference-in-difference combined with matching"\label{main_regressions}) ///
 	mgroups("All firms" "Winner firms" "All w/o outliers", ///
 		pattern(1 0 1 0 1 0)) ///
@@ -276,19 +260,7 @@ esttab matrix(matching_all, fmt(%-9.2fc)) using matching_all.csv, replace ///
 	width(0.8\hsize) ///
 	addnotes("All estimtes are based on a Logit model with robust standard errors in parentheses.")
 */
-	
-***********************************************************************
-* 	PART 6: simple DiD
-***********************************************************************
-
-
-***********************************************************************
-* 	PART 7: simple DiD
-***********************************************************************
-	
-reg dif_solar_patents i.lcr, vce(hc3)
-
-	
+		
 ***********************************************************************
 * 	Save the changes made to the data		  			
 ***********************************************************************

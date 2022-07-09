@@ -88,11 +88,13 @@ _eststo phase, r: logit lcr i.indian i.manufacturer_solar i.part_jnnsm_1 , vce(r
 
 		* (18) all
 _eststo all, r: logit lcr i.indian /*i.patentor*/ ihs_pre_not_solar_patent pre_solar_patent ihs_total_revenue log_total_employees sector i.soe_india age i.energy_focus i.manufacturer /*i.manufacturer_solar*/ i.subsidiary i.part_jnnsm_1 , vce(robust)
+		* (19) final specification
+_eststo final, r: logit lcr i.indian pre_solar_patent ihs_total_revenue log_total_employees i.manufacturer_solar i.part_jnnsm_1, vce(robust)
 
-local regressions indian /*india_state*/ india_capital /*patentor*/ otherprepatents solarprepatents size1 size2 lob electronics soe age energy manuf subsidiary phase all
+local regressions indian /*india_state*/ india_capital /*patentor*/ otherprepatents solarprepatents size1 size2 lob electronics soe age energy manuf subsidiary phase all final
 esttab `regressions' using variable_choice2_all.csv, replace ///
 	title("Selection of variables used for PSM") ///
-	mtitles("Indian" /*"HQ Indian state"*/ "HQ in Delhi" /*"Pre Patentor"*/ "pre-LCR patents" "pre-LCR solar patents""pre-LCR sales" "pre-LCR employees" "Sector" "Electronics" "SOE" "Age" "Energy focus" "Manufacturer" "Subsidiary" "Phase 1" "All") ///
+	mtitles("Indian" /*"HQ Indian state"*/ "HQ in Delhi" /*"Pre Patentor"*/ "pre-LCR patents" "pre-LCR solar patents""pre-LCR sales" "pre-LCR employees" "Sector" "Electronics" "SOE" "Age" "Energy focus" "Manufacturer" "Subsidiary" "Phase 1" "All" "Final") ///
 	label ///
 	b(2) ///
 	se(2) ///
@@ -101,11 +103,11 @@ esttab `regressions' using variable_choice2_all.csv, replace ///
 	nobaselevels ///
 	addnotes("All estimtes are based on a Logit model with robust standard errors in parentheses.")
 	
-*creating tex file
-local regressions indian /*india_state*/ india_capital /*patentor*/ otherprepatents solarprepatents size1 size2 lob electronics soe age energy manuf subsidiary phase all
-esttab `regressions' using variable_choice2_all.tex, replace ///
+* tex table for paper 
+local regressions indian /*india_state*/ india_capital /*patentor*/ otherprepatents solarprepatents size1 size2 lob electronics soe age energy manuf subsidiary phase all final
+esttab `regressions' using variable_choice_all.tex, replace ///
 	title("Selection of variables used for PSM") ///
-	mtitles("Indian" /*"HQ Indian state"*/ "HQ in Delhi" /*"Pre Patentor"*/ "pre-LCR patents" "pre-LCR solar patents""pre-LCR sales" "pre-LCR employees" "Sector" "Electronics" "SOE" "Age" "Energy focus" "Manufacturer" "Subsidiary" "Phase 1" "All") ///
+	mtitles("Indian" /*"HQ Indian state"*/ "HQ in Delhi" /*"Pre Patentor"*/ "pre-LCR patents" "pre-LCR solar patents""pre-LCR sales" "pre-LCR employees" "Sector" "Electronics" "SOE" "Age" "Energy focus" "Manufacturer" "Subsidiary" "Phase 1" "All" "Final") ///
 	label ///
 	b(2) ///
 	se(2) ///
@@ -319,7 +321,7 @@ local matching_var indian patentor pre_not_solar_patent total_revenue total_empl
 local matching_var2 indian pre_not_solar_patent soe manufacturer manufacturer_solar
 local matching_var3 indian pre_not_solar_patent soe manufacturer
 local matching_var4 indian pre_not_solar_patent soe manufacturer total_revenue total_employees age
-local matching_var5 log_total_employees ihs_total_revenue pre_solar_patent indian manufacturer part_jnnsm_1
+local matching_var5 log_total_employees ihs_total_revenue pre_solar_patent indian manufacturer electronics part_jnnsm_1
 
 set graphics on
 

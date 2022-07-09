@@ -184,7 +184,7 @@ if (1) do "${lcr_github}/lcr_correct.do"
 if (1) do "${lcr_github}/lcr_generate.do"
 
 ***********************************************************************
-* 	PART 5: 	Run do-files for data analysis
+* 	PART 5: 	Run do-files for PSM + DiD cross-section analysis
 ***********************************************************************
 /* --------------------------------------------------------------------
 	PART 5.0: descriptive statitics
@@ -246,7 +246,7 @@ if (1) do "${lcr_github}/lcr_demand_shock.do"
 
 
 ***********************************************************************
-* 	PART 7: 	Robustness check: Firm-year level dataset/Event-study design
+* 	PART 7: 	Robustness check: firm-year panel, event study PSM DiD
 ***********************************************************************
 if (1) do "${lcr_github}/merge_firmyeardata.do"
 

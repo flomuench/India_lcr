@@ -168,16 +168,23 @@ replace indian = 1 if indian == .
 		* correct if firm is not indian
 replace indian = 0 if company_name == "alfanar"
 replace indian = 0 if company_name == "bosch"
+replace indian = 0 if company_name == "bastille"
 replace indian = 0 if company_name == "alfanar"
 replace indian = 0 if company_name == "cambronne"
 replace indian = 0 if company_name == "devona"
 replace indian = 0 if company_name == "duroc"
+replace indian = 0 if company_name == "segur"
 replace indian = 0 if company_name == "eden"
 replace indian = 0 if company_name == "fortum"
+replace indian = 0 if company_name == "mira"
 replace indian = 0 if company_name == "ibc"
 replace indian = 0 if company_name == "lightsource"
 replace indian = 0 if company_name == "softbank"
 replace indian = 0 if company_name == "rosepetal"
+replace indian = 0 if company_name == "renew"
+replace indian = 0 if company_name == "solar"
+replace indian = 0 if company_name == "terraform"
+
 
 		* correct if pre-coding is not indian but seems 
 replace indian = 1 if company_name == "azure"
@@ -193,6 +200,9 @@ replace manufacturer = 1 if company_name == "suzlon"
 replace manufacturer = 1 if company_name == "waaree"
 replace manufacturer = 1 if company_name == "mahindra" /* https://www.mahindrasusten.com/products/module-mounting-structure/, https://www.mahindra.com/news-room/press-release/susten-and-mitsui-to-co-invest-in-distributed-solar-power-projects */
 replace manufacturer = 1 if company_name == "exide" /* https://www.exideindustries.com/products/solar-solutions/solar-pv-modules.aspx */
+replace manufacturer = 1 if company_name == "solar" /* https://www.exideindustries.com/products/solar-solutions/solar-pv-modules.aspx */
+
+
 
 	* solar module manufacturer
 		* classification based on: 
@@ -213,6 +223,10 @@ replace manufacturer_solar = 1 if company_name == "surana" /* http://suranasolar
 replace manufacturer_solar = 1 if company_name == "canadian" /*https://www.canadiansolar.com/  */
 replace manufacturer_solar = 1 if company_name == "mahindra"
 replace manufacturer_solar = 1 if company_name == "exide" 
+replace manufacturer_solar = 1 if company_name == "sunedison" 
+replace manufacturer_solar = 1 if company_name == "alfanar" 
+replace manufacturer_solar = 1 if company_name == "solar" 
+
 
 ***********************************************************************
 * 	PART 4: create sector dummy

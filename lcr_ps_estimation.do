@@ -28,7 +28,7 @@ local matching_var indian patentor pre_not_solar_patent sales employees soe age 
 local matching_var2 indian pre_not_solar_patent soe manufacturer manufacturer_solar
 local matching_var3 indian pre_not_solar_patent soe manufacturer
 local matching_var4 indian pre_not_solar_patent soe manufacturer sales employees age
-local matching_var5 log_total_employees ihs_total_revenue pre_solar_patent indian manufacturer part_jnnsm_1
+local matching_var5 log_total_employees ihs_total_revenue pre_solar_patent indian manufacturer_solar part_jnnsm_1
 
 ***********************************************************************
 * 	PART 1:  set the scene  - counterfactual: did not participate in LCR	
