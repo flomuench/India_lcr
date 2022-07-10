@@ -145,7 +145,6 @@ gr export spatents_pretrend.png, replace
 
 restore
 
-
 	* 2: visualisation of solar patents over time - CONDITIONAL ON MATCHING
 *preserve
 gen one = 1

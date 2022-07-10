@@ -29,7 +29,7 @@ qui cap log c
 
 	* install packages
 /*
-ssc install ietoolkit /* for iebaltab */
+ssc install ietoolkit, replace /* for iebaltab */
 ssc install randtreat, replace /* for randtreat --> random allocation */
 ssc install blindschemes, replace /* for plotplain --> scheme for graphical visualisations */
 net install http://www.stata.com/users/kcrow/tab2docx
@@ -250,5 +250,5 @@ if (1) do "${lcr_github}/lcr_demand_shock.do"
 ***********************************************************************
 if (1) do "${lcr_github}/merge_firmyeardata.do"
 
-if (0) do "${lcr_github}/event_study.do"
+if (1) do "${lcr_github}/event_study.do"
 

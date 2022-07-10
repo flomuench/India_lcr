@@ -43,7 +43,7 @@ set graphics on
 ***********************************************************************
 foreach model in reg poisson {
 		* regression estimate: OLS & Poisson
-	`model' solarpatent i.lcr##ib2010.year, vce(robust)
+	`model' solarpatent i.lcr##ib2013.year, vce(robust)
 
 		* visualisation of the treatment effect (LCR-year dummy)
 			* store coefficients + SE results in variables
@@ -70,13 +70,12 @@ foreach model in reg poisson {
 		twoway (sc coef_`model' year) ///
 			(rcap ci_top_`model' ci_bottom_`model' year, vertical),	///
 				xtitle("year") ///
-				xline(2010, lpattern(dash)) ///
-				xlabel(2004(1)2020, labsize(vsmall)) ///
+				xline(2013, lpattern(dash)) ///
+				xlabel(2004(1)2020, labsize(tiny)) ///
 				yline(0, lcolor(black)) ///
 				caption("95% Confidence Intervals Shown", size(vsmall)) ///
-				title("{bf: Event study difference-in-difference}") ///
 				subtitle("{it:Unmatched}") ///
-				ytitle("filed patents") ///
+				ytitle("filed solar patents") ///
 				legend(off) ///
 				name(event_unmatched_`model', replace)
 		graph export event_unmatched_`model'.png, replace
@@ -90,10 +89,10 @@ foreach model in reg poisson {
 	* estimate weighted DiD regressions
 foreach weight in weight_all01 weight_all05 weight_won01 weight_won05 weight_outliers01 weight_outliers05 {
 			* OLS
-	_eststo `weight'_reg: reg solarpatent i.lcr##ib2010.year [iweight=`weight'], vce(hc3)
+	_eststo `weight'_reg: reg solarpatent i.lcr##ib2013.year [iweight=`weight'], vce(hc3)
 	
 			* Poisson
-	*_eststo `weight'_poi: poisson solarpatent i.lcr##ib2010.year [iweight=`weight'], vce(robust)
+	*_eststo `weight'_poi: poisson solarpatent i.lcr##ib2013.year [iweight=`weight'], vce(robust)
 }
 
 	* export results in a table
@@ -111,12 +110,12 @@ foreach model in reg /*poi*/ {
 		star(* 0.1 ** 0.05 *** 0.01) ///
 		nobaselevels ///
 		booktabs ///
-		addnotes("DiD estimates based on X model." "DiD based on solar patents 2011-2020 minus 2001-2010." "Common support imposed in all specifications through caliper." "Robust standard errors in parentheses.")
+		addnotes("Event window before-after 2013, with 2013 as baselevel for year dummmies." "Robust standard errors in parentheses.")
 }
 
 	* visualise the results after matching
 		* choice of model
-reg solarpatent i.lcr##ib2010.year [iweight=weight_all01], vce(hc3)
+reg solarpatent i.lcr##ib2013.year [iweight=weight_all01], vce(hc3)
 		* code for visualisation
 gen coef_all01 = . 
 gen se_low_all01 = . 
@@ -141,19 +140,25 @@ keep year coef_* ci_* se_*
 	twoway (sc coef_all01 year) ///
 		(rcap ci_top_all01 ci_bottom_all01 year, vertical),	///
 			xtitle("year") ///
-			xline(2010, lpattern(dash)) ///
-			xlabel(2004(1)2020, labsize(vsmall)) ///
+			xline(2013, lpattern(dash)) ///
+			xlabel(2004(1)2020, labsize(tiny)) ///
 			yline(0, lcolor(black)) ///
 			caption("95% Confidence Intervals Shown", size(vsmall)) ///
-			title("{bf: Event study difference-in-difference}") ///
-			subtitle("{it:Unmatched}") ///
-			ytitle("filed patents") ///
+			subtitle("{it:Matched}") ///
+			ytitle("filed solar patents") ///
 			legend(off) ///
-			name(event_unmatched_all01, replace)
-	graph export event_unmatched_all01.png, replace
+			name(event_matched_all01, replace)
+	graph export event_matched_all01.png, replace
 		
 restore
-	
+
+***********************************************************************
+* 	PART 4: combine matched and unmatched into one graph						
+***********************************************************************
+gr combine event_unmatched_reg event_matched_all01, ycommon ///
+		name(event_combined, replace)
+gr export event_combined.png, replace
+
 	
 /* archived:
 /*	

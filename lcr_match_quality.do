@@ -23,7 +23,7 @@ use "${lcr_final}/lcr_final", clear
 cd "$lcr_psm"
 
 	* put variables for matching into a local
-local matching_var5 ihs_pre_not_solar_patent soe_india indian manufacturer
+local matching_var5 log_total_employees ihs_total_revenue pre_solar_patent indian manufacturer part_jnnsm_1
 
 	*
 set graphics on
@@ -70,7 +70,7 @@ foreach x in 0.05 0.1 {
 psmatch2 lcr, radius caliper(`x') outcome(post_solar_patent) pscore(pscore_all)
 
 		* pre-matching standardised bias
-	pstest `bias_table' if _weight != ., both rubin treated(lcr) graph ///
+	pstest `matching_var5' if _weight != ., both rubin treated(lcr) graph ///
 			title(Standardized bias LCR vs. no LCR firms) ///
 			subtitle(Post vs. pre-matching on caliper = `x') ///
 			ylabel(-60(5)60, labs(vsmall)) ///
@@ -80,7 +80,7 @@ psmatch2 lcr, radius caliper(`x') outcome(post_solar_patent) pscore(pscore_all)
 	gr export bias_all_radius`i'.png, replace
 
 		* table 1 / balance table post matching
-	iebaltab `bias_table' if _weight != ., grpvar(lcr) save(baltab_post_all_radius`i') replace ///
+	iebaltab `matching_var5' [iweight=_weight], grpvar(lcr) savetex(baltab_post_all_radius`i') replace ///
 			 vce(robust) pttest rowvarlabels balmiss(mean) onerow stdev notecombine ///
 			 format(%12.2fc)
 }	
@@ -94,7 +94,7 @@ foreach x in 0.05 0.1 {
 psmatch2 lcr if won_total > 0, radius caliper(`x') outcome(post_solar_patent) pscore(pscore_won)
 
 		* pre-matching standardised bias
-	pstest `bias_table' if won_total > 0 & _weight != ., both rubin treated(lcr) graph ///
+	pstest `matching_var5' if won_total > 0 & _weight != ., both rubin treated(lcr) graph ///
 			title(Standardized bias LCR vs. no LCR firms) ///
 			subtitle(Post vs. pre-matching on caliper = `x') ///
 			ylabel(-60(5)60, labs(vsmall)) ///
@@ -104,7 +104,7 @@ psmatch2 lcr if won_total > 0, radius caliper(`x') outcome(post_solar_patent) ps
 	gr export bias_won_radius`i'.png, replace
 
 		* table 1 / balance table post matching
-	iebaltab `bias_table' if won_total > 0 & _weight != ., grpvar(lcr) save(baltab_post_all_radius`i') replace ///
+	iebaltab `matching_var5' if won_total > 0 [iweight=_weight], grpvar(lcr) savetex(baltab_post_won_radius`i') replace ///
 			 vce(robust) pttest rowvarlabels balmiss(mean) onerow stdev notecombine ///
 			 format(%12.2fc)
 }		
@@ -118,7 +118,7 @@ foreach x in 0.05 /* 0.1 for some reason does not converge */ {
 	psmatch2 lcr if patent_outlier == 0, radius caliper(`x') outcome(post_solar_patent) pscore(pscore_nooutliers)
 
 		* pre-matching standardised bias
-	pstest `bias_table' if patent_outlier == 0 & _weight != ., both rubin treated(lcr) graph ///
+	pstest `matching_var5' if patent_outlier == 0 & _weight != ., both rubin treated(lcr) graph ///
 			title(Standardized bias LCR vs. no LCR firms) ///
 			subtitle(Post vs. pre-matching on caliper = `x') ///
 			ylabel(-60(5)60, labs(vsmall)) ///
@@ -128,7 +128,7 @@ foreach x in 0.05 /* 0.1 for some reason does not converge */ {
 	gr export bias_nooutliers_radius`i'.png, replace
 
 		* table 1 / balance table post matching
-	iebaltab `bias_table' if patent_outlier == 0 & _weight != ., grpvar(lcr) save(baltab_post_nooutliers_radius`i') replace ///
+	iebaltab `matching_var5' if patent_outlier == 0 [iweight=_weight], grpvar(lcr) savetex(baltab_post_nooutliers_radius`i') replace ///
 			 vce(robust) pttest rowvarlabels balmiss(mean) onerow stdev notecombine ///
 			 format(%12.2fc)
 }

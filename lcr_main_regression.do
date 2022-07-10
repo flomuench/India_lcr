@@ -72,10 +72,10 @@ esttab *_nn using did_robust_nn.tex, replace ///
 ***********************************************************************
 
 * C1: Simple post-difference
-_eststo post_nn, r:reg post_solar_patent i.lcr
+_eststo post_caliper, r:reg post_solar_patent i.lcr
 
 * C2: DiD
-_eststo did_nn, r:reg dif_solar_patents i.lcr, vce(hc3)
+_eststo did_caliper, r:reg dif_solar_patents i.lcr, vce(hc3)
 	* counterfactual = participated LCR vs. did not participate LCR
 		* outcome 1: solar patents
 			* sample = all
@@ -112,8 +112,8 @@ cd "$final_figures"
 esttab *caliper* using did.tex, replace ///
 	title("Difference-in-difference combined with matching"\label{main_regressions}) ///
 	mgroups("All firms" "Winner firms" "All w/o outliers", ///
-		pattern(1 0 1 0 1 0)) ///
-	mtitles("caliper = 0.1" "caliper = 0.05" "caliper = 0.1" "caliper = 0.05" "caliper = 0.1" "caliper = 0.05") ///
+		pattern(1 0 1 0 1 0 1 0)) ///
+	mtitles("Post difference" "DiD" "caliper = 0.1" "caliper = 0.05" "caliper = 0.1" "caliper = 0.05" "caliper = 0.1" "caliper = 0.05") ///
 	label ///
 	b(2) ///
 	se(2) ///

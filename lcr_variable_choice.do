@@ -321,12 +321,12 @@ local matching_var indian patentor pre_not_solar_patent total_revenue total_empl
 local matching_var2 indian pre_not_solar_patent soe manufacturer manufacturer_solar
 local matching_var3 indian pre_not_solar_patent soe manufacturer
 local matching_var4 indian pre_not_solar_patent soe manufacturer total_revenue total_employees age
-local matching_var5 log_total_employees ihs_total_revenue pre_solar_patent indian manufacturer electronics part_jnnsm_1
+local matching_var5 log_total_employees ihs_total_revenue pre_solar_patent indian manufacturer part_jnnsm_1
 
 set graphics on
 
 	* pre-matching table 1 / balance table
-iebaltab `matching_var5', grpvar(lcr) save(baltab_lcr_pre) replace ///
+iebaltab `matching_var5', grpvar(lcr) savetex(baltab_lcr_pre) replace ///
 			 vce(robust) pttest rowvarlabels balmiss(mean) onerow stdev notecombine ///
 			 format(%12.2fc)
 	
