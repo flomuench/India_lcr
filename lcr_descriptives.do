@@ -18,10 +18,10 @@
 * 	PART 1:  set the scene  			
 ***********************************************************************
 use "${lcr_final}/lcr_final", clear
-set scheme s1color	
+set scheme plotplain	
 set graphics on
 ***********************************************************************
-* 	PART 1: descriptive statistics about pre-post (solar) patents 	  						
+* 	PART 2: descriptive statistics for final paper 	  						
 ************************************************************************
 *set working directory to final figures
 cd "$final_figures"
@@ -43,13 +43,23 @@ gr export firms_pie_sectors.png, replace
 
 *Table 1 descriptive statistics
 
-local table1 post_solar_patent pre_solar_patent lcr indian patentor pre_not_solar_patent   post_not_solar_patent soe age energy_focus manufacturer manufacturer_solar subsidiary total_auctions won_total part_jnnsm_1
+local table1 post_solar_patent pre_solar_patent lcr indian patentor pre_not_solar_patent post_not_solar_patent soe age energy_focus manufacturer manufacturer_solar subsidiary total_auctions won_total part_jnnsm_1
 estpost tabstat `table1', listwise ///
         statistics(mean sd min max) columns(statistics)
 esttab . using table1.tex, cells("mean(fmt(a3)) sd(fmt(a3)) min(fmt(a3)) max(fmt(a3))") replace /// 
 	title("Descriptive Statistics"\label{table1}) ///
 	label
 	
+	
+*Shaded Bar chart with treatment intensity
+graph hbar share_lcr_part if lcr==1, over(company_name, sort(share_lcr_part) descending) ///
+	ytitle("Share of auction participations that had LCR") yline(0.5) ///
+	note ("Based on the 41 auctions observed in the sample (2013-2019)")
+gr export treatment_intensity.png, replace
+
+***********************************************************************
+* 	PART 3: Other descriptive statistics  	  						
+************************************************************************	
 	* define local for pre-post comparisons
 cd "$lcr_descriptives"
 local prepostsolar pre_solar_patent post_solar_patent

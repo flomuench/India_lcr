@@ -54,7 +54,7 @@ net install grc1leg.pkg
 
 	* define graph scheme for visual outputs
 *set scheme plotplain
-set scheme s1color
+set scheme plotplain
 
 ***********************************************************************
 * 	PART 2: 	Prepare dynamic folder paths & globals			  	  *
@@ -189,7 +189,7 @@ if (1) do "${lcr_github}/lcr_generate.do"
 /* --------------------------------------------------------------------
 	PART 5.0: descriptive statitics
 ----------------------------------------------------------------------*/	
-if (0) do "${lcr_github}/lcr_descriptives.do"
+if (1) do "${lcr_github}/lcr_descriptives.do"
 /* --------------------------------------------------------------------
 	PART 5.1: select variables to include into matching model
 ----------------------------------------------------------------------*/	

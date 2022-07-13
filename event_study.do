@@ -159,6 +159,20 @@ gr combine event_unmatched_reg event_matched_all01, ycommon ///
 		name(event_combined, replace)
 gr export event_combined.png, replace
 
+
+* combine matched and unmatched coefficient in one graph (TBC)
+	twoway ///
+	(sc coef_all01 year, mfcolor(red)) (rcap ci_top_all01 ci_bottom_all01 year, vertical lcolor(red)) ///
+	(sc coef_reg year, mfcolor(black%20)) (rcap ci_top_reg ci_bottom_reg year, vertical lcolor(black%20)),	///
+			xtitle("year") ///
+			xline(2013, lpattern(dash)) ///
+			xlabel(2004(1)2020, labsize(tiny)) ///
+			yline(0, lcolor(black)) ///
+			caption("95% Confidence Intervals Shown", size(vsmall)) ///
+			ytitle("filed solar patents") ///
+			legend(order(2 "Matched" 4 "Unmatched")) ///
+			name(event_matched_all01, replace)
+	graph export matched_unmatched_combined.png, replace
 	
 /* archived:
 /*	

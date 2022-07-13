@@ -44,6 +44,7 @@ replace company_name = "canadian" if company_name == "rutherford"
 ***********************************************************************
 replace international = 0 if international == .
 
+
 ***********************************************************************
 * 	PART 4:  replace all MV = 0 for firms that did never patent
 ***********************************************************************

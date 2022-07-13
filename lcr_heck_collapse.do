@@ -97,6 +97,13 @@ cd "$lcr_intermediate"
 export excel company_name bidder ultimateparent city state lob webaddress founded manufacturer totalemployees subsidiary using missing.xlsx if founded == . | manufacturer == . | totalemployees == . , firstrow(var) replace
 */
 
+
+***********************************************************************
+* 	PART 5: Miscallenous change
+***********************************************************************
+
+*Shorten name of Development corporation odisha for visual reasons
+replace company_name ="odisha" if company_name == "development corporation odisha"
 ***********************************************************************
 * 	PART 5: save cross-section data as raw
 ***********************************************************************
