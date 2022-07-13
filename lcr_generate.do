@@ -162,9 +162,33 @@ ihstrans total_revenue
 lab var ihs_total_revenue "ihs transf. pre-LCR sales"
 kdensity ihs_total_revenue
 
+ihstrans post_revenue
+lab var ihs_post_revenue "ihs transf. post-LCR sales"
+kdensity ihs_post_revenue
+
+	* Create difference in Sales for Difference in Differences Analysis
+gen diff_revenue = post_revenue-total_revenue
+lab var diff_revenue "Difference in Revenues pre- vs. post-LCR"
+
 	* employees: log-transformation given no zeros but extreme values
 gen log_total_employees = log(total_employees)
 kdensity log_total_employees
+
+
+***********************************************************************
+* 	PART 11: Create variables to display share of LCR auctions	  					  			
+***********************************************************************
+*Share of LCR particitation among total
+gen share_lcr_part = total_auctions_lcr/total_auctions
+
+*Share of LCR wins among total wins
+gen share_lcr_won = won_lcr/won_total
+
+ *Share of LCR MW wanted among total wanted
+gen share_lcr_mw_wanted = quantity_wanted_mw_lcr/ quantity_wanted_mw_total
+
+ *Share of LCR MW allocated among total allocated
+gen share_lcr_mw_allocated = quantity_allocated_mw_lcr/ quantity_allocated_mw_total
 
 ***********************************************************************
 * 	Save the changes made to the data		  			
