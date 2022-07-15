@@ -82,7 +82,14 @@ gen solar_patentor = (solarpatents > 0 & solarpatents <.), b(solarpatents)
 
 gen post_solar_patentor = 0
 replace post_solar_patentor =1 if post_solar_patent>0 & post_solar_patent<.
-lab var post_solar_patentor "dummy if patent after LCR policy start"
+lab var post_solar_patentor "At least one solar patent after LCR introduction"
+
+gen pre_solar_patentor = 0
+replace pre_solar_patentor =1 if pre_solar_patent>0 & pre_solar_patent<.
+lab var pre_solar_patentor "At least one solar patent prior to LCR introduction"
+
+gen diff_solar_patentor = post_solar_patentor - pre_solar_patentor
+lab var diff_solar_patentor "Solar patentor status changed after after LCR"
 
 ***********************************************************************
 * 	PART 5: create dummy for firm having filed a patent
