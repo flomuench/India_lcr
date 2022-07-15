@@ -25,6 +25,9 @@ cd "$lcr_descriptives"
 set scheme plotplain	
 set graphics on
 
+*Change name of one firm for visualisation purposes
+replace company_name = "odisha" if company_name == "development corporation odisha"
+ 
 	* create additional variables needed for visualisation
 	* quantity firm won in LCR
 egen lcr_total_quantity_allocated = sum(quantity_allocated_mw) if lcr==1, by(company_name)
@@ -89,7 +92,24 @@ gr combine mw_won_lcr mw_won_nolcr17, ///
 	name(mw_lcr_vs_no_lcr, replace)
 gr export mw_lcr_vs_no_lcr.png, replace
 
+*stacked bar chart
 
+g lcr_quantity_allocated = quantity_allocated_mw if lcr == 1
+g open_quantity_allocated = quantity_allocated_mw if lcr == 0 & /// 
+	auction_year < 2018 & lcr_both == 1 | lcr_only == 1
+*drop zeros by making them missing*
+replace lcr_quantity_allocated =. if lcr_quantity_allocated == 0
+replace open_quantity_allocated =. if open_quantity_allocated == 0
+
+gr hbar (sum) lcr_quantity_allocated (sum) open_quantity_allocated if (open_quantity_allocated<. ) | (lcr_quantity_allocated<. ) , ///
+	over(company_name, sort(2) descending lab(labs(small))) stack ///
+	ytitle("MW won") ///
+	ylabel(0 100 200 300 400 500) ///
+	title("Share of LCR allocated vs. share of open auction among LCR participants") ///
+	legend(order(1 "MW allocated via LCR auctions 2013 - 2017" 2 "MW allocated in open auctions 2013 - 2017") pos(6)) ///
+	name(mw_won_stacked, replace)	
+gr export mw_won_stacked.png, replace
+			
 ***********************************************************************
 * 	PART 2: size of demand shock in INR (USD)		
 ***********************************************************************

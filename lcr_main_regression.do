@@ -25,17 +25,11 @@ use "${lcr_final}/lcr_final", clear
 cd "$lcr_final"
 
 *in case weight variables were saved from previous version, they are dropped here now
-*drop weight*
-*drop cweight*
+drop weight*
+drop cweight*
 ***********************************************************************
 * 	PART 2:  Nearest neighbor matching
 ***********************************************************************
-* C1: Simple post-difference
-_eststo post_nn, r:reg post_solar_patent i.lcr
-
-* C2: DiD
-_eststo did_nn, r:reg dif_solar_patents i.lcr, vce(hc3)
-	
 * 1: 1nn with replacement
 		* sample = all
 psmatch2 lcr, neighbor(1) outcome(post_solar_patent) pscore(pscore_all)
@@ -73,8 +67,117 @@ psmatch2 lcr if patent_outliers == 0, neighbor(2) outcome(post_solar_patent) psc
 _eststo outlier2_nn, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(hc3)
 	rename _weight weight_nn2_outlie	
 	
+*PART 2.2. NN with cell patents
+
+* 1: 1nn with replacement
+		* sample = all
+psmatch2 lcr, neighbor(1) outcome(post_modcell_patent) pscore(pscore_all)
+_eststo all_nn_cell, r: reg dif_modcell_patents i.lcr [iweight=_weight], vce(hc3)
+	rename _weight weight_nn_all_cell
 	
-	* export results C1 C2 1 and 2 in a table
+*_eststo all_nn_ate, r: reg post_modcell_patent i.lcr
+*_eststo all_nn_att, r: reg post_modcell_patent i.lcr [iweight= weight_nn_all]
+
+		
+		* sample = won
+psmatch2 lcr if won_total > 0, neighbor(1) outcome(post_modcell_patent) pscore(pscore_won)
+_eststo won_nn_cell, r: reg dif_modcell_patents i.lcr [iweight=_weight], vce(hc3)
+	rename _weight weight_nn_won_cell
+	
+		* sample = no outliers
+psmatch2 lcr if patent_outliers == 0, neighbor(1) outcome(post_modcell_patent) pscore(pscore_nooutliers)
+_eststo outlier_nn_cell, r: reg dif_modcell_patents i.lcr [iweight=_weight], vce(hc3)
+	rename _weight weight_nn_outlier_cell
+
+* 2: 2nn with replacement (selects the two nearest neighbors instead of just one)
+		* sample = all
+psmatch2 lcr, neighbor(2) outcome(post_modcell_patent) pscore(pscore_all)
+_eststo all2_nn_cell, r: reg dif_modcell_patents i.lcr [iweight=_weight], vce(hc3)
+	rename _weight weight_nn2_all_cell
+	
+		
+		* sample = won
+psmatch2 lcr if won_total > 0, neighbor(2) outcome(post_modcell_patent) pscore(pscore_won)
+_eststo won2_nn_cell, r: reg dif_modcell_patents i.lcr [iweight=_weight], vce(hc3)
+	rename _weight weight_nn2_won_cell
+	
+		* sample = no outliers
+psmatch2 lcr if patent_outliers == 0, neighbor(2) outcome(post_modcell_patent) pscore(pscore_nooutliers)
+_eststo outlier2_nn_cell, r: reg dif_modcell_patents i.lcr [iweight=_weight], vce(hc3)
+	rename _weight weight_nn2_outlier_cell	
+
+	
+*****Part 2.3 BINARY POST SOLAR OUTCOME*****
+* 1: 1nn with replacement post_solar_patentor
+		* sample = all
+psmatch2 lcr, neighbor(1) outcome(post_solar_patentor) pscore(pscore_all)
+_eststo all_nn_bin, r: reg post_solar_patentor i.lcr [iweight=_weight], vce(hc3)
+	rename _weight weight_nn_all_bin
+	
+		* sample = won
+psmatch2 lcr if won_total > 0, neighbor(1) outcome(post_solar_patentor) pscore(pscore_won)
+_eststo won_nn_bin, r: reg post_solar_patentor i.lcr [iweight=_weight], vce(hc3)
+	rename _weight weight_nn_won_bin
+	
+		* sample = no outliers
+psmatch2 lcr if patent_outliers == 0, neighbor(1) outcome(post_solar_patentor) pscore(pscore_nooutliers)
+_eststo outlier_nn_bin, r: reg post_solar_patentor i.lcr [iweight=_weight], vce(hc3)
+	rename _weight weight_nn_outlier_bin
+
+* 2: 2nn with replacement (selects the two nearest neighbors instead of just one)
+		* sample = all
+psmatch2 lcr, neighbor(2) outcome(post_solar_patentor) pscore(pscore_all)
+_eststo all2_nn_bin, r: reg post_solar_patentor i.lcr [iweight=_weight], vce(hc3)
+	rename _weight weight_nn2_all_bin
+	
+		
+		* sample = won
+psmatch2 lcr if won_total > 0, neighbor(2) outcome(post_solar_patentor) pscore(pscore_won)
+_eststo won2_nn_bin, r: reg post_solar_patentor i.lcr [iweight=_weight], vce(hc3)
+	rename _weight weight_nn2_won_bin
+	
+		* sample = no outliers
+psmatch2 lcr if patent_outliers == 0, neighbor(2) outcome(post_solar_patentor) pscore(pscore_nooutliers)
+_eststo outlier2_nn_bin, r: reg post_solar_patentor i.lcr [iweight=_weight], vce(hc3)
+	rename _weight weight_nn2_outlier_bin	
+
+**** Part. 2.4. NN with Sales**
+* 1: 1nn with replacement
+		* sample = all
+psmatch2 lcr, neighbor(1) outcome(post_revenue) pscore(pscore_all)
+_eststo all_nn_sales, r: reg diff_revenue i.lcr [iweight=_weight], vce(hc3)
+	rename _weight weight_nn_all_sales
+
+		
+		* sample = won
+psmatch2 lcr if won_total > 0, neighbor(1) outcome(post_revenue) pscore(pscore_won)
+_eststo won_nn_sales, r: reg diff_revenue i.lcr [iweight=_weight], vce(hc3)
+	rename _weight weight_nn_won_sales
+	
+		* sample = no outliers
+psmatch2 lcr if patent_outliers == 0, neighbor(1) outcome(post_revenue) pscore(pscore_nooutliers)
+_eststo outlier_nn_sales, r: reg diff_revenue i.lcr [iweight=_weight], vce(hc3)
+	rename _weight weight_nn_outlier_sales
+
+* 2: 2nn with replacement (selects the two nearest neighbors instead of just one)
+		* sample = all
+psmatch2 lcr, neighbor(2) outcome(post_revenue) pscore(pscore_all)
+_eststo all2_nn_sales, r: reg diff_revenue i.lcr [iweight=_weight], vce(hc3)
+	rename _weight weight_nn2_all_sales
+	
+		
+		* sample = won
+psmatch2 lcr if won_total > 0, neighbor(2) outcome(post_revenue) pscore(pscore_won)
+_eststo won2_nn_sales, r: reg diff_revenue i.lcr [iweight=_weight], vce(hc3)
+	rename _weight weight_nn2_won_sales
+	
+		* sample = no outliers
+psmatch2 lcr if patent_outliers == 0, neighbor(2) outcome(post_revenue) pscore(pscore_nooutliers)
+_eststo outlier2_nn_sales, r: reg diff_revenue i.lcr [iweight=_weight], vce(hc3)
+	rename _weight weight_nn2_outlie_sales	
+	
+	
+	/* export results C1 C2 1 and 2 in a table
 cd "$final_figures"	
 esttab *_nn using did_robust_nn.tex, replace ///
 	title("Difference-in-difference combined with PSM: Nearest Neighbor"\label{nn_robust}) ///
@@ -89,7 +192,55 @@ esttab *_nn using did_robust_nn.tex, replace ///
 	nobaselevels ///
 	booktabs ///
 	addnotes("Estimates (3)-(5) based on nearest neighbor matching." "DiD based on solar patents 2011-2020 minus 2001-2010." "Common support imposed in all specifications." "Robust standard errors in parentheses.")
+*/
+	*Same four panel table like for caliper 
+cd "$final_figures"		
+	//top panel
+esttab  all_nn won_nn outlier_nn all2_nn won2_nn outlier2_nn using did_robust_nn.tex, replace ///
+		nobaselevels ///
+		prehead("\begin{table}[htbp]\centering \\  \def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi} \\ \caption{Robustness: Results with Neareast Neighbour Matching} \\ \begin{tabular}{l*{8}{c}} \hline\hline") ///
+		posthead("\hline \\ \multicolumn{6}{c}{\textbf{Panel A: Solar PV Patents}} \\\\[-1ex]") ///
+		fragment ///
+		mgroups("1 nearest neighbor" "2 nearest neighbors", ///
+		pattern(1 0 1 0 1 0)) ///
+		mtitles("All firms" "Winner firms" "All w/o outliers" "All firms" "Winner firms" "All w/o outliers") ///
+		label /// 
+		star(* 0.1 ** 0.05 *** 0.01) ///
+		b(2) se(2) 
 
+//middle panel 
+esttab  all_nn_cell won_nn_cell outlier_nn_cell all2_nn_cell won2_nn_cell outlier2_nn_cell using did_robust_nn.tex, ///
+    nobaselevels ///
+	posthead("\hline \\ \multicolumn{6}{c}{\textbf{Panel B: PV Module \& PV Cell Patents only}} \\\\[-1ex]") ///
+	fragment ///
+	append ///
+	label ///
+	star(* 0.1 ** 0.05 *** 0.01) ///
+	b(2) se(2) nomtitles nonumbers 
+
+//second middle panel 
+esttab  all_nn_bin won_nn_bin outlier_nn_bin all2_nn_bin won2_nn_bin outlier2_nn_bin using did_robust_nn.tex, ///
+    nobaselevels ///
+	posthead("\hline \\ \multicolumn{6}{c}{\textbf{Panel C: Post-LCR solar patent (binary)}} \\\\[-1ex]") ///
+	fragment ///
+	append ///
+	label ///
+	star(* 0.1 ** 0.05 *** 0.01) ///
+	b(2) se(2) nomtitles nonumbers 
+	
+//bottom panel 
+esttab all_nn_sales won_nn_sales outlier_nn_sales all2_nn_sales won2_nn_sales outlier2_nn_sales using did_robust_nn.tex, ///
+   	nobaselevels ///
+	posthead("\hline \\ \multicolumn{6}{c}{\textbf{Panel D: Revenues (in INR)}} \\\\[-1ex]") ///
+	fragment ///
+	append ///
+	label ///
+	star(* 0.1 ** 0.05 *** 0.01) ///
+	b(2) se(2) nomtitles nonumbers  ///
+	prefoot("\hline") ///
+	postfoot("\hline\hline\hline \multicolumn{5}{l}{\footnotesize Robust Standard errors in parentheses}\\\multicolumn{2}{l}{\footnotesize \sym{**} \(p<0.05\), \sym{*} \(p<0.1\)}\\ \end{tabular} \\ \end{table}")
+
+		
 
 ***********************************************************************
 * 	PART 3:  Radius/caliper matching
