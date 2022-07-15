@@ -102,7 +102,8 @@ esttab `regressions' using variable_choice2_all.csv, replace ///
 	star(* 0.1 ** 0.05 *** 0.01) ///
 	nobaselevels ///
 	addnotes("All estimtes are based on a Logit model with robust standard errors in parentheses.")
-	
+
+
 * tex table for paper 
 local regressions indian /*india_state*/ india_capital /*patentor*/ otherprepatents solarprepatents size1 size2 lob electronics soe age energy manuf subsidiary phase all final
 esttab `regressions' using variable_choice_all.tex, replace ///

@@ -236,9 +236,9 @@ if (0) do "${lcr_github}/lcr_teffects_psmatch.do"
 ----------------------------------------------------------------------*/
 if (0) do "${lcr_github}/lcr_post_power.do"
 /* --------------------------------------------------------------------
-	PART 6.2: Check which type of solar patents were filed
+	PART 6.2: Check which type of solar patents were filed (Does not work "variable ID not found")
 ----------------------------------------------------------------------*/
-if (1) do "${lcr_github}/patent_analysis.do"
+if (0) do "${lcr_github}/patent_analysis.do"
 /* --------------------------------------------------------------------
 	PART 6.3: demand shock from LCRs in MW & financial value of modules
 ----------------------------------------------------------------------*/

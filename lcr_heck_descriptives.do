@@ -28,7 +28,7 @@ use "${lcr_final}/lcr_bid_final", clear
 
 	* change directory to output folder for descriptive stats
 cd "$lcr_descriptives"
-set scheme s1color	
+set scheme plotplain	
 set graphics on
 ******************* bid-level statistics ******************************
 
@@ -66,10 +66,10 @@ gr bar, over(won)  ///
 gr export bid_results.png, replace
 
 	* winning vs. loosing bids lcr vs. no lcr
+cd "$final_figures"
 gr bar, over(won)  ///
-	blabel(total, format(%9.1fc)) ///
-	by(lcr , title("{bf:Overview of results from firm bids}") ///
-	subtitle("LCR vs. no LCR bids") ///
+	blabel(total, format(%9.1fc) pos(center) size(large)) ///
+	by(lcr , ///
 	note("Lost bids N = 178, won bids N = 146", size(small))) ///
 	name(bid_results_lcr, replace)
 gr export bid_results_lcr.png, replace
@@ -79,6 +79,7 @@ gr export bid_results_lcr.png, replace
 * 	PART 3: price in lcr vs price outside lcr					
 ***********************************************************************
 	* 
+cd "$lcr_descriptives"
 gr bar final_price_after_era if contractual_arrangement == 1 & won == 1, over(lcr)
 
 	* restrict sample to firms that bid in both LCR & non LCR
@@ -192,7 +193,7 @@ gr bar (sum) one quantity_total, over(auction_year) over(lcr) ///
 gr export auctions_evolution_lcr.png, replace
 
 	* auctions + MW allocated during treatment period by LCR
-preserve
+
 cd "$final_figures"
 collapse one quantity_total , by(auction_year lcr)
 reshape wide one quantity_total, i(auction_year) j(lcr)
@@ -202,9 +203,9 @@ rename one0 no_lcr_auction
 lab var no_lcr_auction "number of no-LCR auctions"
 rename one1 lcr_auction
 lab var lcr_auction "number of LCR auctions"
-rename quantity_total0 mw_no_lcr
+rename quantity_total0 gw_no_lcr
 lab var gw_no_lcr "GW auctioned no-LCR auctions"
-rename quantity_total1 mw_lcr
+rename quantity_total1 gw_lcr
 lab var gw_lcr "GW auctioned LCR auctions"
 
 foreach var in no_lcr_auction lcr_auction gw_no_lcr gw_lcr {
@@ -224,14 +225,14 @@ gr bar (asis) gw_no_lcr gw_lcr if year < 2018, over(year) ///
 		subtitle("{bf:GW auctioned}") ///
 	name(tperiod_gw, replace)
 	
-grc1leg tperiod_auctions tperiod_gw, ///
+/*gr c1leg tperiod_auctions tperiod_gw, ///
 	title("Treatment period 2013-2017: LCR & no-LCR auctions") ///
 	legendfrom(tperiod_auctions) ///
 	rows(1) ycommon xcommon ///
 	note("Note: In 11 LCR auctions 547 MW were auctioned, while 5.05 GW were auctioned in 17 no-LCR auctions.") ///
 	name(treatmentperiod, replace)
 gr export treatmentperiod.png, replace
-
+*/
 
 
 restore
@@ -303,7 +304,7 @@ gen quantity_allocated_gw = quantity_allocated_mw/1000
 lab var quantity_allocated_gw "Quantity allocated in GW"
 
 cd "$final_figures"
-graph twoway (bar quantity_allocated_gw year if year >=2011 & year<=2019, color(blue%50)) (bar solarpatent year if year >=2011 & year<=2019, color(green%50)) ///
+graph twoway (bar quantity_allocated_gw year if year >=2011 & year<=2019, color(gs0%30)) (bar solarpatent year if year >=2011 & year<=2019, color(gs11%50)) ///
 	|| (line final_price_after_era year if year >=2011 & year<=2019, ///
 	yaxis(2) ytitle("Average bid price in INR/MWh",axis(2)) lc(black)) (scatter final_price_after_era year if year >=2011 & year<=2019, mlabel(final_price_after_era) mlabpos(1) mcolor(black) mlabcolor(black) yaxis(2)), ///
 	legend (pos(6) lab(1 "Auctioned-off capacity in GW") lab(2 "Solar patents") lab(3 "Average bid price")) ///

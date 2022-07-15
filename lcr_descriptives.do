@@ -43,7 +43,7 @@ gr export firms_pie_sectors.png, replace
 
 *Table 1 descriptive statistics
 
-local table1 post_solar_patent pre_solar_patent lcr indian patentor pre_not_solar_patent post_not_solar_patent soe age energy_focus manufacturer manufacturer_solar subsidiary total_auctions won_total part_jnnsm_1
+local table1 post_solar_patent pre_solar_patent lcr indian manufacturer ihs_total_revenue ihs_post_revenue log_total_employees part_jnnsm_1
 estpost tabstat `table1', listwise ///
         statistics(mean sd min max) columns(statistics)
 esttab . using table1.tex, cells("mean(fmt(a3)) sd(fmt(a3)) min(fmt(a3)) max(fmt(a3))") replace /// 
@@ -113,7 +113,7 @@ gr export prepost_no_outlier.png, replace
 	* pre-post solar LCR vs. no LCR only without outliers
 cd "$final_figures"
 graph bar (sum)  `prepostsolar' if patent_outliers == 0, over(lcr) ///
-	blabel(total, size(vsmall)) ///
+	blabel(total, size(medium)) ///
 	title("{bf: Solar patents pre-and post LCR auctions in India}") ///
 	subtitle("Firms that participated in SECI solar auctions between 2011-2020", size(small)) ///
 	legend(label(1 "solar patents 2001-2010") label(2 "solar patents 2011-2020") rows(2) pos(6)) ///
@@ -121,6 +121,13 @@ graph bar (sum)  `prepostsolar' if patent_outliers == 0, over(lcr) ///
 	name(prepost_solar_LCR_no_outlier, replace)
 gr export prepost_solar_LCR_no_outlier.png, replace
 
+*pre-post LCR vs. no LCR incl. outliers
+graph bar (sum)  `prepostsolar', over(lcr) ///
+	blabel(total, size(medium)) ///
+	legend(label(1 "solar patents 2001-2010") label(2 "solar patents 2011-2020") rows(2) pos(6)) ///
+	note("Authors own calculations based on patent application at Indian patent office.", size(vsmall)) ///
+	name(prepost_solar_LCR, replace)
+gr export prepost_solar_LCR.png, replace
 
 	* pre-post module/cell patents by LCR
 graph bar (sum) pre_modcell_patent post_modcell_patent if patent_outliers == 0, over(lcr) ///

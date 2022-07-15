@@ -160,7 +160,19 @@ foreach x in 0.1 0.25 0.5 {
 			 format(%12.2fc)
 }
 */
+**********************************************************************
+* 	PART 5:  Table for final paper without header 
+***********************************************************************
 
+psmatch2 lcr, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore_all)
+
+		* pre-matching standardised bias
+	pstest `matching_var5' if _weight != ., both rubin treated(lcr) graph ///
+			ylabel(-60(5)60, labs(vsmall)) ///
+			note(Sample = all firms. Standardised bias should between [-25%-25%]., size(small)) ///
+			yline (-25 25) ///
+			name(bias_caliper01_all_paper, replace)
+	gr export bias_caliper01_all_paper.png, replace
 ***********************************************************************
 * 	Save the changes made to the data		  			
 ***********************************************************************
