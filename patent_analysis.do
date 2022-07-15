@@ -17,7 +17,7 @@
 ***********************************************************************
 * 	PART 1:  set the scene & merge			
 ***********************************************************************
-set scheme s1color
+set scheme plotplain
 import delimited "${lcr_raw}/solar_patents_addinfo.csv", clear varn(1)
 rename id company_name
 drop sales manufacturer

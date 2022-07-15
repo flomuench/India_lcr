@@ -22,7 +22,7 @@ use "${lcr_final}/lcr_bid_final", clear
 
 	* change directory to output folder for descriptive stats
 cd "$lcr_descriptives"
-set scheme s1color	
+set scheme plotplain	
 set graphics on
 
 	* create additional variables needed for visualisation

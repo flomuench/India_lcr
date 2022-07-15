@@ -76,6 +76,7 @@ rename one_no_lcr total_auctions_no_lcr
 
 label var won_total "total SECI auctions firm won 2013-2019"
 label var total_auctions "times firm participated in SECI auction 2013-2019" 
+label var total_auctions_lcr "No. of times participated in an LCR auction" 
 
 local allvar expected_annual_revenue expected_revenue final_price_after_era final_vgf_after_era n_competitors total_auctions quantity_allocated_mw quantity_total quantity_wanted_mw total_plant_price total_plant_price_life won	
 foreach var of local allvar {

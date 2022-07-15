@@ -25,7 +25,8 @@ use "${lcr_final}/lcr_final", clear
 cd "$lcr_final"
 
 *in case weight variables were saved from previous version, they are dropped here now
-drop weight*
+*drop weight*
+*drop cweight*
 ***********************************************************************
 * 	PART 2:  Nearest neighbor matching
 ***********************************************************************
@@ -94,90 +95,212 @@ esttab *_nn using did_robust_nn.tex, replace ///
 * 	PART 3:  Radius/caliper matching
 ***********************************************************************
 
+***********************************************************************
+*Outcome 1.1: All Solar patents with binary treatment
+***********************************************************************
 * C1: Simple post-difference
 _eststo post_patcaliper, r:reg post_solar_patent i.lcr
+*est store post_patcaliper
 
 * C2: DiD
 _eststo did_patcaliper, r:reg dif_solar_patents i.lcr, vce(hc3)
+*est store did_patcaliper
+
 	* counterfactual = participated LCR vs. did not participate LCR
 		* outcome 1: solar patents
 			* sample = all
 psmatch2 lcr, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore_all)
 _eststo all_patcaliper01, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(hc3)
+*est store all_patcaliper01
 	rename _weight weight_all01
+
 	
 psmatch2 lcr, radius caliper(0.05) outcome(post_solar_patent) pscore(pscore_all)
 _eststo all_patcaliper05, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(hc3)
+*est store all_patcaliper05
+
 	rename _weight weight_all05
 	
 			* sample = won
 psmatch2 lcr if won_total > 0, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore_won)
 _eststo won_patcaliper01, r: reg dif_solar_patents i.lcr [iweight=_weight] if won_total > 0, vce(hc3)
+*est store won_patcaliper01
+
 	rename _weight weight_won01
 	
 psmatch2 lcr if won_total > 0, radius caliper(0.05) outcome(post_solar_patent) pscore(pscore_won)
 _eststo won_patcaliper05, r: reg dif_solar_patents i.lcr [iweight=_weight] if won_total > 0, vce(hc3)
+*est store won_patcaliper05
+
 	rename _weight weight_won05
 	
 			* sample = no outliers (bosch & sunedision dropped - high patents, only once participated)
 psmatch2 lcr if patent_outliers == 0, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore_nooutliers)
 _eststo outliers_patcaliper01, r: reg dif_solar_patents i.lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
+*est store outliers_patcaliper01
+
 	rename _weight weight_outliers01
 	
 psmatch2 lcr if patent_outliers == 0, radius caliper(0.05) outcome(post_solar_patent) pscore(pscore_nooutliers)
 _eststo outliers_patcaliper05, r: reg dif_solar_patents i.lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
+*est store outliers_patcaliper05
 	rename _weight weight_outliers05
+	
+***********************************************************************
+*Outcome 1.2: All Solar patents with continous treatment
+***********************************************************************
+* C1: Simple post-difference
+_eststo cpost_patcaliper, r:reg post_solar_patent total_auctions_lcr
+*est store post_patcaliper
+
+* C2: DiD
+_eststo cdid_patcaliper, r:reg dif_solar_patents total_auctions_lcr, vce(hc3)
+*est store did_patcaliper
+
+	* counterfactual = participated LCR vs. did not participate LCR
+		* outcome 1: solar patents
+			* sample = all
+psmatch2 lcr, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore_all)
+_eststo call_patcaliper01, r: reg dif_solar_patents total_auctions_lcr [iweight=_weight], vce(hc3)
+*est store all_patcaliper01
+	rename _weight cweight_all01
 
 	
-	* export results in a table
-cd "$final_figures"
-local caliper_final post_patcaliper did_patcaliper all_patcaliper01 all_patcaliper05 won_patcaliper01 won_patcaliper05 outliers_patcaliper01 outliers_patcaliper05	
+psmatch2 lcr, radius caliper(0.05) outcome(post_solar_patent) pscore(pscore_all)
+_eststo call_patcaliper05, r: reg dif_solar_patents total_auctions_lcr [iweight=_weight], vce(hc3)
+*est store all_patcaliper05
 
-esttab `caliper_final' using did.tex, replace ///
-	title("Difference-in-difference combined with matching"\label{main_regressions}) ///
-	mgroups("" "All firms" "Winner firms" "All w/o outliers", ///
-		pattern(1 0 1 0 1 0 1 0)) ///
-	mtitles("Post difference" "DiD" "caliper = 0.1" "caliper = 0.05" "caliper = 0.1" "caliper = 0.05" "caliper = 0.1" "caliper = 0.05") ///
-	label ///
-	b(2) ///
-	se(2) ///
-	width(0.8\hsize) ///
-	star(* 0.1 ** 0.05 *** 0.01) ///
-	nobaselevels ///
-	booktabs ///
-	addnotes("DiD based on solar patents 2011-2020 minus 2001-2010." "Common support imposed in all specifications." "Robust standard errors in parentheses.")
-
+	rename _weight cweight_all05
 	
-		* outcome 2: cell & module patents
+			* sample = won
+psmatch2 lcr if won_total > 0, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore_won)
+_eststo cwon_patcaliper01, r: reg dif_solar_patents total_auctions_lcr [iweight=_weight] if won_total > 0, vce(hc3)
+*est store won_patcaliper01
+
+	rename _weight cweight_won01
+	
+psmatch2 lcr if won_total > 0, radius caliper(0.05) outcome(post_solar_patent) pscore(pscore_won)
+_eststo cwon_patcaliper05, r: reg dif_solar_patents total_auctions_lcr [iweight=_weight] if won_total > 0, vce(hc3)
+*est store won_patcaliper05
+
+	rename _weight cweight_won05
+	
+			* sample = no outliers (bosch & sunedision dropped - high patents, only once participated)
+psmatch2 lcr if patent_outliers == 0, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore_nooutliers)
+_eststo coutliers_patcaliper01, r: reg dif_solar_patents total_auctions_lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
+*est store outliers_patcaliper01
+
+	rename _weight cweight_outliers01
+	
+psmatch2 lcr if patent_outliers == 0, radius caliper(0.05) outcome(post_solar_patent) pscore(pscore_nooutliers)
+_eststo coutliers_patcaliper05, r: reg dif_solar_patents total_auctions_lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
+*est store outliers_patcaliper05
+	rename _weight cweight_outliers05
+	
+***********************************************************************	
+		* outcome 2.1: cell & module patents with binary treatment
+***********************************************************************
+		* Simple post-difference
+_eststo post_cell, r:reg post_modcell_patent i.lcr
+*est store post_cell
+
+* DiD
+_eststo did_cell, r:reg dif_modcell_patents i.lcr, vce(hc3)
+*est store did_cell
+
 			* sample = all
 psmatch2 lcr, radius caliper(0.1) outcome(post_modcell_patent) pscore(pscore_all)
 _eststo all_caliper01_cell, r: reg dif_modcell_patents i.lcr [iweight=_weight], vce(hc3)
+*est store all_caliper01_cell
 	rename _weight weight_cell_all01
+
+
 psmatch2 lcr, radius caliper(0.05) outcome(post_modcell_patent) pscore(pscore_all)
 _eststo all_caliper05_cell, r: reg dif_modcell_patents i.lcr [iweight=_weight], vce(hc3)
+*est store all_caliper05_cell
+
 	rename _weight weight_cell_all05
 
 			* sample = won
 psmatch2 lcr if won_total > 0, radius caliper(0.1) outcome(post_modcell_patent) pscore(pscore_won)
 _eststo won_caliper01_cell, r: reg dif_modcell_patents i.lcr [iweight=_weight] if won_total > 0, vce(hc3)
+*est store won_caliper01_cell
 	rename _weight weight_cell_won01
+	
 psmatch2 lcr if won_total > 0, radius caliper(0.05) outcome(post_modcell_patent) pscore(pscore_won)
 _eststo won_caliper05_cell, r: reg dif_modcell_patents i.lcr [iweight=_weight] if won_total > 0, vce(hc3)
+*est store won_caliper05_cell
 	rename _weight weight_cell_won05
 	
 			* sample = no outliers (bosch & sunedision dropped - high patents, only once participated)
 psmatch2 lcr if patent_outliers == 0, radius caliper(0.1) outcome(post_modcell_patent) pscore(pscore_nooutliers)
 _eststo outliers_caliper01_cell, r: reg dif_modcell_patents i.lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
+*est store outliers_caliper01_cell
 	rename _weight weight_cell_outliers01
+	
 psmatch2 lcr if patent_outliers == 0, radius caliper(0.05) outcome(post_modcell_patent) pscore(pscore_nooutliers)
 _eststo outliers_caliper05_cell, r: reg dif_modcell_patents i.lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
+*est store outliers_caliper05_cell
 	rename _weight weight_cell_outliers05
 
-/*	Eststo command says "too many specified?"
-	* outcome 3: Binary post-patent indicator (1 if at least one patent post-2010)
+***********************************************************************	
+		* outcome 2.2: cell & module patents with continous treatment
+***********************************************************************
+		* Simple post-difference
+_eststo cpost_cell, r:reg post_modcell_patent total_auctions_lcr
+*est store post_cell
+
+* DiD
+_eststo cdid_cell, r:reg dif_modcell_patents total_auctions_lcr, vce(hc3)
+*est store did_cell
+
+			* sample = all
+psmatch2 lcr, radius caliper(0.1) outcome(post_modcell_patent) pscore(pscore_all)
+_eststo call_caliper01_cell, r: reg dif_modcell_patents total_auctions_lcr [iweight=_weight], vce(hc3)
+*est store all_caliper01_cell
+	rename _weight cweight_cell_all01
+
+
+psmatch2 lcr, radius caliper(0.05) outcome(post_modcell_patent) pscore(pscore_all)
+_eststo call_caliper05_cell, r: reg dif_modcell_patents total_auctions_lcr [iweight=_weight], vce(hc3)
+*est store all_caliper05_cell
+
+	rename _weight cweight_cell_all05
+
+			* sample = won
+psmatch2 lcr if won_total > 0, radius caliper(0.1) outcome(post_modcell_patent) pscore(pscore_won)
+_eststo cwon_caliper01_cell, r: reg dif_modcell_patents total_auctions_lcr [iweight=_weight] if won_total > 0, vce(hc3)
+*est store won_caliper01_cell
+	rename _weight cweight_cell_won01
+	
+psmatch2 lcr if won_total > 0, radius caliper(0.05) outcome(post_modcell_patent) pscore(pscore_won)
+_eststo cwon_caliper05_cell, r: reg dif_modcell_patents total_auctions_lcr [iweight=_weight] if won_total > 0, vce(hc3)
+*est store won_caliper05_cell
+	rename _weight cweight_cell_won05
+	
+			* sample = no outliers (bosch & sunedision dropped - high patents, only once participated)
+psmatch2 lcr if patent_outliers == 0, radius caliper(0.1) outcome(post_modcell_patent) pscore(pscore_nooutliers)
+_eststo coutliers_caliper01_cell, r: reg dif_modcell_patents total_auctions_lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
+*est store outliers_caliper01_cell
+	rename _weight cweight_cell_outliers01
+	
+psmatch2 lcr if patent_outliers == 0, radius caliper(0.05) outcome(post_modcell_patent) pscore(pscore_nooutliers)
+_eststo coutliers_caliper05_cell, r: reg dif_modcell_patents total_auctions_lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
+*est store outliers_caliper05_cell
+	rename _weight cweight_cell_outliers05
+	
+***********************************************************************
+*outcome 3.1: Binary post-patent indicator (1 if at least one patent post-2010)
+***********************************************************************
+		* Simple post-difference
+_eststo post_binary, r:reg post_solar_patentor i.lcr
+*est store post_cell
+
+* DiD (Would relate to change in solar patentor status, could also be negative in case company was patentor before but not after)
+_eststo did_binary, r:reg diff_solar_patentor i.lcr, vce(hc3)
 			* sample = all
 psmatch2 lcr, radius caliper(0.1) outcome(post_solar_patentor) pscore(pscore_all)
-_eststo all_caliper01_bin r: reg post_solar_patentor i.lcr [iweight=_weight], vce(hc3)
+_eststo all_caliper01_bin, r: reg post_solar_patentor i.lcr [iweight=_weight], vce(hc3)
 	rename _weight weight_binary_all01
 	
 psmatch2 lcr, radius caliper(0.05) outcome(post_solar_patentor) pscore(pscore_all)
@@ -198,32 +321,44 @@ _eststo outliers_caliper01_bin, r: reg post_solar_patentor i.lcr [iweight=_weigh
 	rename _weight weight_binary_outlier01
 psmatch2 lcr if patent_outliers == 0, radius caliper(0.05) outcome(post_solar_patentor) pscore(pscore_nooutliers)
 _eststo outliers_caliper05_bin, r: reg post_solar_patentor i.lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
-	rename _weight weight_cell_outliers05
-	*/
-	
-* export results in a table
-cd "$final_figures"	
-local cell_models all_caliper01_cell all_caliper05_cell won_caliper01_cell won_caliper05_cell outliers_caliper01_cell outliers_caliper05_cell
-esttab `cell_models' using did_modcell.tex, replace ///
-	title("Difference-in-difference combined with matching"\label{main_regressions}) ///
-	mgroups("All firms" "Winner firms" "All w/o outliers", ///
-		pattern(1 0 1 0 1 0)) ///
-	mtitles("caliper = 0.1" "caliper = 0.05" "caliper = 0.1" "caliper = 0.05" "caliper = 0.1" "caliper = 0.05") ///
-	label ///
-	b(2) ///
-	se(2) ///
-	width(0.8\hsize) ///
-	star(* 0.1 ** 0.05 *** 0.01) ///
-	nobaselevels ///
-	booktabs ///
-	addnotes("DiD based on solar patents 2011-2020 minus 2001-2010." "Common support imposed in all specifications." "Robust standard errors in parentheses.")
-	
-	
-	* counterfactual = won LCR vs. did not win LCR
+	rename _weight weight_binary_outliers05
 
+***********************************************************************
+*outcome 3.2: Binary post-patent indicator (1 if at least one patent post-2010) with continous treatment
+***********************************************************************
+		* Simple post-difference
+_eststo cpost_binary, r:reg post_solar_patentor total_auctions_lcr
+*est store post_cell
 
-	/*	
-		
+* DiD
+_eststo cdid_binary, r:reg diff_solar_patentor total_auctions_lcr, vce(hc3)
+
+			* sample = all
+psmatch2 lcr, radius caliper(0.1) outcome(post_solar_patentor) pscore(pscore_all)
+_eststo call_caliper01_bin, r: reg post_solar_patentor total_auctions_lcr [iweight=_weight], vce(hc3)
+	rename _weight cweight_binary_all01
+	
+psmatch2 lcr, radius caliper(0.05) outcome(post_solar_patentor) pscore(pscore_all)
+_eststo call_caliper05_bin, r: reg post_solar_patentor total_auctions_lcr [iweight=_weight], vce(hc3)
+	rename _weight cweight_binary_all05
+
+			* sample = won
+psmatch2 lcr if won_total > 0, radius caliper(0.1) outcome(post_solar_patentor) pscore(pscore_won)
+_eststo cwon_caliper01_bin, r: reg post_solar_patentor total_auctions_lcr [iweight=_weight] if won_total > 0, vce(hc3)
+	rename _weight cweight_binary_won01
+psmatch2 lcr if won_total > 0, radius caliper(0.05) outcome(post_solar_patentor) pscore(pscore_won)
+_eststo cwon_caliper05_bin, r: reg post_solar_patentor total_auctions_lcr [iweight=_weight] if won_total > 0, vce(hc3)
+	rename _weight cweight_binary_won05
+	
+			* sample = no outliers (bosch & sunedision dropped - high patents, only once participated)
+psmatch2 lcr if patent_outliers == 0, radius caliper(0.1) outcome(post_solar_patentor) pscore(pscore_nooutliers)
+_eststo coutliers_caliper01_bin, r: reg post_solar_patentor total_auctions_lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
+	rename _weight cweight_binary_outlier01
+psmatch2 lcr if patent_outliers == 0, radius caliper(0.05) outcome(post_solar_patentor) pscore(pscore_nooutliers)
+_eststo coutliers_caliper05_bin, r: reg post_solar_patentor total_auctions_lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
+	rename _weight cweight_binary_outliers05	
+
+/*		
 ***********************************************************************
 * 	PART 4:  Kernel matching
 ***********************************************************************
@@ -272,7 +407,7 @@ _eststo mahalanobis01, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(hc3
 	
 	*/
 ***********************************************************************
-* 	PART 6:  Alternative outcome variable: sales
+* 	PART 6.1:  Alternative outcome variable: sales with binary treatment
 ***********************************************************************
 * C1: Simple post-difference
 _eststo sales_post, r:reg diff_revenue i.lcr
@@ -285,60 +420,188 @@ _eststo sales_did, r:reg diff_revenue i.lcr, vce(hc3)
 	* sample = all
 psmatch2 lcr, radius caliper(0.1) outcome(post_revenue) pscore(pscore_all)
 _eststo sales_all_caliper01, r: reg diff_revenue i.lcr [iweight=_weight], vce(hc3)
+*est store sales_all_caliper01
 	rename _weight weight_didsales_all01
 
 psmatch2 lcr, radius caliper(0.05) outcome(post_revenue) pscore(pscore_all)
 _eststo sales_all_caliper05, r: reg diff_revenue i.lcr [iweight=_weight], vce(hc3)
+*est store sales_all_caliper05
 	rename _weight weight_didsales_all05
 
-	/*not IHS transformed (revenues in rupees)
-psmatch2 lcr, radius caliper(0.1) outcome(post_revenue) pscore(pscore_all)
-_eststo sales_all_caliper01, r: reg post_revenue i.lcr [iweight=_weight], vce(hc3)
-	rename _weight weight_sales_all01
-
-psmatch2 lcr, radius caliper(0.05) outcome(post_revenue) pscore(pscore_all)
-_eststo sales_all_caliper05, r: reg post_revenue i.lcr [iweight=_weight], vce(hc3)
-	rename _weight weight_sales_all05
 
 	*/
 			* sample = won
 psmatch2 lcr if won_total > 0, radius caliper(0.1) outcome(post_revenue) pscore(pscore_won)
 _eststo sales_won_caliper01, r: reg diff_revenue i.lcr [iweight=_weight] if won_total > 0, vce(hc3)
+*est store sales_won_caliper01
 	rename _weight weight_sales_won01
+	
 psmatch2 lcr if won_total > 0, radius caliper(0.05) outcome(post_revenue) pscore(pscore_won)
 _eststo sales_won_caliper05, r: reg diff_revenue i.lcr [iweight=_weight] if won_total > 0, vce(hc3)
+*est store sales_won_caliper05
 	rename _weight weight_sales_won05
 	
 			* sample = no outliers (bosch & sunedision dropped - high patents, only once participated)
 psmatch2 lcr if patent_outliers == 0, radius caliper(0.1) outcome(post_revenue) pscore(pscore_nooutliers)
 _eststo sales_outliers_caliper01, r: reg diff_revenue i.lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
+*est store sales_outliers_caliper01
 	rename _weight weight_sales_outliers01
+
 psmatch2 lcr if patent_outliers == 0, radius caliper(0.05) outcome(post_revenue) pscore(pscore_nooutliers)
 _eststo sales_outliers_caliper05, r: reg diff_revenue i.lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
+*est store sales_outliers_caliper05
 	rename _weight weight_sales_outliers05
 
-	
 ***********************************************************************
-*Two Panel Table Patent and Sales resutls	  			
-***********************************************************************	
-	cd "$final_figures"	
-	
-esttab *sales* using sales_regression.tex, replace ///
-	title("Difference-in-difference combined with matching"\label{sales_regression}) ///
-	mgroups("" "All firms" "Winner firms" "All w/o outliers" , ///
-		pattern(1 0 1 0 1 0 1 0)) ///
-	mtitles("Simple mean diff." "DiD" "caliper = 0.1" "caliper = 0.05" "caliper = 0.1" "caliper = 0.05" "caliper = 0.1" "caliper = 0.05") ///
-	label ///
-	b(2) ///
-	se(2) ///
-	width(0.8\hsize) ///
-	star(* 0.1 ** 0.05 *** 0.01) ///
-	nobaselevels ///
-	booktabs ///
-	addnotes("DiD based on mean of pre-2013 revenue (or earliest available record) minus latest revenue record." "Common support imposed in all specifications." "Robust standard errors in parentheses.")
+* 	PART 6.2:  Alternative outcome variable: sales with continous treatment
+***********************************************************************
+* C1: Simple post-difference
+_eststo csales_post, r:reg diff_revenue total_auctions_lcr
 
+* C2: DiD
+_eststo csales_did, r:reg diff_revenue total_auctions_lcr, vce(hc3)
+
+* 1 Caliper radius matching
+
+	* sample = all
+psmatch2 lcr, radius caliper(0.1) outcome(post_revenue) pscore(pscore_all)
+_eststo csales_all_caliper01, r: reg diff_revenue total_auctions_lcr [iweight=_weight], vce(hc3)
+*est store sales_all_caliper01
+	rename _weight cweight_didsales_all01
+
+psmatch2 lcr, radius caliper(0.05) outcome(post_revenue) pscore(pscore_all)
+_eststo csales_all_caliper05, r: reg diff_revenue total_auctions_lcr [iweight=_weight], vce(hc3)
+*est store sales_all_caliper05
+	rename _weight cweight_didsales_all05
+
+
+	*/
+			* sample = won
+psmatch2 lcr if won_total > 0, radius caliper(0.1) outcome(post_revenue) pscore(pscore_won)
+_eststo csales_won_caliper01, r: reg diff_revenue total_auctions_lcr [iweight=_weight] if won_total > 0, vce(hc3)
+*est store sales_won_caliper01
+	rename _weight cweight_sales_won01
 	
+psmatch2 lcr if won_total > 0, radius caliper(0.05) outcome(post_revenue) pscore(pscore_won)
+_eststo csales_won_caliper05, r: reg diff_revenue total_auctions_lcr [iweight=_weight] if won_total > 0, vce(hc3)
+*est store sales_won_caliper05
+	rename _weight cweight_sales_won05
 	
+			* sample = no outliers (bosch & sunedision dropped - high patents, only once participated)
+psmatch2 lcr if patent_outliers == 0, radius caliper(0.1) outcome(post_revenue) pscore(pscore_nooutliers)
+_eststo csales_outliers_caliper01, r: reg diff_revenue total_auctions_lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
+*est store sales_outliers_caliper01
+	rename _weight cweight_sales_outliers01
+
+psmatch2 lcr if patent_outliers == 0, radius caliper(0.05) outcome(post_revenue) pscore(pscore_nooutliers)
+_eststo csales_outliers_caliper05, r: reg diff_revenue total_auctions_lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
+*est store sales_outliers_caliper05
+	rename _weight cweight_sales_outliers05
+
+***********************************************************************
+* Part 7.1 Make nice three panel table with Solar patents, cell patents and Sales for binary treatment variable		  			
+***********************************************************************
+	//top panel
+esttab  post_patcaliper did_patcaliper all_patcaliper01 all_patcaliper05 won_patcaliper01 /// 
+		won_patcaliper05 outliers_patcaliper01 outliers_patcaliper05 using three_panel.tex, replace  ///
+		nobaselevels ///
+		prehead("\begin{table}[htbp]\centering \\  \def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi} \\ \caption{Results of Matching combined with Difference in Differences} \\ \begin{tabular}{l*{8}{c}} \hline\hline") ///
+		posthead("\hline \\ \multicolumn{8}{c}{\textbf{Panel A: Solar PV Patents}} \\\\[-1ex]") ///
+		fragment ///
+		mgroups("" "All firms" "Winner firms" "All w/o outliers", ///
+		pattern(1 0 1 0 1 0 1 0)) ///
+		mtitles("Simple post difference" "DiD" "caliper = 0.1" "caliper = 0.05" "caliper = 0.1" "caliper = 0.05" "caliper = 0.1" "caliper = 0.05") ///
+		label /// 
+		star(* 0.1 ** 0.05 *** 0.01) ///
+		b(2) se(2) 
+
+//middle panel 
+esttab  post_cell did_cell all_caliper01_cell all_caliper05_cell won_caliper01_cell won_caliper05_cell outliers_caliper01_cell ///
+	outliers_caliper05_cell using three_panel.tex, ///
+    nobaselevels ///
+	posthead("\hline \\ \multicolumn{8}{c}{\textbf{Panel B: PV Module \& PV Cell Patents only}} \\\\[-1ex]") ///
+	fragment ///
+	append ///
+	label ///
+	star(* 0.1 ** 0.05 *** 0.01) ///
+	b(2) se(2) nomtitles nonumbers 
+
+//second middle panel 
+esttab  post_binary did_binary all_caliper01_bin all_caliper05_bin won_caliper01_bin won_caliper05_bin /// 
+	outliers_caliper01_bin outliers_caliper05_bin using three_panel.tex, ///
+    nobaselevels ///
+	posthead("\hline \\ \multicolumn{8}{c}{\textbf{Panel C: Post-LCR solar patent (binary)}} \\\\[-1ex]") ///
+	fragment ///
+	append ///
+	label ///
+	star(* 0.1 ** 0.05 *** 0.01) ///
+	b(2) se(2) nomtitles nonumbers 
+	
+//bottom panel 
+esttab sales_post sales_did sales_all_caliper01 sales_all_caliper05 sales_won_caliper01 ///
+	sales_won_caliper05 sales_outliers_caliper01 sales_outliers_caliper05 using three_panel.tex, ///
+   	nobaselevels ///
+	posthead("\hline \\ \multicolumn{8}{c}{\textbf{Panel D: Revenues (in INR)}} \\\\[-1ex]") ///
+	fragment ///
+	append ///
+	label ///
+	star(* 0.1 ** 0.05 *** 0.01) ///
+	b(2) se(2) nomtitles nonumbers  ///
+	prefoot("\hline") ///
+	postfoot("\hline\hline\hline \multicolumn{8}{l}{\footnotesize Results in columns (1) \& (2) use unmatched counterfactuals and columns (3)-(8) use matched counterfactuals based on the specified parameters. }\\\multicolumn{5}{l}{\footnotesize Robust Standard errors in parentheses}\\\multicolumn{2}{l}{\footnotesize \sym{**} \(p<0.05\), \sym{*} \(p<0.1\)}\\ \end{tabular} \\ \end{table}")
+
+***********************************************************************
+* Part 7.2 Make nice three panel table with Solar patents, cell patents and Sales for continous treatment		  			
+***********************************************************************
+	//top panel
+esttab  cpost_patcaliper cdid_patcaliper call_patcaliper01 call_patcaliper05 cwon_patcaliper01 /// 
+		cwon_patcaliper05 coutliers_patcaliper01 coutliers_patcaliper05 using three_panel_continous.tex, replace ///
+		nobaselevels ///
+		prehead("\begin{table}[htbp]\centering \\  \def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi} \\ \caption{Adjusted for Treatment Intensity: Results of Matching combined with Difference in Differences} \\ \begin{tabular}{l*{8}{c}} \hline\hline") ///
+		posthead("\hline \\ \multicolumn{8}{c}{\textbf{Panel A: Solar PV Patents}} \\\\[-1ex]") ///
+		fragment ///
+		mgroups("" "All firms" "Winner firms" "All w/o outliers", ///
+		pattern(1 0 1 0 1 0 1 0)) ///
+		mtitles("Simple post difference" "DiD" "caliper = 0.1" "caliper = 0.05" "caliper = 0.1" "caliper = 0.05" "caliper = 0.1" "caliper = 0.05") ///
+		label /// 
+		star(* 0.1 ** 0.05 *** 0.01) ///
+		b(2) se(2) 
+
+//middle panel 
+esttab  cpost_cell cdid_cell call_caliper01_cell call_caliper05_cell cwon_caliper01_cell cwon_caliper05_cell coutliers_caliper01_cell ///
+	coutliers_caliper05_cell using three_panel_continous.tex, ///
+    nobaselevels ///
+	posthead("\hline \\ \multicolumn{8}{c}{\textbf{Panel B: PV Module \& PV Cell Patents only}} \\\\[-1ex]") ///
+	fragment ///
+	append ///
+	label ///
+	star(* 0.1 ** 0.05 *** 0.01) ///
+	b(2) se(2) nomtitles nonumbers 
+
+//second middle panel 
+esttab  cpost_binary cdid_binary call_caliper01_bin call_caliper05_bin cwon_caliper01_bin cwon_caliper05_bin /// 
+	coutliers_caliper01_bin coutliers_caliper05_bin using three_panel_continous.tex, ///
+    nobaselevels ///
+	posthead("\hline \\ \multicolumn{8}{c}{\textbf{Panel C: Post-LCR solar patent (binary)}} \\\\[-1ex]") ///
+	fragment ///
+	append ///
+	label ///
+	star(* 0.1 ** 0.05 *** 0.01) ///
+	b(2) se(2) nomtitles nonumbers 
+	
+//bottom panel 
+esttab csales_post csales_did csales_all_caliper01 csales_all_caliper05 csales_won_caliper01 ///
+	csales_won_caliper05 csales_outliers_caliper01 csales_outliers_caliper05 using three_panel_continous.tex, ///
+   	nobaselevels ///
+	posthead("\hline \\ \multicolumn{8}{c}{\textbf{Panel D: Revenues (in INR)}} \\\\[-1ex]") ///
+	fragment ///
+	append ///
+	label ///
+	star(* 0.1 ** 0.05 *** 0.01) ///
+	b(2) se(2) nomtitles nonumbers  ///
+	prefoot("\hline") ///
+	postfoot("\hline\hline\hline \multicolumn{8}{l}{\footnotesize Results in columns (1) \& (2) use unmatched counterfactuals and columns (3)-(8) use matched counterfactuals based on the specified parameters. }\\\multicolumn{5}{l}{\footnotesize Robust Standard errors in parentheses}\\\multicolumn{2}{l}{\footnotesize \sym{**} \(p<0.05\), \sym{*} \(p<0.1\)}\\ \end{tabular} \\ \end{table}")
+
 	
 ***********************************************************************
 * 	Save the changes made to the data		  			
