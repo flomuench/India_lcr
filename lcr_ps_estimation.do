@@ -53,6 +53,17 @@ predict pscore_nooutliers if patent_outliers == 0, p
 sum pscore_nooutliers, d
 label var pscore_nooutliers "estimated propensity score to participate in LCR auctions, no outliers"
 
+* excluding positive/negative sales outliers Bharat,NTPC,larsen:
+gen sales_outliers = 0
+replace sales_outliers = 1 if company_name == "bharat"
+replace sales_outliers = 1 if company_name == "larsen"
+replace sales_outliers = 1 if company_name == "ntpc"
+label var sales_outliers "outliers in terms of sales pre-post difference"
+
+logit lcr `matching_var5' if sales_outliers == 0, vce(robust)
+predict pscore_nosalesoutliers if sales_outliers == 0, p
+sum pscore_nosalesoutliers, d
+label var pscore_nosalesoutliers "estimated propensity score to participate in LCR auctions, no sales outliers"
 
 ***********************************************************************
 * 	PART 2:  counterfactual: did not win LCR

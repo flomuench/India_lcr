@@ -103,8 +103,7 @@ export excel company_name bidder ultimateparent city state lob webaddress founde
 * 	PART 5: Miscallenous change
 ***********************************************************************
 
-*Shorten name of Development corporation odisha for visual reasons
-replace company_name ="odisha" if company_name == "development corporation odisha"
+
 ***********************************************************************
 * 	PART 5: save cross-section data as raw
 ***********************************************************************

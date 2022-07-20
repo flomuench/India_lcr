@@ -25,8 +25,7 @@ use "${lcr_final}/lcr_final", clear
 cd "$lcr_final"
 
 *in case weight variables were saved from previous version, they are dropped here now
-drop weight*
-drop cweight*
+
 ***********************************************************************
 * 	PART 2:  Nearest neighbor matching
 ***********************************************************************
@@ -155,14 +154,14 @@ _eststo won_nn_sales, r: reg diff_revenue i.lcr [iweight=_weight], vce(hc3)
 	rename _weight weight_nn_won_sales
 	
 		* sample = no outliers
-psmatch2 lcr if patent_outliers == 0, neighbor(1) outcome(post_revenue) pscore(pscore_nooutliers)
-_eststo outlier_nn_sales, r: reg diff_revenue i.lcr [iweight=_weight], vce(hc3)
+psmatch2 lcr if sales_outliers == 0, neighbor(1) outcome(post_revenue) pscore(pscore_nosalesoutliers)
+_eststo outlier_nn_sales, r: reg diff_revenue i.lcr [iweight=_weight] if sales_outliers == 0, vce(hc3)
 	rename _weight weight_nn_outlier_sales
 
 * 2: 2nn with replacement (selects the two nearest neighbors instead of just one)
 		* sample = all
 psmatch2 lcr, neighbor(2) outcome(post_revenue) pscore(pscore_all)
-_eststo all2_nn_sales, r: reg diff_revenue i.lcr [iweight=_weight], vce(hc3)
+_eststo all2_nn_sales, r: reg diff_revenue i.lcr [iweight=_weight] , vce(hc3)
 	rename _weight weight_nn2_all_sales
 	
 		
@@ -172,8 +171,8 @@ _eststo won2_nn_sales, r: reg diff_revenue i.lcr [iweight=_weight], vce(hc3)
 	rename _weight weight_nn2_won_sales
 	
 		* sample = no outliers
-psmatch2 lcr if patent_outliers == 0, neighbor(2) outcome(post_revenue) pscore(pscore_nooutliers)
-_eststo outlier2_nn_sales, r: reg diff_revenue i.lcr [iweight=_weight], vce(hc3)
+psmatch2 lcr if sales_outliers == 0, neighbor(2) outcome(post_revenue) pscore(pscore_nosalesoutliers)
+_eststo outlier2_nn_sales, r: reg diff_revenue i.lcr [iweight=_weight] if sales_outliers == 0, vce(hc3)
 	rename _weight weight_nn2_outlie_sales	
 	
 	
@@ -592,14 +591,14 @@ _eststo sales_won_caliper05, r: reg diff_revenue i.lcr [iweight=_weight] if won_
 *est store sales_won_caliper05
 	rename _weight weight_sales_won05
 	
-			* sample = no outliers (bosch & sunedision dropped - high patents, only once participated)
-psmatch2 lcr if patent_outliers == 0, radius caliper(0.1) outcome(post_revenue) pscore(pscore_nooutliers)
-_eststo sales_outliers_caliper01, r: reg diff_revenue i.lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
+			* sample = no outliers (bharat,ntpc larsen dropped high sales and differences)
+psmatch2 lcr if sales_outliers == 0, radius caliper(0.1) outcome(post_revenue) pscore(pscore_nosalesoutliers)
+_eststo sales_outliers_caliper01, r: reg diff_revenue i.lcr [iweight=_weight] if sales_outliers == 0, vce(hc3)
 *est store sales_outliers_caliper01
 	rename _weight weight_sales_outliers01
 
-psmatch2 lcr if patent_outliers == 0, radius caliper(0.05) outcome(post_revenue) pscore(pscore_nooutliers)
-_eststo sales_outliers_caliper05, r: reg diff_revenue i.lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
+psmatch2 lcr if sales_outliers == 0, radius caliper(0.05) outcome(post_revenue) pscore(pscore_nosalesoutliers)
+_eststo sales_outliers_caliper05, r: reg diff_revenue i.lcr [iweight=_weight] if sales_outliers == 0, vce(hc3)
 *est store sales_outliers_caliper05
 	rename _weight weight_sales_outliers05
 
@@ -638,14 +637,14 @@ _eststo csales_won_caliper05, r: reg diff_revenue total_auctions_lcr [iweight=_w
 *est store sales_won_caliper05
 	rename _weight cweight_sales_won05
 	
-			* sample = no outliers (bosch & sunedision dropped - high patents, only once participated)
-psmatch2 lcr if patent_outliers == 0, radius caliper(0.1) outcome(post_revenue) pscore(pscore_nooutliers)
-_eststo csales_outliers_caliper01, r: reg diff_revenue total_auctions_lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
+			* sample = no outliers (bharat,ntpc larsen dropped high sales and differences)
+psmatch2 lcr if sales_outliers == 0, radius caliper(0.1) outcome(post_revenue) pscore(pscore_nosalesoutliers)
+_eststo csales_outliers_caliper01, r: reg diff_revenue total_auctions_lcr [iweight=_weight] if sales_outliers == 0, vce(hc3)
 *est store sales_outliers_caliper01
 	rename _weight cweight_sales_outliers01
 
-psmatch2 lcr if patent_outliers == 0, radius caliper(0.05) outcome(post_revenue) pscore(pscore_nooutliers)
-_eststo csales_outliers_caliper05, r: reg diff_revenue total_auctions_lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
+psmatch2 lcr if sales_outliers == 0, radius caliper(0.05) outcome(post_revenue) pscore(pscore_nosalesoutliers)
+_eststo csales_outliers_caliper05, r: reg diff_revenue total_auctions_lcr [iweight=_weight] if sales_outliers == 0, vce(hc3)
 *est store sales_outliers_caliper05
 	rename _weight cweight_sales_outliers05
 
