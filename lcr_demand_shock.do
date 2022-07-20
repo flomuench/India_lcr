@@ -105,7 +105,6 @@ gr hbar (sum) lcr_quantity_allocated (sum) open_quantity_allocated if (open_quan
 	over(company_name, sort(2) descending lab(labs(small))) stack ///
 	ytitle("MW won") ///
 	ylabel(0 100 200 300 400 500) ///
-	title("Share of LCR allocated vs. share of open auction among LCR participants") ///
 	legend(order(1 "MW allocated via LCR auctions 2013 - 2017" 2 "MW allocated in open auctions 2013 - 2017") pos(6)) ///
 	name(mw_won_stacked, replace)	
 gr export mw_won_stacked.png, replace

@@ -69,11 +69,12 @@ gr export bid_results.png, replace
 cd "$final_figures"
 gr bar, over(won)  ///
 	blabel(total, format(%9.1fc) pos(center) size(large)) ///
-	by(lcr , ///
-	note("Lost bids N = 178, won bids N = 146", size(small))) ///
+	by(lcr, note("")) ///
+	labsize(medium) ///
 	name(bid_results_lcr, replace)
 gr export bid_results_lcr.png, replace
 
+*note("Lost bids N = 178, won bids N = 146", size(small)))
 
 ***********************************************************************
 * 	PART 3: price in lcr vs price outside lcr					
