@@ -23,7 +23,21 @@ use "${lcr_final}/lcr_final", clear
 cd "$lcr_psm"
 
 ***********************************************************************
-* 	PART 2:   Calculate minimum detectable effect size 		
+* 	PART 2:   Calculate minimum detectable effect size based on SE	
+***********************************************************************
+matrix list lcr_se
+* solar patents
+	* minimum SE
+scalar min_se = lcr_se[1,2] * 2.8
+display min_se
+	* max SE
+scalar max_se = lcr_se[1,7] * 2.8
+display max_se
+
+	* average SE
+
+***********************************************************************
+* 	PART 3:   Calculate minimum detectable effect size based on control group mean & SD
 ***********************************************************************
 	* What to use as base for mean, SD in control group?
 		* Option 1: sample mean & SD
@@ -47,7 +61,7 @@ power twomeans `meancontrol', n1(`ncontrol') n2(`ntreat') alpha(0.05) sd1(`sdcon
 	
 	
 ***********************************************************************
-* 	PART 3:  conditional on patenting, how much MW for one patent?		
+* 	PART 4:  conditional on patenting, how much MW for one patent?		
 ***********************************************************************
 gen mw_patent = quantity_allocated_mw_total/post_solar_patent
 sum mw_patent
@@ -56,7 +70,7 @@ br company_name mw_patent quantity_allocated_mw_lcr quantity_allocated_mw_total 
 
 
 ***********************************************************************
-* 	PART 4:  how much MW did LCR firms win?		
+* 	PART 5:  how much MW did LCR firms win?		
 ***********************************************************************
 sum quantity_allocated_mw_lcr if lcr == 1
 	* suggest 16.5 MW on average, max. 67
@@ -65,7 +79,7 @@ br company_name mw_patent quantity_allocated_mw_lcr quantity_allocated_mw_total 
 
 
 ***********************************************************************
-* 	PART 5:  what were the total additional costs to the government?		
+* 	PART 6:  what were the total additional costs to the government?		
 ***********************************************************************
 * calculate either based on Ben or own calculations
 	* requires also: 1000x for kwh to MW transformation
