@@ -192,6 +192,7 @@ esttab *_nn using did_robust_nn.tex, replace ///
 	booktabs ///
 	addnotes("Estimates (3)-(5) based on nearest neighbor matching." "DiD based on solar patents 2011-2020 minus 2001-2010." "Common support imposed in all specifications." "Robust standard errors in parentheses.")
 */
+
 	*Same four panel table like for caliper 
 cd "$final_figures"		
 	//top panel
@@ -248,49 +249,51 @@ esttab all_nn_sales won_nn_sales outlier_nn_sales all2_nn_sales won2_nn_sales ou
 ***********************************************************************
 *Outcome 1.1: All Solar patents with binary treatment
 ***********************************************************************
+	* create matrix to collect SE for ex post power calculation
+matrix def lcr_se = J(2,8,16) 
+
 * C1: Simple post-difference
 _eststo post_patcaliper, r:reg post_solar_patent i.lcr
 *est store post_patcaliper
+matrix lcr_se[1,1] = _se[1.lcr]
 
 * C2: DiD
 _eststo did_patcaliper, r:reg dif_solar_patents i.lcr, vce(hc3)
 *est store did_patcaliper
 
 	* counterfactual = participated LCR vs. did not participate LCR
-		* outcome 1: solar patents
+		* C3: outcome 1: solar patents
 			* sample = all
 psmatch2 lcr, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore_all)
 _eststo all_patcaliper01, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(hc3)
 *est store all_patcaliper01
 	rename _weight weight_all01
 
-	
+		* C4: as C3 but caliper 0.05
 psmatch2 lcr, radius caliper(0.05) outcome(post_solar_patent) pscore(pscore_all)
 _eststo all_patcaliper05, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(hc3)
 *est store all_patcaliper05
-
 	rename _weight weight_all05
 	
-			* sample = won
+			* C5: sample = won
 psmatch2 lcr if won_total > 0, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore_won)
 _eststo won_patcaliper01, r: reg dif_solar_patents i.lcr [iweight=_weight] if won_total > 0, vce(hc3)
 *est store won_patcaliper01
-
 	rename _weight weight_won01
-	
+		
+			* C6:
 psmatch2 lcr if won_total > 0, radius caliper(0.05) outcome(post_solar_patent) pscore(pscore_won)
 _eststo won_patcaliper05, r: reg dif_solar_patents i.lcr [iweight=_weight] if won_total > 0, vce(hc3)
 *est store won_patcaliper05
-
 	rename _weight weight_won05
 	
-			* sample = no outliers (bosch & sunedision dropped - high patents, only once participated)
+			* C7: sample = no outliers (bosch & sunedision dropped - high patents, only once participated)
 psmatch2 lcr if patent_outliers == 0, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore_nooutliers)
 _eststo outliers_patcaliper01, r: reg dif_solar_patents i.lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
 *est store outliers_patcaliper01
-
 	rename _weight weight_outliers01
 	
+			* C8:
 psmatch2 lcr if patent_outliers == 0, radius caliper(0.05) outcome(post_solar_patent) pscore(pscore_nooutliers)
 _eststo outliers_patcaliper05, r: reg dif_solar_patents i.lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
 *est store outliers_patcaliper05
