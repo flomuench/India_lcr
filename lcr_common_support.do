@@ -36,13 +36,13 @@ foreach sample in all won nooutliers {
 	forvalues binwidth = 5(5)20 {
 			* depending on sample change pscore
 		psgraph , treated(lcr) pscore(pscore_`sample') bin(`binwidth') ///
-			title(Number of bins = `binwidth') ///
-			subtitle(sample = `sample') ///
-			xlabel(0(.05)1) ///
+			subtitle(bin width = `binwidth') ///
+			xlabel(0(.1)1) ///
+			legend(label(1 "LCR auctions") label(2 "Open auctions") pos(6) rows(1)) ///
 			name(common_support_`sample'`binwidth', replace)
 		}
-	gr combine common_support_`sample'5 common_support_`sample'10 common_support_`sample'15 common_support_`sample'20, ///
-		title("{bf:Is there common support for LCR & non-LCR firms?}") ///
+	grc1leg common_support_`sample'5 common_support_`sample'10 common_support_`sample'15 common_support_`sample'20, ///
+		legendfrom(common_support_`sample'5) pos(6) span ///
 		name(common_support_`sample', replace)
 gr export common_support_`sample'.png, replace
 }

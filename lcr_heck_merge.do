@@ -231,8 +231,8 @@ replace manufacturer_solar = 1 if company_name == "solar"
 ***********************************************************************
 * 	PART 4: create sector dummy
 ***********************************************************************
-lab def sectors 1 "real estate" 2 "industry" 3 "construction" 4 "business services" 5 "electrical services, EPC" ///
-	6 "electronics, component manufacturers" 7 "utility"
+lab def sectors 1 "real estate" 2 "industry" 3 "construction" 4 "business services" 5 "electrical services EPC" ///
+	6 "electronics manufacturer" 7 "utility"
 	
 gen sector = .
 replace sector = 1 if lob == 1 | lob == 31 

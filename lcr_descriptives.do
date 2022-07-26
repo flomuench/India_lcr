@@ -39,9 +39,17 @@ iebaltab `firm_characteristics', grpvar(lcr) save(baltab_firmlevel) replace ///
 iebaltab `firm_characteristics', grpvar(lcr) savetex(baltab_firmlevel) replace ///
 			 vce(robust) pttest rowvarlabels balmiss(mean) onerow stdev notecombine ///
 			 format(%12.2fc)	
-			 
-graph pie, over (sector) plabel (_all sum) title("Participating firms by main sectors")
+	
+graph hbar (count), over(sector, sort(1) lab(labs(small))) ///
+	blabel(total, format(%9.0g) pos(center)) ///
+	ytitle("number of firms") ///
+	name(firms_pie_sectors, replace)
 gr export firms_pie_sectors.png, replace
+
+	
+graph pie, over(sector) plabel (_all sum)  descending ///
+	legend(pos(6) rows(2)) ///
+	intensity(*0.5)
 
 
 *Table 1 descriptive statistics
@@ -112,20 +120,20 @@ gr export prepost_no_outlier.png, replace
 
 
 	* pre-post solar LCR vs. no LCR only without outliers
-cd "$final_figures"
 graph bar (sum)  `prepostsolar' if patent_outliers == 0, over(lcr) ///
 	blabel(total, size(medium)) ///
 	title("{bf: Solar patents pre-and post LCR auctions in India}") ///
 	subtitle("Firms that participated in SECI solar auctions between 2011-2020", size(small)) ///
-	legend(label(1 "solar patents 2001-2010") label(2 "solar patents 2011-2020") rows(2) pos(6)) ///
+	legend(label(1 "solar patents 2001-2010") label(2 "solar patents 2011-2020") rows(1) pos(6)) ///
 	note("Authors own calculations based on patent application at Indian patent office.", size(vsmall)) ///
 	name(prepost_solar_LCR_no_outlier, replace)
 gr export prepost_solar_LCR_no_outlier.png, replace
 
+cd "$final_figures"
 *pre-post LCR vs. no LCR incl. outliers
-graph bar (sum)  `prepostsolar', over(lcr) ///
+graph bar (sum)  `prepostsolar', over(lcr, label(labs(large))) ///
 	blabel(total, size(medium)) ///
-	legend(label(1 "solar patents 2001-2010") label(2 "solar patents 2011-2020") rows(2) pos(6)) ///
+	legend(label(1 "solar patents 2001-2010") label(2 "solar patents 2011-2020") rows(1) pos(6)) ///
 	name(prepost_solar_LCR, replace)
 gr export prepost_solar_LCR.png, replace
 

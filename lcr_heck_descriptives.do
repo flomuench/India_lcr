@@ -67,10 +67,9 @@ gr export bid_results.png, replace
 
 	* winning vs. loosing bids lcr vs. no lcr
 cd "$final_figures"
-gr bar, over(won)  ///
+gr bar, over(won, label(labs(large)))  ///
 	blabel(total, format(%9.1fc) pos(center) size(large)) ///
 	by(lcr, note("")) ///
-	labsize(medium) ///
 	name(bid_results_lcr, replace)
 gr export bid_results_lcr.png, replace
 
