@@ -20,7 +20,7 @@
 use "${lcr_final}/lcr_final", clear
 
 	* set the directory to propensity matching folder
-cd "$lcr_psm"
+cd "$final_figures"
 
 ***********************************************************************
 * 	PART 2:   Calculate minimum detectable effect size based on SE	
@@ -29,12 +29,21 @@ matrix list lcr_se
 * solar patents
 	* minimum SE
 scalar min_se = lcr_se[1,2] * 2.8
-display min_se
+display min_se /* 1.59 solar patents */
 	* max SE
 scalar max_se = lcr_se[1,7] * 2.8
-display max_se
+display max_se /* 2.38 solar patents */
 
 	* average SE
+	
+	* export as table
+putexcel set lcr_se, replace
+putexcel B1:K1 = "", border(bottom)
+putexcel B2:K2 = "", border(bottom)
+putexcel B2 = matrix(lcr_se), hcenter nformat(number_d2) names
+putexcel B6:K6 = "", border(top)
+putexcel save 
+
 
 ***********************************************************************
 * 	PART 3:   Calculate minimum detectable effect size based on control group mean & SD

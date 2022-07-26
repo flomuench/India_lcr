@@ -250,8 +250,8 @@ esttab all_nn_sales won_nn_sales outlier_nn_sales all2_nn_sales won2_nn_sales ou
 *Outcome 1.1: All Solar patents with binary treatment
 ***********************************************************************
 	* create matrix to collect SE for ex post power calculation
-matrix def lcr_se = J(2,8,16)
-matrix rownames lcr_se = solar_patents, cell_patents
+matrix def lcr_se = J(3,8,24)
+matrix rownames lcr_se = solar_patents, cell_patents, sales
 matrix colnames lcr_se  = post_difference, DiD, all01, all05, winners01, winners05, nooutliers_01, nooutliers_05
 
 * C1: Simple post-difference
@@ -271,42 +271,42 @@ _eststo did_patcaliper, r:reg dif_solar_patents i.lcr, vce(hc3)
 psmatch2 lcr, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore_all)
 _eststo all_patcaliper01, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(hc3)
 *est store all_patcaliper01
-	rename _weight weight_lcrbinary_all01
+	rename _weight weight_all01
 	matrix lcr_se[1,3] = _se[1.lcr]
 
 		* C4: as C3 but caliper 0.05
 psmatch2 lcr, radius caliper(0.05) outcome(post_solar_patent) pscore(pscore_all)
 _eststo all_patcaliper05, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(hc3)
 *est store all_patcaliper05
-	rename _weight weight_lcrbinary_all05
+	rename _weight weight_all05
 	matrix lcr_se[1,4] = _se[1.lcr]
 
 			* C5: sample = won
 psmatch2 lcr if won_total > 0, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore_won)
 _eststo won_patcaliper01, r: reg dif_solar_patents i.lcr [iweight=_weight] if won_total > 0, vce(hc3)
 *est store won_patcaliper01
-	rename _weight weight_lcrbinary_won01
+	rename _weight weight_won01
 	matrix lcr_se[1,5] = _se[1.lcr]
 
 			* C6:
 psmatch2 lcr if won_total > 0, radius caliper(0.05) outcome(post_solar_patent) pscore(pscore_won)
 _eststo won_patcaliper05, r: reg dif_solar_patents i.lcr [iweight=_weight] if won_total > 0, vce(hc3)
 *est store won_patcaliper05
-	rename _weight weight_lcrbinary_won05
+	rename _weight weight_won05
 	matrix lcr_se[1,6] = _se[1.lcr]
 
 			* C7: sample = no outliers (bosch & sunedision dropped - high patents, only once participated)
 psmatch2 lcr if patent_outliers == 0, radius caliper(0.1) outcome(post_solar_patent) pscore(pscore_nooutliers)
 _eststo outliers_patcaliper01, r: reg dif_solar_patents i.lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
 *est store outliers_patcaliper01
-	rename _weight weight_lcrbinary_outliers01
+	rename _weight weight_outliers01
 	matrix lcr_se[1,7] = _se[1.lcr]
 
 			* C8:
 psmatch2 lcr if patent_outliers == 0, radius caliper(0.05) outcome(post_solar_patent) pscore(pscore_nooutliers)
 _eststo outliers_patcaliper05, r: reg dif_solar_patents i.lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
 *est store outliers_patcaliper05
-	rename _weight weight_lcrbinary_outliers05
+	rename _weight weight_outliers05
 	matrix lcr_se[1,8] = _se[1.lcr]
 
 ***********************************************************************
@@ -584,9 +584,12 @@ _eststo mahalanobis01, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(hc3
 ***********************************************************************
 * C1: Simple post-difference
 _eststo sales_post, r:reg diff_revenue i.lcr
+	matrix lcr_se[3,1] = _se[1.lcr]
+
 
 * C2: DiD
 _eststo sales_did, r:reg diff_revenue i.lcr, vce(hc3)
+		matrix lcr_se[3,2] = _se[1.lcr]
 
 * 1 Caliper radius matching
 
@@ -595,35 +598,44 @@ psmatch2 lcr, radius caliper(0.1) outcome(post_revenue) pscore(pscore_all)
 _eststo sales_all_caliper01, r: reg diff_revenue i.lcr [iweight=_weight], vce(hc3)
 *est store sales_all_caliper01
 	rename _weight weight_didsales_all01
+	matrix lcr_se[3,3] = _se[1.lcr]
+
 
 psmatch2 lcr, radius caliper(0.05) outcome(post_revenue) pscore(pscore_all)
 _eststo sales_all_caliper05, r: reg diff_revenue i.lcr [iweight=_weight], vce(hc3)
 *est store sales_all_caliper05
 	rename _weight weight_didsales_all05
+	matrix lcr_se[3,4] = _se[1.lcr]
 
-
-	*/
 			* sample = won
 psmatch2 lcr if won_total > 0, radius caliper(0.1) outcome(post_revenue) pscore(pscore_won)
 _eststo sales_won_caliper01, r: reg diff_revenue i.lcr [iweight=_weight] if won_total > 0, vce(hc3)
 *est store sales_won_caliper01
 	rename _weight weight_sales_won01
+	matrix lcr_se[3,5] = _se[1.lcr]
+
 	
 psmatch2 lcr if won_total > 0, radius caliper(0.05) outcome(post_revenue) pscore(pscore_won)
 _eststo sales_won_caliper05, r: reg diff_revenue i.lcr [iweight=_weight] if won_total > 0, vce(hc3)
 *est store sales_won_caliper05
 	rename _weight weight_sales_won05
+	matrix lcr_se[3,6] = _se[1.lcr]
+
 	
 			* sample = no outliers (bharat,ntpc larsen dropped high sales and differences)
 psmatch2 lcr if sales_outliers == 0, radius caliper(0.1) outcome(post_revenue) pscore(pscore_nosalesoutliers)
 _eststo sales_outliers_caliper01, r: reg diff_revenue i.lcr [iweight=_weight] if sales_outliers == 0, vce(hc3)
 *est store sales_outliers_caliper01
 	rename _weight weight_sales_outliers01
+	matrix lcr_se[3,7] = _se[1.lcr]
+
 
 psmatch2 lcr if sales_outliers == 0, radius caliper(0.05) outcome(post_revenue) pscore(pscore_nosalesoutliers)
 _eststo sales_outliers_caliper05, r: reg diff_revenue i.lcr [iweight=_weight] if sales_outliers == 0, vce(hc3)
 *est store sales_outliers_caliper05
 	rename _weight weight_sales_outliers05
+	matrix lcr_se[3,8] = _se[1.lcr]
+
 
 ***********************************************************************
 * 	PART 6.2:  Alternative outcome variable: sales with continous treatment
