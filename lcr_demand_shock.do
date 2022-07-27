@@ -127,7 +127,7 @@ gr export mw_won_stacked.png, replace
 gen bprice_mw = final_price_after_era * 1000 /* unit: INR per MW/h */
 gen mprice_mw = bprice_mw * 0.42  
 gen mdemand_shock = mprice_mw * quantity_allocated_mw /* total INR demand for modules */
-replace mdemand_shock = mdemand_shock / 60 /* */
+replace mdemand_shock = mdemand_shock / 60 /* based on OECD average INR - USD exchange rate 2013-2017 */
 lab var mdemand_shock "module demand in USD"
 
 	* option 1
