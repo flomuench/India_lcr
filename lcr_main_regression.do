@@ -26,6 +26,10 @@ cd "$lcr_final"
 
 *in case weight variables were saved from previous version, they are dropped here now
 
+	* generate random order of observations
+gen random_order = uniform()
+sort random_order
+
 ***********************************************************************
 * 	PART 2:  Nearest neighbor matching
 ***********************************************************************
