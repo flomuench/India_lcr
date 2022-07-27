@@ -26,7 +26,7 @@ cd "$lcr_final"
 
 *in case weight variables were saved from previous version, they are dropped here now
 
-	* generate random order of observations
+	* generate random order of observations (note that sortseed and seed are defined in master do-file)
 gen random_order = uniform()
 sort random_order
 

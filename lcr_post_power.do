@@ -37,7 +37,7 @@ display max_se /* 2.38 solar patents */
 	* average SE
 	
 	* export as table
-putexcel set lcr_se, replace
+putexcel set lcr_se2, replace
 putexcel B1:K1 = "", border(bottom)
 putexcel B2:K2 = "", border(bottom)
 putexcel B2 = matrix(lcr_se), hcenter nformat(number_d2) names
