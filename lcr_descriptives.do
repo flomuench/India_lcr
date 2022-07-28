@@ -22,7 +22,7 @@ set scheme plotplain
 set graphics on
 
 *Shorten name of Development corporation odisha for visual reasons
-replace company_name ="odisha" if company_name == "development corporation odisha"
+replace company_name = "odisha" if company_name == "development corporation odisha"
 
 ***********************************************************************
 * 	PART 2: descriptive statistics for final paper 	  						
@@ -55,6 +55,7 @@ graph pie, over(sector) plabel (_all sum)  descending ///
 *Table 1 descriptive statistics
 
 local table1 post_solar_patent pre_solar_patent lcr indian manufacturer ihs_total_revenue ihs_post_revenue log_total_employees part_jnnsm_1
+codebook `table1'
 estpost tabstat `table1', listwise ///
         statistics(mean sd min max) columns(statistics)
 esttab . using table1.tex, cells("mean(fmt(a3)) sd(fmt(a3)) min(fmt(a3)) max(fmt(a3))") replace /// 
