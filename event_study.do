@@ -170,7 +170,7 @@ gen year_offset = year+0.3
 			xlabel(2004(1)2020, labsize(vsmall)) ///
 			yline(0, lcolor(black)) ///
 			ytitle("Solar patent applications") ///
-			legend(order(2 "Matched (caliper = 0.1)" 4 "Unmatched") pos(6)) ///
+			legend(order(2 "Matched (caliper = 0.1)" 4 "Unmatched") rows(1) pos(6)) ///
 			name(matched_unmatched_combined, replace)
 	graph export matched_unmatched_combined.png, replace
 	
