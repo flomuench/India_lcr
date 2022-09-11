@@ -36,12 +36,24 @@ local matching_var5 log_total_employees ihs_total_revenue pre_solar_patent india
 	* estimate propensity (score) to participate in treatment
 
 * samepl: all
-logit lcr `matching_var5', vce(robust)
+_eststo all_score, r: logit lcr `matching_var5', vce(robust)
 predict pscore_all, p
 sum pscore_all, d
 label var pscore_all "estimated propensity score to participate in LCR auctions, all firms"
+cd "$final_figures"
+esttab all_score using firststage.tex, replace ///
+	title("Predicting participation in LCR auctions") ///
+	label ///
+	b(2) ///
+	se(2) ///
+	width(0.8\hsize) ///
+	star(* 0.1 ** 0.05 *** 0.01) ///
+	nobaselevels ///
+	addnotes("Estimates are based on a Logit model with robust standard errors in parentheses.")
+
 
 * sample: only firms that won at least one auction
+cd "$lcr_psm"
 logit lcr `matching_var5' if won_total > 0, vce(robust)
 predict pscore_won if won_total > 0, p
 sum pscore_won, d
