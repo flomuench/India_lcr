@@ -53,7 +53,7 @@ net install grc1leg.pkg
 
 
 	* define graph scheme for visual outputs
-*set scheme plotplain
+*set scheme burd
 set scheme plotplain
 
 ***********************************************************************

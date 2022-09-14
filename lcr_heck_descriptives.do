@@ -133,6 +133,7 @@ gr export vgf_lcr_nolcr.png, replace
 
 ******************* auction-level statistics **************************
 preserve
+
 collapse (firstnm) n_competitors auction_year lcr contractual_arrangement quantity_total scope solarpark location climate_zone technology plant_type (min) maxprojectsize final_bid_after_era (mean) contractlength std_count_feb20 (sum) final_vgf_after_era, by(auction)
 	* do some data cleaning for visualisation
 lab var n_competitors "number of bidders"
@@ -214,26 +215,6 @@ foreach var in no_lcr_auction lcr_auction gw_no_lcr gw_lcr {
 	egen sum_`var' = sum(`var') if year < 2018
 }
 
-gr bar (asis) no_lcr_auction lcr_auction if year < 2018, over(year) ///
-		blabel(total, format(%9.0g) size(vsmall)) ///
-		subtitle("{bf:number of auctions}") ///
-		legend(label(1 "no-LCR") label(2 "LCR")) ///
-	name(tperiod_auctions, replace)
-	
-gr bar (asis) gw_no_lcr gw_lcr if year < 2018, over(year) ///
-		blabel(total, format(%9.0g) size(vsmall)) ///
-		legend(off) ///
-		subtitle("{bf:GW auctioned}") ///
-	name(tperiod_gw, replace)
-	
-/*gr c1leg tperiod_auctions tperiod_gw, ///
-	title("Treatment period 2013-2017: LCR & no-LCR auctions") ///
-	legendfrom(tperiod_auctions) ///
-	rows(1) ycommon xcommon ///
-	note("Note: In 11 LCR auctions 547 MW were auctioned, while 5.05 GW were auctioned in 17 no-LCR auctions.") ///
-	name(treatmentperiod, replace)
-gr export treatmentperiod.png, replace
-*/
 
 
 restore
@@ -280,9 +261,16 @@ gr export patent_evolution.png, replace
 gen no_bids = 1
 lab var no_bids "# of bids per year"
 
+gen final_bid_price_lcr = final_bid_after_era if lcr == 1
+lab var final_bid_price_lcr "bid price LCR"
+gen final_bid_price_open = final_bid_after_era if lcr == 0
+lab var final_bid_price_open "bid price open auctions"
+
+
 *Somehow errors in collapse command when running from the start, but not when individually ran
 collapse (sum) no_bids won quantity* total_plant_price  lcr ///
-	(mean) final_price_after_era n_competitors, by(auction_year) 
+	(mean) n_competitors ///
+	final_bid_after_era final_bid_price_lcr final_bid_price_open, by(auction_year) 
 
 rename auction_year year
 cd "$lcr_final"	
@@ -305,6 +293,35 @@ gen quantity_allocated_gw = quantity_allocated_mw/1000
 lab var quantity_allocated_gw "Quantity allocated in GW"
 
 cd "$final_figures"
+tsset year
+set scheme cleanplots
+lab var final_bid_after_era "Mean annual bid price INR/MWh"
+lab var solarpatent "Sum annual solar patents"
+lab var year "Year"
+
+
+* time series graph: expansion in solar patents and capacity auctioned
+tsline quantity_allocated_gw if year >= 2005, ///
+	legend(pos(6) row(1)) ///
+	xlabel(2005(1)2020, labs(vsmall)) ///
+	xline(2013 2017) ///
+	name(capacity_ts, replace)
+gr export capacity_ts.png, replace
+
+tsline quantity_allocated_gw solarpatent if year >= 2005, ///
+	legend(pos(6) row(1)) ///
+	xlabel(2005(1)2020, labs(vsmall)) ///
+	xline(2013 2017) ///
+	name(capacity_patents_ts, replace)
+gr export capacity_ts.png, replace
+
+tsline quantity_allocated_gw solarpatent final_bid_after_era if year >= 2005, ///
+	legend(pos(6) row(1)) ///
+	xlabel(2005(1)2020, labs(vsmall)) ///
+	xline(2013 2017) ///
+	name(capacity_patents_price_ts, replace)
+gr export capacity_ts.png, replace
+
 graph twoway (bar quantity_allocated_gw year if year >=2011 & year<=2019, color(gs0%30)) (bar solarpatent year if year >=2011 & year<=2019, color(gs11%50)) ///
 	|| (line final_price_after_era year if year >=2011 & year<=2019, ///
 	yaxis(2) ytitle("Average bid price in INR/MWh",axis(2)) lc(black)) (scatter final_price_after_era year if year >=2011 & year<=2019, mlabel(final_price_after_era) mlabpos(1) mcolor(black) mlabcolor(black) yaxis(2)), ///
