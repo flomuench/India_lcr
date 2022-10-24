@@ -69,32 +69,39 @@ set scheme plotplain
 
 		* dynamic folder path for gdrive(data,output), github(code), backup(local computer)
 if c(os) == "Windows" {
-	global lcr_gdrive_data = "C:/Users/`c(username)'/Google Drive/Research_Solar India TU-IASS-PTB/Paper effect of LCR on innovation/data"
-	global lcr_gdrive_analysis = "C:/Users/`c(username)'/Google Drive/Research_Solar India TU-IASS-PTB/Paper effect of LCR on innovation/output"
+	global lcr_gdrive = "G:"
 	global lcr_github = "C:/Users/`c(username)'/Documents/GitHub/India_lcr"
-	global lcr_backup = "C:/Users/`c(username)'/Documents/India_lcr"
 	
 }
-else if c(os) == "MacOSX" {
-	global lcr_gdrive_data = "/Volumes/GoogleDrive/My Drive/Research_Solar India TU-IASS-PTB/Paper effect of LCR on innovation/data"
-	global lcr_gdrive_analysis = "/Volumes/GoogleDrive//My Drive/Research_Solar India TU-IASS-PTB/Paper effect of LCR on innovation/output"
-	global lcr_github = "/Users/`c(username)'/Documents/GitHub/India_lcr"
-	global lcr_backup = "/Users/`c(username)'/Documents/India_lcr"
+
+		* user specific
+if "`c(username)'" == "ASUS" {
+		global lcr_gdrive_user = "${lcr_gdrive}/Meine Ablage"
+}
+else{
+	
+		global lcr_gdrive_user = "${lcr_gdrive}/.shortcut-targets-by-id\1t09p3JqyHkjvrE8TEqosOpHm-GiD94Q3"
 }
 
+		* path to gdrive
+global lcr_project_folder =  "${lcr_gdrive_user}/Research_Solar India TU-IASS-PTB/Paper effect of LCR on innovation"
+
 		* paths within gdrive
-			* data
+global lcr_gdrive_data = "${lcr_project_folder}/data"
+global lcr_gdrive_output = "${lcr_project_folder}/output"
+
+			* within data
 global lcr_raw = "${lcr_gdrive_data}/raw"
 global lcr_intermediate "${lcr_gdrive_data}/intermediate"
 global lcr_final = "${lcr_gdrive_data}/final"
 global lcr_checks = "${lcr_gdrive}/checks"
 
 
-			* output (regression tables, figures)
-global lcr_rt = "${lcr_gdrive_analysis}/regression-tables"
-global lcr_descriptives = "${lcr_gdrive_analysis}/descriptive-statistics-figures"
-global lcr_psm = "${lcr_gdrive_analysis}/propensity-score-matching"
-global final_figures = "${lcr_gdrive_analysis}/final_figures"
+			* within output (regression tables, figures)
+global lcr_rt = "${lcr_gdrive_output}/regression-tables"
+global lcr_descriptives = "${lcr_gdrive_output}/descriptive-statistics-figures"
+global lcr_psm = "${lcr_gdrive_output}/propensity-score-matching"
+global final_figures = "${lcr_gdrive_output}/final_figures"
 			
 		* set seeds for replication
 set seed 8413195
