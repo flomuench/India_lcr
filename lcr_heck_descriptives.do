@@ -301,12 +301,25 @@ lab var year "Year"
 
 
 * time series graph: expansion in solar patents and capacity auctioned
+		* quantity allocated 
 tsline quantity_allocated_gw if year >= 2005, ///
 	legend(pos(6) row(1)) ///
 	xlabel(2005(1)2020, labs(vsmall)) ///
 	xline(2013 2017) ///
 	name(capacity_ts, replace)
 gr export capacity_ts.png, replace
+
+tsline solarpatent if year >= 2005, ///
+	legend(pos(6) row(1)) ///
+	xlabel(2005 2006 2007 2008 2009 2010 2011 "{bf:2011}" 2012 2013 "{bf:2013}" 2014 2015 2016 2017 "{bf:2017}" 2018 2019 2020, labs(small) nogrid) ///
+	xline(2011 2013 2017) ///
+	ylabel(0(5)25, nogrid) ///
+	ytitle("solar patents") ///
+	text(20 2011 "Auction scheme" "announced", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5)) ///
+	text(15 2013 "LCR introduced", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5)) ///
+	text(5 2017 "LCR ended", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5)) ///
+	name(spatents_ts, replace)
+gr export "${lcr_descriptives}/spatents_ts.png", replace
 
 tsline quantity_allocated_gw solarpatent if year >= 2005, ///
 	legend(pos(6) row(1)) ///

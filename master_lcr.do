@@ -49,6 +49,13 @@ ssc install ihstrans, replace
 net install http://www.stata.com/users/kcrow/tab2xl
 net describe grc1leg, from(http://www.stata.com/users/vwiggins)
 net install grc1leg.pkg
+*
+net install grc1leg, from(http://www.stata.com/users/vwiggins) replace
+net install gr0075, from(http://www.stata-journal.com/software/sj18-4) replace
+ssc install labutil, replace
+ssc install sencode, replace
+ssc install panelview, all
+
 */
 
 
