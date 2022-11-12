@@ -246,8 +246,5 @@ egen total_mw_all = sum(quantity_allocated_mw)
 ***********************************************************************
 * 	Save the changes made to the data		  			
 ***********************************************************************
-	* set export directory
-cd "$lcr_intermediate"
-
 	* save dta file
-save "lcr_bid_inter", replace
+save "${lcr_intermediate}/lcr_bid_inter", replace

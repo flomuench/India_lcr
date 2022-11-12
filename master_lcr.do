@@ -18,7 +18,7 @@
 * 	PART 1: 	Set standard settings & install packages			  
 ***********************************************************************
  	* set standard settings
-version 15
+version 17
 clear all
 graph drop _all
 scalar drop _all
@@ -112,6 +112,7 @@ set sortseed 8413195
 ***********************************************************************
 /* --------------------------------------------------------------------
 	PART 3.1: Import & raw data
+	Requires: firm_sales_employees.xlsx. Creates: lcr_sales_raw.dta
 ----------------------------------------------------------------------*/		
 if (1) do "${lcr_github}/lcr_sales_import.do"	
 /* --------------------------------------------------------------------
@@ -120,6 +121,7 @@ if (1) do "${lcr_github}/lcr_sales_import.do"
 if (1) do "${lcr_github}/lcr_sales_clean.do"	
 /* --------------------------------------------------------------------
 	PART 3.3: Correct, generate, transform intermediate data
+	Creates: lcr_sales_final
 ----------------------------------------------------------------------*/		
 if (1) do "${lcr_github}/lcr_sales_transform.do"	
 /* --------------------------------------------------------------------
@@ -127,7 +129,8 @@ if (1) do "${lcr_github}/lcr_sales_transform.do"
 ----------------------------------------------------------------------*/		
 if (1) do "${lcr_github}/lcr_sales_visualise.do"	
 /* --------------------------------------------------------------------
-	PART 3.4: Collapse on firm level for pre-treatment control 
+	PART 3.4: Creates cross-sectional firm-level employees/sales data
+	Creates: firm_sales, firm_employees
 ----------------------------------------------------------------------*/		
 if (1) do "${lcr_github}/lcr_sales_collapse.do"
 	
@@ -153,6 +156,7 @@ if (1) do "${lcr_github}/lcr_heck_correct.do"
 if (1) do "${lcr_github}/lcr_heck_generate.do"
 /* --------------------------------------------------------------------
 	PART 3.5: Merge with Ben Probst et al. 2020 for firm controls
+	Creates: lcr_bid_final + several variables (solar_manufacture, energy_company)
 ----------------------------------------------------------------------*/
 if (1) do "${lcr_github}/lcr_heck_merge.do"
 /* --------------------------------------------------------------------
@@ -167,7 +171,10 @@ if (0) do "${lcr_github}/lcr_heck_regresssion.do"
 	PART 3.7: collapse + aggregate cross-section
 ----------------------------------------------------------------------*/	
 if (1) do "${lcr_github}/lcr_heck_collapse.do"
-
+/* --------------------------------------------------------------------
+	PART 3.8: collapse + aggregate firm-year panel
+----------------------------------------------------------------------*/	
+if (1) do "${lcr_github}/lcr_heck_collapse_panel.do"
 		
 ***********************************************************************
 * 	PART 4: 	Run do-files for cross-section data cleaning
@@ -260,9 +267,19 @@ if (1) do "${lcr_github}/lcr_demand_shock.do"
 
 
 ***********************************************************************
-* 	PART 7: 	Robustness check: firm-year panel, event study PSM DiD
+* 	PART 7: 	firm-year panel, event study PSM DiD
 ***********************************************************************
+/* --------------------------------------------------------------------
+	PART 7.1: Prepare data set
+----------------------------------------------------------------------*/
 if (1) do "${lcr_github}/merge_firmyeardata.do"
-
+/* --------------------------------------------------------------------
+	PART 7.2: Run event study/dynamic DiD
+----------------------------------------------------------------------*/
 if (1) do "${lcr_github}/event_study.do"
+/* --------------------------------------------------------------------
+	PART 7.3: Run staggered Did
+----------------------------------------------------------------------*/
+if (1) do "${lcr_github}/callaway_santanna.do"
+
 

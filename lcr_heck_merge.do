@@ -274,8 +274,5 @@ format age %9.0g
 ***********************************************************************
 * 	Save the changes made to the data		  			
 ***********************************************************************
-	* set export directory
-cd "$lcr_final"
-
 	* save dta file
-save "lcr_bid_final", replace
+save "${lcr_final}/lcr_bid_final", replace

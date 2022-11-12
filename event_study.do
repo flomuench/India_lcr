@@ -21,20 +21,15 @@
 ***********************************************************************
 * 	PART 1: import the collapsed dataset & declara as panel data	  						
 ***********************************************************************
-cd "$lcr_final"
-
 use "${lcr_final}/event_study", clear	
 
-xtset company_name2 year_application
-
 rename year_application year
+
+xtset company_name2 year
 
 cd "$final_figures"	
 
 set graphics on
-
-
-
 
 ***********************************************************************
 * 	PART 2:   revenue 

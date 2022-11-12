@@ -35,5 +35,4 @@ kdensity log_total_employees
 ***********************************************************************
 * 	PART 2: save as final	  					  			
 ***********************************************************************
-cd "$lcr_final"
-save "lcr_sales_final", replace
+save "${lcr_final}/lcr_sales_final", replace

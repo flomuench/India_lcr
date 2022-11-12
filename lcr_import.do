@@ -17,14 +17,10 @@
 ***********************************************************************
 * 	PART 1: import collapsed bid data from SECI online archives
 ***********************************************************************
-	* set directory to raw folder
-cd "$lcr_raw"
-
-	* old code
 use "${lcr_raw}/cross_section_new", clear
 sort company_name
 
 ***********************************************************************
 * 	PART 2: save cross-section data as raw
 ***********************************************************************
-save "lcr_raw", replace
+save "${lcr_raw}/lcr_raw", replace

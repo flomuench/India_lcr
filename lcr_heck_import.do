@@ -17,9 +17,6 @@
 ***********************************************************************
 * 	PART 1: import SECI online archives data set
 ***********************************************************************
-	* set directory to raw folder
-cd "$lcr_raw"
-
 	* excel
 import excel "${lcr_raw}/combined_results.xlsx", firstrow clear
 
@@ -28,4 +25,4 @@ import excel "${lcr_raw}/combined_results.xlsx", firstrow clear
 * 	PART 2: save list of lcrtered firms in lcrtration raw 			  						
 ***********************************************************************
 	* save 
-save "lcr_bid_raw", replace
+save "${lcr_raw}/lcr_bid_raw", replace

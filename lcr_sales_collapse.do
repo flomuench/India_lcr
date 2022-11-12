@@ -18,8 +18,6 @@
 ***********************************************************************
 use "${lcr_final}/lcr_sales_final", clear
 
-	* set folder location for saving
-cd "$lcr_final"
 
 ***********************************************************************
 * 	PART 1: collapse + save on firm level
@@ -46,7 +44,7 @@ drop pre_revenue
 drop ihs_total_revenue
 
 
-save "firm_sales", replace
+save "${lcr_final}/firm_sales", replace
 restore
 
 	* employees
@@ -58,5 +56,5 @@ drop pre_employees
 drop log_total_employees
 rename year source_year_employees
 
-save "firm_employees", replace
+save "${lcr_final}/firm_employees", replace
 restore

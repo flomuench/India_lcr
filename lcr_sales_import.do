@@ -17,14 +17,9 @@
 ***********************************************************************
 * 	PART 1: import SECI online archives data set
 ***********************************************************************
-	* set directory to raw folder
-cd "$lcr_raw"
-
-	* excel
 import excel "${lcr_raw}/firm_sales_employees.xlsx", firstrow sheet(firm_year_panel) clear
 
 ***********************************************************************
 * 	PART 2: save as dta file
 ***********************************************************************
-cd "$lcr_raw"
-save "lcr_sales_raw", replace
+save "${lcr_raw}/lcr_sales_raw", replace

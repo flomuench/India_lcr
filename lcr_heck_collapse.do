@@ -22,9 +22,6 @@
 ***********************************************************************
 use "${lcr_final}/lcr_bid_final", clear
 
-	* change directory to final folder to save files resulting from collapse for merger
-cd "$lcr_final"
-
 
 ***********************************************************************
 * 	PART 1:  collapse + reshape the data  			
@@ -38,7 +35,7 @@ foreach x in city state subsidiary lob  {
 	rename `x'1 `x'
 }
 collapse (sum) final_vgf_after_era (max) empl totalemployees *sales founded age  (firstnm) sector bidder international dummy_firm_operation_india webaddress city state lob ultimateparent subsidiary indian soe_india manufacturer* energy_focus part_jnnsm_1, by(company_name)
-save "firm_characteristics", replace
+save "${lcr_final}/firm_characteristics", replace
 restore
 
 * variables to be created by LCR vs. no LCR auctions
@@ -86,7 +83,7 @@ foreach var of local allvar {
 ***********************************************************************
 * 	PART 3:  add firm characteristics
 ***********************************************************************
-merge 1:1 company_name using firm_characteristics
+merge 1:1 company_name using "${lcr_final}/firm_characteristics"
 drop _merge
 
 
@@ -98,16 +95,8 @@ cd "$lcr_intermediate"
 export excel company_name bidder ultimateparent city state lob webaddress founded manufacturer totalemployees subsidiary using missing.xlsx if founded == . | manufacturer == . | totalemployees == . , firstrow(var) replace
 */
 
-
-***********************************************************************
-* 	PART 5: Miscallenous change
-***********************************************************************
-
-
 ***********************************************************************
 * 	PART 5: save cross-section data as raw
 ***********************************************************************
-	* set directory to raw folder
-cd "$lcr_raw"
 	* save as cross_section_new to allow comparison with first cross-section file
-save "cross_section_new", replace
+save "${lcr_raw}/cross_section_new", replace
