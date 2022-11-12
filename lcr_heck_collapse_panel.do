@@ -110,10 +110,6 @@ foreach var of local stable_vars {
 	rename `var'1 `var'
 }
 
-*drop and rename encoded variable for merging*
-drop company_name
-decode company_name2, gen(company_name)
-
 
 * remove variables, which will be matched via employees & sales data
 drop ihs_sales sales totalemployees empl totalemployees age
@@ -124,6 +120,14 @@ gen age_at_bid = auction_year - founded, a(founded)
 order founded age_at_bid, a(auction_year)
 br if age_at_bid < 0
 codebook company_name2 if age_at_bid < 0 /* 24 firms participated in auctions before they were founded...obviously erroneous. requires correction. */
+
+* prepare for merge
+	* panel_id
+drop company_name
+decode company_name2, gen(company_name)
+
+	* panel time id
+rename auction_year year
 
 ***********************************************************************
 * 	PART 5: save firm-year panel data set

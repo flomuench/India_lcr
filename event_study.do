@@ -13,7 +13,7 @@
 *	5) 		Do event study regression without controls
 *	6)		Do event study regression with controls
 *																	 																      *
-*	Author: Fabian  														  
+*	Author: Florian Münch, Fabian Scheifele  														  
 *	ID variable: company_name		  									  
 *	Requires:	eventstudy_final
 *	Creates:	

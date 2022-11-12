@@ -197,7 +197,7 @@ graph bar (sum) solarpatent, over(year_application, label(labs(tiny))) over(lcr_
 	note("Authors own calculations based on patent application at Indian patent office.", size(vsmall)) ///
 	name(patent_evolution_lcr, replace)
 
-frame copy default solar_patent_time_series
+frame copy temp_frame solar_patent_time_series, replace
 frame change solar_patent_time_series
 
 collapse (sum) solarpatent, by (year_application lcr_participation)
@@ -219,7 +219,7 @@ tsline solarpatent1 solarpatent0  if year_application >= 2005, ///
 	name(spatents_ts_lcr, replace)
 gr export "${lcr_descriptives}/spatents_ts_lcr.png", replace
 
-frame change default
+frame change temp_frame
 frame drop solar_patent_time_series
 
 
@@ -292,6 +292,31 @@ tab solarpatent if year_publication == . /* no solar patent are concerned */
 
 	* collapse data to company-year panel
 collapse (sum) solarpatent not_solar_patent onepatent modcell_patent, by(company_name year_application)
+rename year_application year
+
+drop if company_name == "" /* drop 78 patents */
+
+		*Cut off all years before 2004
+				* only 2 patents before 2005 (1982 and 2000)
+drop if year<2004
+
+	* declare panel data
+encode company_name, gen (company_name2)
+order company_name2, first
+sort company_name2 year, stable
+drop company_name
+xtset company_name2 year
+tsfill, full
+
+	*replace missing values of newly created firm-year instances with zero
+local patents solarpatent not_solar_patent onepatent modcell_patent
+foreach var of local patents {
+		replace `var' = 0 if `var' == .
+	}
+	
+*drop and rename encoded variable for merging*
+*decode company_name2, gen(company_name)
+	
 
 *NEXT STEPS: 
 *SAVE firm-year dataset and create new do file structure Part 7 for firm-year analysis
@@ -301,6 +326,7 @@ save "$lcr_final/firmyear_patents", replace
 ***********************************************************************
 * 	PART 8: create pre-post period dummy					
 ***********************************************************************
+rename year year_application
 	* collapse into pre-treatment period (1982-2012) or post-treatment period (2013-2020)
 		* option 1: take whole pre-period == 30 years
 gen post = (year_application > 2010 & year_application < .)

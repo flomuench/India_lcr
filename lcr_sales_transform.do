@@ -33,6 +33,13 @@ gen log_total_employees = log(total_employees)
 kdensity log_total_employees
 
 ***********************************************************************
-* 	PART 2: save as final	  					  			
+* 	PART 2: prepare for merge with panel data event_study.dta
+***********************************************************************
+encode company_name, gen(company_name2)
+order company_name2, first
+
+
+***********************************************************************
+* 	PART 3: save as final	  					  			
 ***********************************************************************
 save "${lcr_final}/lcr_sales_final", replace

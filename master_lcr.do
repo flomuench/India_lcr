@@ -169,10 +169,12 @@ if (1) do "${lcr_github}/lcr_heck_descriptives.do"
 if (0) do "${lcr_github}/lcr_heck_regresssion.do"
 /* --------------------------------------------------------------------
 	PART 3.7: collapse + aggregate cross-section
+	Creates: lcr_final
 ----------------------------------------------------------------------*/	
-if (1) do "${lcr_github}/lcr_heck_collapse.do"
+if (1) do "${lcr_github}/lcr_heck_collapse_csection.do"
 /* --------------------------------------------------------------------
 	PART 3.8: collapse + aggregate firm-year panel
+	Creates: firmyear_auction.dta
 ----------------------------------------------------------------------*/	
 if (1) do "${lcr_github}/lcr_heck_collapse_panel.do"
 		
@@ -184,7 +186,8 @@ if (1) do "${lcr_github}/lcr_heck_collapse_panel.do"
 ----------------------------------------------------------------------*/		
 if (1) do "${lcr_github}/lcr_import.do"
 /* --------------------------------------------------------------------
-	PART 4.1: Import & merge patent data & Ben Probst
+	PART 4.1: Import & merge patent data
+	Creates: firmyear_patents.dta
 ----------------------------------------------------------------------*/		
 if (1) do "${lcr_github}/lcr_import_merge_patents.do"
 /* --------------------------------------------------------------------
@@ -270,15 +273,23 @@ if (1) do "${lcr_github}/lcr_demand_shock.do"
 * 	PART 7: 	firm-year panel, event study PSM DiD
 ***********************************************************************
 /* --------------------------------------------------------------------
-	PART 7.1: Prepare data set
+	PART 7.1: Merge auction panel, patent panel, employees/sales panel
 ----------------------------------------------------------------------*/
 if (1) do "${lcr_github}/merge_firmyeardata.do"
 /* --------------------------------------------------------------------
-	PART 7.2: Run event study/dynamic DiD
+	PART 7.2: Prepare data set
+----------------------------------------------------------------------*/
+if (1) do "${lcr_github}/event_clean.do"
+/* --------------------------------------------------------------------
+	PART 7.3: Visualize
+----------------------------------------------------------------------*/
+if (1) do "${lcr_github}/event_visualize.do"
+/* --------------------------------------------------------------------
+	PART 7.4: Run event study/dynamic DiD
 ----------------------------------------------------------------------*/
 if (1) do "${lcr_github}/event_study.do"
 /* --------------------------------------------------------------------
-	PART 7.3: Run staggered Did
+	PART 7.5: Run staggered Did
 ----------------------------------------------------------------------*/
 if (1) do "${lcr_github}/callaway_santanna.do"
 
