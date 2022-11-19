@@ -55,7 +55,8 @@ net install gr0075, from(http://www.stata-journal.com/software/sj18-4) replace
 ssc install labutil, replace
 ssc install sencode, replace
 ssc install panelview, all
-
+ssc install drdid, all replace
+ssc install csdid, all replace
 */
 
 
