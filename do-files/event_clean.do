@@ -61,7 +61,9 @@ label var nsm_1 "=1 if part. in nsm-1 in 2011 or 2012"
 * 	PART 6: create treatment dummies
 ***********************************************************************
 format %-9.0g total_auctions*
-*** I: considering the whole NSM period 
+
+*** I: considering the whole NSM period: Batch I (2011-2012) + Batch II  (2013-2017)
+
 * create lcr won annual indicator
 bysort company_name year: gen d_lcrwon_nsm_panel = (nsm_1 == 1 | won_lcr > 0 & won_lcr<.), a(solarpatent)
 lab var d_lcrwon_nsm_panel "=1 in year firm won LCR auction in NSM 1 or 2"
@@ -101,7 +103,14 @@ replace d_winner = 0 if d_winner != . & year < 2011
 		
 	* B: Treated: LCR participant. Counterfactual: open auction participant (only).
 		* Variable exist --> lcr_participant
+
 		
+*** considering only the counterfactual period: Batch II (2013-2017)
+
+		
+***********************************************************************
+* 	PART 7: create cohort dummies
+***********************************************************************
 
 *** cohort dummy g
 			* NSM batch I: 2011-2012
@@ -124,12 +133,9 @@ bysort company_name year: replace cohort2 = 2 if d_lcrwon_nsm_panel == 1 & cond(
 	* cohort 1: batch 1
 	* cohort 2: 2013
 
-
-*** considering only the counterfactual period
-
-
-
-*** gen relative time to treatment
+***********************************************************************
+* 	PART 8: create period index time to treat
+***********************************************************************
 gen ttt_2011 = year - 2010, a(year)
 lab var ttt_2011 "time to treatment, base year = 2010"
 gen ttt_2013 = year - 2012, a(year)
