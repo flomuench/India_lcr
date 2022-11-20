@@ -61,6 +61,11 @@ sort company_name2 year, stable
 xtset company_name2 year
 
 ***********************************************************************
-* 	PART 4: save event study dataset	  						
+* 	PART 4: merge with sales		
+***********************************************************************
+tsfill, full
+
+***********************************************************************
+* 	PART 5: save event study dataset	  						
 ***********************************************************************
 save "${lcr_final}/event_study_raw", replace

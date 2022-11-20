@@ -95,6 +95,7 @@ drop max_open_won
 bysort company_name: gen d_winner = (lcr_winner == 1), a(won_lcr)
 bysort company_name: replace d_winner = . if open_winner == 0 & lcr_participant == 0 // put open auction participants missing (never won)
 bysort company_name: replace d_winner = . if lcr_winner == 0 & lcr_participant == 1 // put lcr auction participants missing (never won)
+replace d_winner = 0 if d_winner != . & year < 2011
 			* reduces sample by 40%.
 			* 23 firms in treatment, 45 in control.
 		
@@ -105,6 +106,19 @@ bysort company_name: replace d_winner = . if lcr_winner == 0 & lcr_participant =
 *** cohort dummy g
 			* NSM batch I: 2011-2012
 			* LCR batch II: 2013-2017
+gen cohort1 = 0, a(won_lcr)
+replace cohort1 = 1 if d_lcrwon_nsm_panel == 1 & year == 2011 | year == 2012
+* extend to all other years.
+replace cohort1 = 2 if d_lcrwon_nsm_panel == 1 & cohort1 == 0 & year == 2013
+replace cohort1 = 3 if d_lcrwon_nsm_panel == 1 & cohort1 == 0 & year == 2014 | year == 2015 
+replace cohort1 = 4 if d_lcrwon_nsm_panel == 1 & cohort1 == 0 & year == 2016 | year == 2017
+
+bysort company_name year: replace cohort1 = 3 if d_lcrwon_nsm_panel == 1 & year == 2014 | year == 2015
+bysort company_name year: replace cohort1 = 4 if d_lcrwon_nsm_panel == 1 & year == 2016 | year == 2017
+
+gen cohort2 = 0, a(won_lcr)
+bysort company_name year: replace cohort2 = 1 if d_lcrwon_nsm_panel == 1 & cond(year,2011, 2013)
+bysort company_name year: replace cohort2 = 2 if d_lcrwon_nsm_panel == 1 & cond(year,2013,2017)
 
 * idea
 	* cohort 1: batch 1
@@ -112,6 +126,14 @@ bysort company_name: replace d_winner = . if lcr_winner == 0 & lcr_participant =
 
 
 *** considering only the counterfactual period
+
+
+
+*** gen relative time to treatment
+gen ttt_2011 = year - 2010, a(year)
+lab var ttt_2011 "time to treatment, base year = 2010"
+gen ttt_2013 = year - 2012, a(year)
+lab var ttt_2011 "time to treatment, base year = 2012"
 
 
 

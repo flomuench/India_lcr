@@ -18,6 +18,8 @@ xtset company_name year
 ***********************************************************************
 * 	PART 2: visualize solar patents
 ***********************************************************************
+* xtline
+
 xtline solarpatent, overlay legend(off) ///
 	xlabel(2005 2006 2007 2008 2009 2010 2011 "{bf:2011}" 2012 2013 "{bf:2013}" 2014 2015 2016 2017 "{bf:2017}" 2018 2019 2020, labs(small) nogrid) ///
 	xline(2011 2013 2017) ///
@@ -39,16 +41,45 @@ xtline solarpatent, overlay legend(off) ///
 	text(15 2013 "LCR introduced", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5)) ///
 	text(5 2017 "LCR ended", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5))
 
+* panelview
+panelview solarpatent d_winner, i(company_name) t(year) type(outcome) ///
+	xlabel(2005 2006 2007 2008 2009 2010 2011 "{bf:2011}" 2012 2013 "{bf:2013}" 2014 2015 2016 2017 "{bf:2017}" 2018 2019 2020, labs(small) nogrid) ///
+	xtitle("Year") ytitle("Solar Patents") title("") ///
+	xline(2011 2013 2017) ///
+	ylabel(0(1)15, nogrid) ///
+	ytitle("solar patents") ///
+	text(15 2010 "Auction scheme" "announced", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5)) ///
+	text(15 2014 "LCR introduced", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5)) ///
+	text(5 2017 "LCR ended", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5)) ///
+	legend(all pos(6) row(1)) ///
+	name(panelview_patents_winner_b2, replace)
+gr export "${lcr_descriptives}/panelview_patents_winner_b2.png", replace
+
+	
 ***********************************************************************
 * 	PART 3: visualize revenue
 ***********************************************************************
+* panelview
+panelview ihs_total_revenue d_winner, i(company_name) t(year) type(outcome) ///
+	xlabel(2005 2006 2007 2008 2009 2010 2011 "{bf:2011}" 2012 2013 "{bf:2013}" 2014 2015 2016 2017 "{bf:2017}" 2018 2019 2020, labs(small) nogrid) ///
+	xtitle("Year") ytitle("ihs. total revenue") title("") ///
+	xline(2011 2013 2017) ///
+	ylabel(0(5)30, nogrid) ///
+	ytitle("solar patents") ///
+	text(15 2010 "Auction scheme" "announced", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5)) ///
+	text(15 2014 "LCR introduced", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5)) ///
+	text(5 2017 "LCR ended", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5)) ///
+	legend(all pos(6) row(1)) ///
+	name(panelview_revenue_winner_b2, replace)
+gr export "${lcr_descriptives}/panelview_revenue_winner_b2.png", replace
 
 
 ***********************************************************************
 * 	PART 4: visualize timing in LCR/treatment participation
 ***********************************************************************
 decode company_name, gen(company_name_str)
-	* excluding nsm first batch
+	
+*** excluding nsm first batch
 		* times auctions won
 panelview won_lcr, i(company_name_str) t(year) type(treat) bytiming mycolor(lean) ///
 	xtitle("Year") ytitle("Company") subtitle("NSM Batch II (times won)") ///
@@ -67,15 +98,20 @@ gr export "${lcr_descriptives}/panel_mw_won_b2.png", replace
 
 
 		* lcr vs. open auction winner
-panelview d_winner, i(company_name_str) t(year) type(treat) ///
+panelview d_winner, i(company_name_str) t(year) type(treat) prepost bytiming ///
 	xtitle("Year") ytitle("Company") subtitle("NSM Batch II (mw)") ///
 	legend(pos(6) row(1)) ///
-	ylabdist(3)
-	name(panel_auctions_won_b2, replace)
-
-	* include nsm first batch
-panelview d_lcrwon_nsm_panel, i(company_name) t(year) type(treat) ///
-	xtitle("Year") ytitle("Company") subtitle("NSM Batch I + II")
+	ylabdist(1) ///
+	name(panel_dwon_b2, replace)
+	
+*** include nsm first batch
+		* times auction won
+panelview d_lcrwon_nsm_panel, i(company_name_str) t(year) type(treat) prepost bytiming ///
+	xtitle("Year") ytitle("Company") subtitle("NSM Batch I + II") ///
+	legend(pos(6) row(1)) ///
+	ylabdist(1) ///
+	name(panel_auctions_won_b1, replace)
+gr export "${lcr_descriptives}/panel_auctions_won_b1.png", replace
 	
 	
 	
