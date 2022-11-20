@@ -26,7 +26,11 @@ rename company_name2 company_name
 * 	PART 3: order
 ***********************************************************************
 order solarpatent, a(year)
-order won_no_lcr won_lcr total_auctions_no_lcr total_auctions_lcr, a(solarpatent)
+order won_no_lcr won_lcr quantity_allocated_mw_no_lcr quantity_allocated_mw_lcr total_auctions_no_lcr total_auctions_lcr, a(solarpatent)
+format %-9.0g won_no_lcr won_lcr quantity_allocated_mw_no_lcr quantity_allocated_mw_lcr total_auctions_no_lcr total_auctions_lcr
+order quantity_allocated_mw_lcr, a(won_lcr)
+order quantity_allocated_mw_no_lcr, a(won_no_lcr)
+
 order part_jnnsm_1, a(solarpatent)
 
 ***********************************************************************

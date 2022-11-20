@@ -47,20 +47,56 @@ xtline solarpatent, overlay legend(off) ///
 ***********************************************************************
 * 	PART 4: visualize timing in LCR/treatment participation
 ***********************************************************************
+decode company_name, gen(company_name_str)
 	* excluding nsm first batch
 		* times auctions won
-panelview quantity_allocated_mw_lcr, i(company_name) t(year) type(treat) ///
-	xtitle("Year") ytitle("Company") subtitle("NSM Batch II") ///
-	legend(pos(6) row(1))
+panelview won_lcr, i(company_name_str) t(year) type(treat) bytiming mycolor(lean) ///
+	xtitle("Year") ytitle("Company") subtitle("NSM Batch II (times won)") ///
+	legend(order (1 "never won" 2 "one auction won" 3 "two auctions won" 4 "three auctions won") pos(6) row(2)) ///
+	name(panel_auctions_won_b2, replace)
+gr export "${lcr_descriptives}/panel_auctions_won_b2.png", replace
 	
 		* quantity won
-panelview won_lcr, i(company_name) t(year) type(treat) ///
-	xtitle("Year") ytitle("Company") subtitle("NSM Batch II") ///
-	legend(pos(6) row(1))
+			* for some reason, the command does not show some leves of outcome, e.g. 2 and 5 MW (is allocated to zero group?) I double checked that variable does not have missing values for 2014 and 2015. Command states "too many levels"
+panelview quantity_allocated_mw_lcr, i(company_name_str) t(year) type(treat)  mycolor(lean) continuoustreat /// discreteoutcome, displayall
+	xtitle("Year") ytitle("Company") subtitle("NSM Batch II (mw won)") ///
+legend(pos(6) row(2)) ///
+	ylabdist(3) ///
+	name(panel_mw_won_b2, replace)
+gr export "${lcr_descriptives}/panel_mw_won_b2.png", replace
+
+
+		* lcr vs. open auction winner
+panelview d_winner, i(company_name_str) t(year) type(treat) ///
+	xtitle("Year") ytitle("Company") subtitle("NSM Batch II (mw)") ///
+	legend(pos(6) row(1)) ///
+	ylabdist(3)
+	name(panel_auctions_won_b2, replace)
 
 	* include nsm first batch
 panelview d_lcrwon_nsm_panel, i(company_name) t(year) type(treat) ///
 	xtitle("Year") ytitle("Company") subtitle("NSM Batch I + II")
+	
+	
+	
+/*
+firmyear_auction.dta
+tab year if won_lcr > 0
+    year of |
+    auction |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       2013 |         16       61.54       61.54
+       2014 |          1        3.85       65.38
+       2015 |          2        7.69       73.08
+       2016 |          6       23.08       96.15
+       2017 |          1        3.85      100.00
+------------+-----------------------------------
+      Total |         26      100.00
 
 
 
+*/
+
+
+
+drop company_name_str
