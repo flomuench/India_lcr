@@ -54,7 +54,7 @@ net install grc1leg, from(http://www.stata.com/users/vwiggins) replace
 net install gr0075, from(http://www.stata-journal.com/software/sj18-4) replace
 ssc install labutil, replace
 ssc install sencode, replace
-ssc install panelview, all
+ssc install panelview, all replace
 ssc install drdid, all replace
 ssc install csdid, all replace
 */
@@ -67,11 +67,11 @@ set scheme plotplain
 ***********************************************************************
 * 	PART 2: 	Prepare dynamic folder paths & globals			  	  *
 ***********************************************************************
-
+{
 		* dynamic folder path for gdrive(data,output), github(code), backup(local computer)
 if c(os) == "Windows" {
 	global lcr_gdrive = "G:"
-	global lcr_github = "C:/Users/`c(username)'/Documents/GitHub/India_lcr"
+	global lcr_github = "C:/Users/`c(username)'/Documents/GitHub/India_lcr/do-files"
 	
 }
 
@@ -107,10 +107,12 @@ global final_figures = "${lcr_gdrive_output}/final_figures"
 		* set seeds for replication
 set seed 8413195
 set sortseed 8413195
-		
+	
+}	
 ***********************************************************************
 * 	PART 3: 	Run do-files for employees + sales data 
 ***********************************************************************
+{
 /* --------------------------------------------------------------------
 	PART 3.1: Import & raw data
 	Requires: firm_sales_employees.xlsx. Creates: lcr_sales_raw.dta
@@ -135,10 +137,12 @@ if (1) do "${lcr_github}/lcr_sales_visualise.do"
 ----------------------------------------------------------------------*/		
 if (1) do "${lcr_github}/lcr_sales_collapse.do"
 	
-		
+}
+	
 ***********************************************************************
 * 	PART 4: 	Run do-files for bid-level cleaning + analysis
 ***********************************************************************
+{
 /* --------------------------------------------------------------------
 	PART 3.1: Import & raw data
 ----------------------------------------------------------------------*/		
@@ -178,107 +182,99 @@ if (1) do "${lcr_github}/lcr_heck_collapse_csection.do"
 	Creates: firmyear_auction.dta
 ----------------------------------------------------------------------*/	
 if (1) do "${lcr_github}/lcr_heck_collapse_panel.do"
+
+}
 		
 ***********************************************************************
-* 	PART 4: 	Run do-files for cross-section data cleaning
+* 	PART 5: 	Run do-files for cross-section data cleaning
 ***********************************************************************
+{
 /* --------------------------------------------------------------------
-	PART 4.0: Import & raw data
+	PART 5.0: Import & raw data
 ----------------------------------------------------------------------*/		
 if (1) do "${lcr_github}/lcr_import.do"
 /* --------------------------------------------------------------------
-	PART 4.1: Import & merge patent data
+	PART 5.1: Import & merge patent data
 	Creates: firmyear_patents.dta
 ----------------------------------------------------------------------*/		
 if (1) do "${lcr_github}/lcr_import_merge_patents.do"
 /* --------------------------------------------------------------------
-	PART 4.2: Import & merge sales and employees data
+	PART 5.2: Import & merge sales and employees data
 ----------------------------------------------------------------------*/		
 if (1) do "${lcr_github}/lcr_import_merge_sales.do"
 /* --------------------------------------------------------------------
-	PART 4.3: Clean raw data & save as intermediate data
+	PART 5.3: Clean raw data & save as intermediate data
 ----------------------------------------------------------------------*/	
 if (1) do "${lcr_github}/lcr_clean.do"
 /* --------------------------------------------------------------------
-	PART 4.4: Correct & save intermediate data
+	PART 5.4: Correct & save intermediate data
 ----------------------------------------------------------------------*/	
 if (1) do "${lcr_github}/lcr_correct.do"
 /* --------------------------------------------------------------------
-	PART 4.5: Generate variables for analysis or implementation
+	PART 5.5: Generate variables for analysis or implementation
 ----------------------------------------------------------------------*/	
 if (1) do "${lcr_github}/lcr_generate.do"
 
+}
+
 ***********************************************************************
-* 	PART 5: 	Run do-files for PSM + DiD cross-section analysis
+* 	PART 6: 	Run do-files for cross-section analysis (DiD + PSM)
 ***********************************************************************
+{
 /* --------------------------------------------------------------------
-	PART 5.0: descriptive statitics
+	PART 6.0: descriptive statitics
 ----------------------------------------------------------------------*/	
 if (1) do "${lcr_github}/lcr_descriptives.do"
 /* --------------------------------------------------------------------
-	PART 5.1: select variables to include into matching model
+	PART 6.1: select variables to include into matching model
 ----------------------------------------------------------------------*/	
 if (0) do "${lcr_github}/lcr_model_choice.do"
 /* --------------------------------------------------------------------
-	PART 5.2.: select model for estimation of propensity score
+	PART 6.2.: select model for estimation of propensity score
 ----------------------------------------------------------------------*/	
 if (1) do "${lcr_github}/lcr_variable_choice.do"
 /* --------------------------------------------------------------------
-	PART 5.3.: estimate the propensity score
+	PART 6.3.: estimate the propensity score
 ----------------------------------------------------------------------*/	
 if (1) do "${lcr_github}/lcr_ps_estimation.do"
 /* --------------------------------------------------------------------
-	PART 5.4.: evaluate common support
+	PART 6.4.: evaluate common support
 ----------------------------------------------------------------------*/
 if (1) do "${lcr_github}/lcr_common_support.do"
 /* --------------------------------------------------------------------
-	PART 5.5.: PSM estimation
+	PART 6.5.: PSM estimation
 ----------------------------------------------------------------------*/
 if (1) do "${lcr_github}/lcr_main_regression.do"
 /* --------------------------------------------------------------------
-	PART 5.6.: power size calculations
+	PART 6.6.: power size calculations
 ----------------------------------------------------------------------*/
 if (0) do "${lcr_github}/power.do"
 /* --------------------------------------------------------------------
-	PART 5.7.: Assess quality of match in terms of reduction in bias
+	PART 6.7.: Assess quality of match in terms of reduction in bias
 ----------------------------------------------------------------------*/
 if (1) do "${lcr_github}/lcr_match_quality.do"
 /* --------------------------------------------------------------------
-	PART 5.8.: DiD combined with matching
+	PART 6.8.: DiD combined with matching
 ----------------------------------------------------------------------*/
 if (0) do "${lcr_github}/lcr_did_matching.do"
 /* --------------------------------------------------------------------
-	PART 5.9.: Robust 1: use "teffects psmatch" command
+	PART 6.9.: Robust 1: use "teffects psmatch" command
 ----------------------------------------------------------------------*/
 if (0) do "${lcr_github}/lcr_teffects_psmatch.do"
-
-
-***********************************************************************
-* 	PART 6: 	Interpretation & explanation of results
-***********************************************************************
-/* --------------------------------------------------------------------
-	PART 6.1: Check which type of solar patents were filed
-----------------------------------------------------------------------*/
-if (1) do "${lcr_github}/lcr_post_power.do"
-/* --------------------------------------------------------------------
-	PART 6.2: Check which type of solar patents were filed (Does not work "variable ID not found")
-----------------------------------------------------------------------*/
-if (0) do "${lcr_github}/patent_analysis.do"
-/* --------------------------------------------------------------------
-	PART 6.3: demand shock from LCRs in MW & financial value of modules
-----------------------------------------------------------------------*/
-if (1) do "${lcr_github}/lcr_demand_shock.do"
-
+}
 
 ***********************************************************************
-* 	PART 7: 	firm-year panel, event study PSM DiD
+* 	PART 7: 	Run do-files for firm-year panel, event study PSM DiD
 ***********************************************************************
+{
 /* --------------------------------------------------------------------
 	PART 7.1: Merge auction panel, patent panel, employees/sales panel
+	Creates: event_study_raw.dta
 ----------------------------------------------------------------------*/
 if (1) do "${lcr_github}/merge_firmyeardata.do"
 /* --------------------------------------------------------------------
 	PART 7.2: Prepare data set
+	Creates: event_study_final.dta
 ----------------------------------------------------------------------*/
 if (1) do "${lcr_github}/event_clean.do"
 /* --------------------------------------------------------------------
@@ -286,12 +282,34 @@ if (1) do "${lcr_github}/event_clean.do"
 ----------------------------------------------------------------------*/
 if (1) do "${lcr_github}/event_visualize.do"
 /* --------------------------------------------------------------------
-	PART 7.4: Run event study/dynamic DiD
+	PART 7.4: Event study/dynamic DiD
 ----------------------------------------------------------------------*/
 if (1) do "${lcr_github}/event_study.do"
 /* --------------------------------------------------------------------
 	PART 7.5: Run staggered Did
 ----------------------------------------------------------------------*/
 if (1) do "${lcr_github}/callaway_santanna.do"
+
+}
+
+***********************************************************************
+* 	PART 8: 	Run do-files for Interpretation & explanation of results
+***********************************************************************
+{
+/* --------------------------------------------------------------------
+	PART 8.1: Calculate (ex-post) power
+----------------------------------------------------------------------*/
+if (1) do "${lcr_github}/lcr_post_power.do"
+/* --------------------------------------------------------------------
+	PART 8.2: Check which type of solar patents were filed
+----------------------------------------------------------------------*/
+if (0) do "${lcr_github}/patent_analysis.do"
+/* --------------------------------------------------------------------
+	PART 8.3: demand shock from LCRs in MW & financial value of modules
+----------------------------------------------------------------------*/
+if (1) do "${lcr_github}/lcr_demand_shock.do"
+
+}
+
 
 

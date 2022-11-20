@@ -1,20 +1,16 @@
 ***********************************************************************
-* 			lcr India paper: create a balanced firm-year panel and test-pre trends					
+* 			lcr India paper: event or dynamic Did estimates		
 ***********************************************************************
 *																	   
-*	PURPOSE: 				  								  
+*	PURPOSE: examine effect of LCR on firm innovation		  								  
 *				  
 *																	  
 *	OUTLINE:														  
-*	1)		import the collapsed firm-year dataset
-*	2) 		transform to panel dataset and use tsfill to have balanced time periods
-*	3)		merge company specific data
-*	4) 		create event study dummies
-*	5) 		Do event study regression without controls
-*	6)		Do event study regression with controls
-*																	 																      *
+*	1) prepare the ground
+*	2) unmatched event study
+*	3) matched event study
 *	Author: Florian Münch, Fabian Scheifele  														  
-*	ID variable: company_name		  									  
+*	ID variable: company_name, year		  									  
 *	Requires:	eventstudy_final
 *	Creates:	
 
@@ -31,41 +27,6 @@ cd "$final_figures"
 
 set graphics on
 
-***********************************************************************
-* 	PART 2:   revenue 
-***********************************************************************
-/*
-	* winsorize variable
-winsor2 total_revenue, cuts(0 95)
-ihstrans total_revenue_w
-
-
-preserve
-
-panelview ihs_total_revenue_w lcr, i(company_name) t(year_application) type(outcome) prepost
-
-preserve 
-collapse , by(year)
-
-tsline total_revenue
-
-twoway ///
-	(line total_revenue year_application if lcr == 1) ///
-	(line total_revenue year_application if lcr == 0)
-
-tsline solarpatent if year >= 2005, ///
-	legend(pos(6) row(1)) ///
-	xlabel(2005 2006 2007 2008 2009 2010 2011 "{bf:2011}" 2012 2013 "{bf:2013}" 2014 2015 2016 2017 "{bf:2017}" 2018 2019 2020, labs(small) nogrid) ///
-	xline(2011 2013 2017) ///
-	ylabel(0(5)25, nogrid) ///
-	ytitle("solar patents") ///
-	text(20 2011 "Auction scheme" "announced", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5)) ///
-	text(15 2013 "LCR introduced", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5)) ///
-	text(5 2017 "LCR ended", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5)) ///
-	name(spatents_ts, replace)
-gr export "${lcr_descriptives}/spatents_ts.png", replace
-
-*/
 
 ***********************************************************************
 * 	PART 2: unmatched event study	  						
@@ -203,8 +164,52 @@ gen year_offset = year+0.3
 			name(matched_unmatched_combined, replace)
 	graph export matched_unmatched_combined.png, replace
 	
-/* archived:
+	
+	
+	
+	
+***********************************************************************
+* 	archive
+***********************************************************************
+	
+/*
 /*	
+
+***********************************************************************
+* 	PART 2:   revenue 
+***********************************************************************
+/*
+	* winsorize variable
+winsor2 total_revenue, cuts(0 95)
+ihstrans total_revenue_w
+
+
+preserve
+
+panelview ihs_total_revenue_w lcr, i(company_name) t(year_application) type(outcome) prepost
+
+preserve 
+collapse , by(year)
+
+tsline total_revenue
+
+twoway ///
+	(line total_revenue year_application if lcr == 1) ///
+	(line total_revenue year_application if lcr == 0)
+
+tsline solarpatent if year >= 2005, ///
+	legend(pos(6) row(1)) ///
+	xlabel(2005 2006 2007 2008 2009 2010 2011 "{bf:2011}" 2012 2013 "{bf:2013}" 2014 2015 2016 2017 "{bf:2017}" 2018 2019 2020, labs(small) nogrid) ///
+	xline(2011 2013 2017) ///
+	ylabel(0(5)25, nogrid) ///
+	ytitle("solar patents") ///
+	text(20 2011 "Auction scheme" "announced", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5)) ///
+	text(15 2013 "LCR introduced", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5)) ///
+	text(5 2017 "LCR ended", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5)) ///
+	name(spatents_ts, replace)
+gr export "${lcr_descriptives}/spatents_ts.png", replace
+
+*/
 	
 	* firm fixed effects
 xtreg solarpatent i.lcr##ib2010.year, fe vce(robust)
