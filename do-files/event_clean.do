@@ -111,27 +111,43 @@ replace d_winner = 0 if d_winner != . & year < 2011
 ***********************************************************************
 * 	PART 7: create cohort dummies
 ***********************************************************************
+/* 
+resource/reference: 
+	1:
+	2: min 44-45 Sant'Anna presentation: "create a new column with group indicator that is time-invariant" https://www.youtube.com/watch?v=VLviaylakAo
+*/
 
-*** cohort dummy g
-			* NSM batch I: 2011-2012
-			* LCR batch II: 2013-2017
-gen cohort1 = 0, a(won_lcr)
-replace cohort1 = 1 if d_lcrwon_nsm_panel == 1 & year == 2011 | year == 2012
-* extend to all other years.
-replace cohort1 = 2 if d_lcrwon_nsm_panel == 1 & cohort1 == 0 & year == 2013
-replace cohort1 = 3 if d_lcrwon_nsm_panel == 1 & cohort1 == 0 & year == 2014 | year == 2015 
-replace cohort1 = 4 if d_lcrwon_nsm_panel == 1 & cohort1 == 0 & year == 2016 | year == 2017
+* cohort defined as by first year they enter an lcr auction
+gen first_treat1 = ., a(year)
+replace first_treat1 = 2011  if d_lcrwon_nsm_panel == 1 & year == 2011							 // 5 firms
+replace first_treat1 = 2012  if d_lcrwon_nsm_panel == 1 & year == 2012 & first_treat1[_n-1] == . // no new firms in 2012
+replace first_treat1 = 2013  if d_lcrwon_nsm_panel == 1 & year == 2013 & first_treat1[_n-2] == . // 13 firms
+replace first_treat1 = 2015  if d_lcrwon_nsm_panel == 1 & year == 2015 & first_treat1[_n-4] == . // 1 firm
+replace first_treat1 = 2016  if d_lcrwon_nsm_panel == 1 & year == 2016 & first_treat1[_n-3] == . // 6 firms
+replace first_treat1 = 2017  if d_lcrwon_nsm_panel == 1 & year == 2017 & first_treat1 == .		 // 1 firm
 
-bysort company_name year: replace cohort1 = 3 if d_lcrwon_nsm_panel == 1 & year == 2014 | year == 2015
-bysort company_name year: replace cohort1 = 4 if d_lcrwon_nsm_panel == 1 & year == 2016 | year == 2017
+egen first_treat0 = min(first_treat1), by(company_name)
+order first_treat0, a(first_treat1)
+drop first_treat1
+rename first_treat0 first_treat1
+replace first_treat1 = 0 if first_treat1 == .
 
-gen cohort2 = 0, a(won_lcr)
-bysort company_name year: replace cohort2 = 1 if d_lcrwon_nsm_panel == 1 & cond(year,2011, 2013)
-bysort company_name year: replace cohort2 = 2 if d_lcrwon_nsm_panel == 1 & cond(year,2013,2017)
 
-* idea
-	* cohort 1: batch 1
-	* cohort 2: 2013
+* cohort grouped into early, middle, late adopters
+gen first_treat2 = ., a(first_treat1)
+replace first_treat2 = 2011 if d_lcrwon_nsm_panel == 1 & year == 2011 | d_lcrwon_nsm_panel == 1 & year == 2012
+replace first_treat2 = 2013 if d_lcrwon_nsm_panel == 1 & year == 2013 & first_treat2[_n-1] == .
+replace first_treat2 = 2015 if d_lcrwon_nsm_panel == 1 & year == 2015 & first_treat2[_n-3] == .
+replace first_treat2 = 2015 if d_lcrwon_nsm_panel == 1 & year == 2016 & first_treat2[_n-3] == .
+replace first_treat2 = 2015 if d_lcrwon_nsm_panel == 1 & year == 2017 & first_treat2 == .
+
+egen first_treat0 = min(first_treat2), by(company_name)
+order first_treat0, a(first_treat2)
+drop first_treat2
+rename first_treat0 first_treat2
+replace first_treat2 = 0 if first_treat2 == .
+
+
 
 ***********************************************************************
 * 	PART 8: create period index time to treat
@@ -140,6 +156,19 @@ gen ttt_2011 = year - 2010, a(year)
 lab var ttt_2011 "time to treatment, base year = 2010"
 gen ttt_2013 = year - 2012, a(year)
 lab var ttt_2011 "time to treatment, base year = 2012"
+
+
+***********************************************************************
+* 	PART 9: Create pre-treatment controls
+***********************************************************************
+* eyeball data: br company_name year log_total_employees ihs_total_revenue indian manufacturer part_jnnsm_1 won_lcr won_no_lcr
+
+* revenue
+
+* employees
+
+
+* patents
 
 
 
