@@ -161,14 +161,31 @@ lab var ttt_2011 "time to treatment, base year = 2012"
 ***********************************************************************
 * 	PART 9: Create pre-treatment controls
 ***********************************************************************
-* eyeball data: br company_name year log_total_employees ihs_total_revenue indian manufacturer part_jnnsm_1 won_lcr won_no_lcr
+/* technical note:
+	- for revenue, take either year before policy (2010, 2012) or earliest available
+	- for employees, we could only find data without time stamp and thus took the latest obs.
+	*/
 
 * revenue
+	* take year before policy = 2010
+egen latest_available_year = min(year) if total_revenue != ., by(company_name)
+replace latest_available_year = . if latest_available_year != year
+bysort company_name: gen total_revenue_latest_year = total_revenue if latest_available_year != .
 
-* employees
-
+forvalues year = 2010(2)2012 {
+	bysort company_name year: gen revenue_`year' = total_revenue if year == `year', a(total_revenue)
+	* replace with latest available year 
+	bysort company_name: replace revenue_`year' = total_revenue_latest_year if latest_available_year != . & revenue_`year' == .
+	egen rev_`year' = min(revenue_`year'), by(company_name)
+	drop revenue_`year'
+	rename rev_`year' revenue_`year'
+}
 
 * patents
+egen solar_patent_2010 = sum(solarpatent) if year <= 2010, by(company_name)
+egen pre_solar_patent_2010 = max(solar_patent_2010), by(company_name)
+egen solar_patent_2012 = sum(solarpatent) if year <= 2012, by(company_name)
+egen pre_solar_patent_2012 = max(solar_patent_2012), by(company_name)
 
 
 

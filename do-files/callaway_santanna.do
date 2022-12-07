@@ -25,10 +25,10 @@ set graphics on
 1: restrict to lcr and open auction winners --> if d_winner != .
 2: include not yet treated in control group --> add option "notyet"
 3: take calendar year of first treatment to define cohorts --> gvar(first_treat1)
-4: use default standard errors
+4: use bootstrap to calculate se
 5: use 95% CI
 */ 
-* main specification
+* 1: main specification
 csdid solarpatent if d_winner != ., ivar(company_name) time(year) gvar(first_treat1) rseed(21112022) notyet level(95)
 estat all // look at aggregated results
 estat event // run aggregated event study for visualisation
@@ -36,33 +36,33 @@ csdid_plot, legend(pos(6) row(1)) ytitle(solar patents) ylabel(-2(1)5, nogrid) x
 gr export "${final_figures}/staggered_event.png", replace
 
 
-* change specification decision 2: do not include not yet treated in control group
+* 2: do not include not yet treated in control group
 csdid solarpatent if d_winner != ., ivar(company_name) time(year) gvar(first_treat1) rseed(21112022) level(95)
 estat all
 estat event
 csdid_plot
 
 
-* change specification decision 3: take early, middle, and late treated as cohorts
+* 3: take early, middle, and late treated as cohorts
 csdid solarpatent if d_winner != ., ivar(company_name) time(year) gvar(first_treat2) rseed(21112022) notyet level(95)
 estat all
 estat event
 csdid_plot
 
-* change specification decision 4: use bootstrap with 999 reps (default)
+* 4: use bootstrap with 999 reps (default)
 csdid solarpatent if d_winner != ., ivar(company_name) time(year) gvar(first_treat1) rseed(21112022) notyet wboot level(95)
 estat all
 estat event
 csdid_plot
 
 
-* change specification decision 5: use 90% CI
+* 5: use 90% CI
 csdid solarpatent if d_winner != ., ivar(company_name) time(year) gvar(first_treat1) rseed(21112022) notyet level(90)
 estat all
 estat event
 csdid_plot
 
-* change specification decision 6: use 90% CI plus bootstrap
+* 6: use 90% CI plus bootstrap
 csdid solarpatent if d_winner != ., ivar(company_name) time(year) gvar(first_treat1) rseed(21112022) notyet level(90) wboot
 estat all
 estat event
