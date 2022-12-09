@@ -197,6 +197,13 @@ gen share_lcr_mw_wanted = quantity_wanted_mw_lcr/ quantity_wanted_mw_total
  *Share of LCR MW allocated among total allocated
 gen share_lcr_mw_allocated = quantity_allocated_mw_lcr/ quantity_allocated_mw_total
 
+
+***********************************************************************
+* 	PART 12: label ununlabelled variables	  					  			
+***********************************************************************
+lab var solar_patentor "At least one solar patent"
+lab var dif_solar_patents "Pre-Post diff. solar patents"
+
 ***********************************************************************
 * 	Save the changes made to the data		  			
 ***********************************************************************

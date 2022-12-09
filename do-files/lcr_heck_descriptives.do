@@ -336,8 +336,8 @@ tsline quantity_allocated_gw solarpatent final_bid_after_era if year >= 2005, //
 gr export capacity_ts.png, replace
 
 graph twoway (bar quantity_allocated_gw year if year >=2011 & year<=2019, color(gs0%30)) (bar solarpatent year if year >=2011 & year<=2019, color(gs11%50)) ///
-	|| (line final_price_after_era year if year >=2011 & year<=2019, ///
-	yaxis(2) ytitle("Average bid price in INR/MWh",axis(2)) lc(black)) (scatter final_price_after_era year if year >=2011 & year<=2019, mlabel(final_price_after_era) mlabpos(1) mcolor(black) mlabcolor(black) yaxis(2)), ///
+	|| (line final_bid_after_era year if year >=2011 & year<=2019, ///
+	yaxis(2) ytitle("Average bid price in INR/MWh",axis(2)) lc(black)) (scatter final_bid_after_era year if year >=2011 & year<=2019, mlabel(final_bid_after_era) mlabpos(1) mcolor(black) mlabcolor(black) yaxis(2)), ///
 	legend (pos(6) lab(1 "Auctioned-off capacity in GW") lab(2 "Solar patents") lab(3 "Average bid price")) ///
 	ytitle("GW/ Patent applications",axis(1)) xtitle("")
 gr export patent_auction_evolution.png, replace

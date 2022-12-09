@@ -262,7 +262,11 @@ if (0) do "${lcr_github}/lcr_did_matching.do"
 ----------------------------------------------------------------------*/
 if (0) do "${lcr_github}/lcr_teffects_psmatch.do"
 }
-
+/* --------------------------------------------------------------------
+	PART 6.10.: Cross-section heterogeneity: Who patented?
+----------------------------------------------------------------------*/
+if (0) do "${lcr_github}/lcr_crosssection_hetero.do"
+}
 ***********************************************************************
 * 	PART 7: 	Run do-files for firm-year panel, event study PSM DiD
 ***********************************************************************
@@ -291,7 +295,12 @@ if (1) do "${lcr_github}/event_study.do"
 if (1) do "${lcr_github}/callaway_santanna.do"
 
 }
+/* --------------------------------------------------------------------
+	PART 7.5: Panel heterogeneity
+----------------------------------------------------------------------*/
+if (1) do "${lcr_github}/panel_hetero.do"
 
+}
 ***********************************************************************
 * 	PART 8: 	Run do-files for Interpretation & explanation of results
 ***********************************************************************
