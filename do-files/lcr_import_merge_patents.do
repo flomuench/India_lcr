@@ -74,7 +74,7 @@ drop if solarpatent == 0
 save firmpatentsolar, replace
 
 	* import solarpatents data incl. ipc groups from Shubbak 2020
-preserve
+frame copy default firmpatent, replace
 import delimited "${lcr_raw}/solar_patents_addinfo.csv", clear varn(1)
 gen len=length(abstract)
 recast str2045 abstract, force 
@@ -82,7 +82,7 @@ save "${lcr_raw}/solar_patents_addinfo", replace
 restore
 
 	* merge with firmsolarpatents
-merge 1:1 applicantname abstract using "${lcr_raw}/solar_patents_addinfo", keepusing(groups subgroups subsubgroups)
+merge 1:1 applicantname solarpatent abstract using "${lcr_raw}/solar_patents_addinfo", keepusing(groups subgroups subsubgroups)
 drop _merge
 save "${lcr_raw}/firmpatentsolar", replace
 
