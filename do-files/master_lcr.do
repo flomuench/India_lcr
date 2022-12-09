@@ -184,6 +184,38 @@ if (1) do "${lcr_github}/lcr_heck_collapse_csection.do"
 if (1) do "${lcr_github}/lcr_heck_collapse_panel.do"
 
 }
+
+***********************************************************************
+* 	PART 5: 	Run do-files for patent data
+**********************************************************************
+* 
+/* --------------------------------------------------------------------
+	PART 5.1: Import patent datasets and put into frames
+	Requires: firmpatent.dta, solar_patents_addinfo
+	Creates:  firmpatent_inter, solarpatents
+----------------------------------------------------------------------*/		
+if (1) do "${lcr_github}/lcr_patent_import.do"
+/* --------------------------------------------------------------------
+	PART 5.2: Patent datasets clean
+----------------------------------------------------------------------*/		
+if (1) do "${lcr_github}/lcr_patent_clean.do"
+/* --------------------------------------------------------------------
+	PART 5.3: Patent datasets merge
+	Creates: firmpatent_final
+----------------------------------------------------------------------*/		
+if (1) do "${lcr_github}/lcr_patent_merge.do"
+/* --------------------------------------------------------------------
+	PART 5.4: Patent datasets generate
+----------------------------------------------------------------------*/		
+if (1) do "${lcr_github}/lcr_patent_generate.do"
+/* --------------------------------------------------------------------
+	PART 5.5: Patent datasets visualize
+----------------------------------------------------------------------*/		
+if (1) do "${lcr_github}/lcr_patent_visualize.do"
+/* --------------------------------------------------------------------
+	PART 5.6: Patent datasets collpase
+----------------------------------------------------------------------*/		
+if (1) do "${lcr_github}/lcr_patent_collapse.do"
 		
 ***********************************************************************
 * 	PART 5: 	Run do-files for cross-section data cleaning
@@ -197,7 +229,8 @@ if (1) do "${lcr_github}/lcr_import.do"
 	PART 5.1: Import & merge patent data
 	Creates: firmyear_patents.dta
 ----------------------------------------------------------------------*/		
-if (1) do "${lcr_github}/lcr_import_merge_patents.do"
+if (1) do "${lcr_github}/lcr_merge_patents.do"
+*if (1) do "${lcr_github}/lcr_import_merge_patents.do"
 /* --------------------------------------------------------------------
 	PART 5.2: Import & merge sales and employees data
 ----------------------------------------------------------------------*/		
