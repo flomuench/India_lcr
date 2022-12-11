@@ -108,13 +108,22 @@ replace d_winner = 0 if d_winner != . & year < 2011
 			* reduces sample by 40%.
 			* 23 firms in treatment, 45 in control.
 		
-	* B: Treated: LCR participant. Counterfactual: open auction participant (only).
+
 		* Variable exist --> lcr_participant
 
 		
 *** considering only the counterfactual period: Batch II (2013-2017)
-
+	
+		* create lcr won annual indicator
+bysort company_name year: gen d_lcrwon_nsm2_panel = (quantity_allocated_mw_lcr > 0 & quantity_allocated_mw_lcr !=. & year >= 2013 & year < 2018), a(d_lcrwon_nsm_panel)
+lab var d_lcrwon_nsm2_panel "=1 in year firm won LCR auction in NSM 2"
 		
+		* create treatment group indicator
+egen d_winner2 = max(d_lcrwon_nsm2_panel), by(company_name)
+order d_winner2, a(d_winner)
+replace d_winner2 = . if d_winner == . // set missing for firms that never won auctions
+replace d_winner2 = 0 if d_winner2 != . & year < 2013
+
 ***********************************************************************
 * 	PART 7: create cohort dummies
 ***********************************************************************
@@ -124,7 +133,7 @@ resource/reference:
 	2: min 44-45 Sant'Anna presentation: "create a new column with group indicator that is time-invariant" https://www.youtube.com/watch?v=VLviaylakAo
 */
 
-* cohort defined as by first year they enter an lcr auction
+	* cohort defined as by first year they enter an lcr auction
 gen first_treat1 = ., a(year)
 replace first_treat1 = 2011  if d_lcrwon_nsm_panel == 1 & year == 2011							 // 5 firms
 replace first_treat1 = 2012  if d_lcrwon_nsm_panel == 1 & year == 2012 & first_treat1[_n-1] == . // no new firms in 2012
@@ -140,7 +149,7 @@ rename first_treat0 first_treat1
 replace first_treat1 = 0 if first_treat1 == .
 
 
-* cohort grouped into early, middle, late adopters
+	* cohort grouped into early, middle, late adopters
 gen first_treat2 = ., a(first_treat1)
 replace first_treat2 = 2011 if d_lcrwon_nsm_panel == 1 & year == 2011 | d_lcrwon_nsm_panel == 1 & year == 2012
 replace first_treat2 = 2013 if d_lcrwon_nsm_panel == 1 & year == 2013 & first_treat2[_n-1] == .
@@ -155,7 +164,17 @@ rename first_treat0 first_treat2
 replace first_treat2 = 0 if first_treat2 == .
 
 
+	* Cohorts for NSM 2, early vs. late (early  = middle in first_treat 2 etc.)
+gen first_treat3 = first_treat2, a(first_treat2)
 
+local companies `" "azure" "development cooperation odisha" "greenko" "hero"  "il&fs" "karnataka" "laxmi" "palimarwar" "rda" "sharda" "solairedirect" "swelect" "terraform" "today" "waaree" "welspun" "' 
+
+foreach company of local companies {
+	replace first_treat3 = 2013 if first_treat3 == 2011 & company_name == "`company'"
+}
+
+replace first_treat3 = 0 if company_name == "mahindra" | company_name == "sunedison"
+	
 ***********************************************************************
 * 	PART 8: create period index time to treat
 ***********************************************************************

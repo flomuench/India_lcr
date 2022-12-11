@@ -83,7 +83,7 @@ decode company_name, gen(company_name_str)
 	
 *** excluding nsm first batch
 		* times auctions won
-panelview won_lcr, i(company_name_str) t(year) type(treat) bytiming mycolor(lean) ///
+panelview won_lcr, i(company_name) t(year) type(treat) bytiming mycolor(lean) ///
 	xtitle("Year") ytitle("Company") subtitle("NSM Batch II (times won)") ///
 	legend(order (1 "never won" 2 "one auction won" 3 "two auctions won" 4 "three auctions won") pos(6) row(2)) ///
 	name(panel_auctions_won_b2, replace)
