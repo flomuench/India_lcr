@@ -89,15 +89,25 @@ rename year_application year
 
 	*Cut off all years before 2004
 				* only 2 patents before 2005 (1982 and 2000)
-drop if year<2004
+drop if year<2004 // --> 99 solar patents remain
 
 	* declare panel data
 encode company_name, gen (company_name2)
 order company_name2, first
 sort company_name2 year, stable
-drop company_name
 xtset company_name2 year
 tsfill, full
+
+	* panel id string: expand company name string identifier into added years
+		* carryforward
+sort company_name2 year
+bys company_name2 (year): carryforward company_name, gen(company_name3)
+		* carryforward (backward)
+gsort company_name2 -year
+carryforward company_name3, gen(company_name4)
+order company_name3 company_name4, a(company_name2)
+drop company_name company_name3
+rename company_name4 company_name
 
 	*replace missing values of newly created firm-year instances with zero
 *tsfill, full
@@ -108,6 +118,10 @@ foreach var of local patents {
 	
 *drop and rename encoded variable for merging*
 *decode company_name2, gen(company_name)
+
+
+	* drop numerical panel id to avoid mismatch when merging
+drop company_name2
 	
 
 save "$lcr_final/firmyear_patents", replace

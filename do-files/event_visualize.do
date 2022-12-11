@@ -14,6 +14,8 @@
 ***********************************************************************
 use "${lcr_final}/event_study_final", clear
 
+set graphics on
+
 xtset company_name year
 ***********************************************************************
 * 	PART 2: visualize solar patents
@@ -23,11 +25,11 @@ xtset company_name year
 xtline solarpatent, overlay legend(off) ///
 	xlabel(2005 2006 2007 2008 2009 2010 2011 "{bf:2011}" 2012 2013 "{bf:2013}" 2014 2015 2016 2017 "{bf:2017}" 2018 2019 2020, labs(small) nogrid) ///
 	xline(2011 2013 2017) ///
-	ylabel(0(5)25, nogrid) ///
+	ylabel(0(1)6, nogrid) ///
 	ytitle("solar patents") ///
 	text(20 2011 "Auction scheme" "announced", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5)) ///
 	text(15 2013 "LCR introduced", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5)) ///
-	text(5 2017 "LCR ended", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5))
+	text(5 2017 "LCR ended", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5)) ///
 	name(spatents_ts_lcr, replace)
 	
 	
@@ -35,7 +37,7 @@ xtline solarpatent, overlay legend(off) ///
 xtline solarpatent, overlay legend(off) ///
 	xlabel(2005 2006 2007 2008 2009 2010 2011 "{bf:2011}" 2012 2013 "{bf:2013}" 2014 2015 2016 2017 "{bf:2017}" 2018 2019 2020, labs(small) nogrid) ///
 	xline(2011 2013 2017) ///
-	ylabel(0(5)25, nogrid) ///
+	ylabel(0(1)6, nogrid) ///
 	ytitle("solar patents") ///
 	text(20 2011 "Auction scheme" "announced", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5)) ///
 	text(15 2013 "LCR introduced", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5)) ///
@@ -46,10 +48,10 @@ panelview solarpatent d_winner, i(company_name) t(year) type(outcome) ///
 	xlabel(2005 2006 2007 2008 2009 2010 2011 "{bf:2011}" 2012 2013 "{bf:2013}" 2014 2015 2016 2017 "{bf:2017}" 2018 2019 2020, labs(small) nogrid) ///
 	xtitle("Year") ytitle("Solar Patents") title("") ///
 	xline(2011 2013 2017) ///
-	ylabel(0(1)15, nogrid) ///
+	ylabel(0(1)6, nogrid) ///
 	ytitle("solar patents") ///
-	text(15 2010 "Auction scheme" "announced", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5)) ///
-	text(15 2014 "LCR introduced", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5)) ///
+	text(6 2010 "Auction scheme" "announced", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5)) ///
+	text(5 2014 "LCR introduced", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5)) ///
 	text(5 2017 "LCR ended", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5)) ///
 	legend(all pos(6) row(1)) ///
 	name(panelview_patents_winner_b2, replace)
@@ -64,7 +66,7 @@ panelview ihs_total_revenue d_winner, i(company_name) t(year) type(outcome) ///
 	xlabel(2005 2006 2007 2008 2009 2010 2011 "{bf:2011}" 2012 2013 "{bf:2013}" 2014 2015 2016 2017 "{bf:2017}" 2018 2019 2020, labs(small) nogrid) ///
 	xtitle("Year") ytitle("ihs. total revenue") title("") ///
 	xline(2011 2013 2017) ///
-	ylabel(0(5)30, nogrid) ///
+	ylabel(0(1)10, nogrid) ///
 	ytitle("solar patents") ///
 	text(15 2010 "Auction scheme" "announced", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5)) ///
 	text(15 2014 "LCR introduced", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5)) ///
@@ -136,3 +138,5 @@ tab year if won_lcr > 0
 
 
 drop company_name_str
+
+set graphics off

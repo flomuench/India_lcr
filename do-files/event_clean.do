@@ -19,8 +19,7 @@ use "${lcr_final}/event_study_raw", clear
 ***********************************************************************
 * 	PART 2: drop unnecessary variables
 ***********************************************************************
-drop company_name companyname bidder
-rename company_name2 company_name
+drop companyname bidder
 
 ***********************************************************************
 * 	PART 3: order
@@ -32,6 +31,14 @@ order quantity_allocated_mw_lcr, a(won_lcr)
 order quantity_allocated_mw_no_lcr, a(won_no_lcr)
 
 order part_jnnsm_1, a(solarpatent)
+
+***********************************************************************
+* 	PART 3: replace missing patent values with zeros
+***********************************************************************
+local patents solarpatent not_solar_patent // modcell_patent
+foreach var of local patents {
+		replace `var' = 0 if `var' == .
+	}
 
 ***********************************************************************
 * 	PART 4: extend the panel for stable variables
@@ -187,10 +194,9 @@ egen pre_solar_patent_2010 = max(solar_patent_2010), by(company_name)
 egen solar_patent_2012 = sum(solarpatent) if year <= 2012, by(company_name)
 egen pre_solar_patent_2012 = max(solar_patent_2012), by(company_name)
 
-
+drop total_revenue_latest_year
 
 ***********************************************************************
 * 	PART: save dataset	  						
 ***********************************************************************
 save "${lcr_final}/event_study_final", replace
-erase "${lcr_final}/event_study_raw"

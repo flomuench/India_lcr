@@ -23,9 +23,6 @@
 use "${lcr_final}/lcr_bid_final", clear
 sort auction company_name, stable 
 
-	* create temporary frame
-frame copy default temp_frame
-frame change temp_frame
 
 ***********************************************************************
 * 	PART 1:  collapse + reshape the data  			
@@ -77,22 +74,35 @@ drop _merge
 ***********************************************************************
 * 	PART 4: fill the panel with the years in which firms did not participate in auctions
 ***********************************************************************
-* declare panel data (to be able to use tsfill)
+	* declare panel data (to be able to use tsfill)
 encode company_name, gen(company_name2)
 order company_name2, b(company_name)
 xtset company_name2 auction_year
 
-*expand panel structure by filling in addtional year, where gaps
+	*expand panel structure by filling in addtional year, where gaps
 tsfill, full
 
-*replace missing values with zeros for auction participation data
+	* expand company name string identifier into added years
+		* carryforward
+sort company_name2 auction_year
+bys company_name2 (auction_year): carryforward company_name, gen(company_name3)
+		* carryforward (backward)
+gsort company_name2 -auction_year
+carryforward company_name3, gen(company_name4)
+order company_name3 company_name4, a(company_name2)
+drop company_name company_name3
+rename company_name4 company_name
+
+	
+	
+	*replace missing values with zeros for auction participation data
 local auctions "won_no_lcr won_lcr won_total quantity_wanted_mw_no_lcr quantity_wanted_mw_lcr quantity_wanted_mw_total quantity_total_no_lcr quantity_total_lcr quantity_total_total quantity_allocated_mw_no_lcr quantity_allocated_mw_lcr quantity_allocated_mw_total total_auctions_no_lcr total_auctions_lcr total_auctions"
 foreach var of local auctions {
 		replace `var' = 0 if `var' == .
 	}
 
-* replace missing values with stable, firm characteristics
-	* first, turn all string variables into factor variables
+	* replace missing values with stable, firm characteristics
+		* first, turn all string variables into factor variables
 local stable_strvars "webaddress city state lob ultimateparent subsidiary"
 foreach var of local stable_strvars {
 	encode `var', gen(`var'1)
@@ -121,16 +131,14 @@ order founded age_at_bid, a(auction_year)
 br if age_at_bid < 0
 codebook company_name2 if age_at_bid < 0 /* 24 firms participated in auctions before they were founded...obviously erroneous. requires correction. */
 
-* prepare for merge
-	* panel_id
-drop company_name
-decode company_name2, gen(company_name)
 
 	* panel time id
 rename auction_year year
 
+	* panel unit id: drop numerical version to avoid mismatches when merging
+drop company_name2
+
 ***********************************************************************
 * 	PART 5: save firm-year panel data set
 ***********************************************************************
-	* save as cross_section_new to allow comparison with first cross-section file
 save "${lcr_final}/firmyear_auction", replace
