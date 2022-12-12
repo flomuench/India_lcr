@@ -37,8 +37,8 @@ ssc install betterbar
 ssc install mdesc 
 ssc install reclink
 ssc install matchit
-ssc install strgroup
-ssc install stripplot
+*ssc install strgroup
+*ssc install stripplot
 net install http://www.stata.com/users/kcrow/tab2docx
 ssc install labutil
 ssc install xtgraph
@@ -57,8 +57,8 @@ ssc install sencode, replace
 ssc install panelview, all replace
 ssc install drdid, all replace
 ssc install csdid, all replace
+ssc install carryforward, all replace
 */
-
 
 	* define graph scheme for visual outputs
 *set scheme burd
@@ -318,11 +318,11 @@ if (1) do "${lcr_github}/event_clean.do"
 /* --------------------------------------------------------------------
 	PART 8.3: Visualize
 ----------------------------------------------------------------------*/
-if (1) do "${lcr_github}/event_visualize.do"
+if (0) do "${lcr_github}/event_visualize.do"
 /* --------------------------------------------------------------------
 	PART 8.4: Event study/dynamic DiD
 ----------------------------------------------------------------------*/
-if (1) do "${lcr_github}/event_study.do"
+if (0) do "${lcr_github}/event_study.do"
 /* --------------------------------------------------------------------
 	PART 8.5: Run staggered Did
 ----------------------------------------------------------------------*/

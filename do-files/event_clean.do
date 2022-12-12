@@ -216,6 +216,11 @@ egen pre_solar_patent_2012 = max(solar_patent_2012), by(company_name)
 drop total_revenue_latest_year
 
 ***********************************************************************
+* 	PART 9: Create binary outcome
+***********************************************************************
+gen solarpatent_bin = 0
+replace solarpatent_bin=1 if solarpatent>0
+***********************************************************************
 * 	PART: save dataset	  						
 ***********************************************************************
 save "${lcr_final}/event_study_final", replace
