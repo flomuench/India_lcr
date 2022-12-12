@@ -68,6 +68,15 @@ graph hbar share_lcr_part if lcr==1, over(company_name, sort(share_lcr_part) des
 	ytitle("Share of auction participations that had LCR") yline(0.5)
 gr export treatment_intensity.png, replace
 
+
+graph hbar (sum) solarpatents, over (sector) by(lcr, note("") iscale(0.8)) ///
+ ytitle("Number of solar patents") blabel (bar) 
+graph export solarpatents_sector.png, replace
+
+graph hbar (count), over(sector) by(lcr, note("") iscale(0.8)) blabel(bar) ///
+	ytitle("Number of firms")
+graph export firms_frequency_sector.png, replace
+
 ***********************************************************************
 * 	PART 3: Other descriptive statistics  	  						
 ************************************************************************	
