@@ -39,8 +39,8 @@ esttab `regressions' using "logit_patent_hetero.tex", replace ///
 	b(3) ///
 	se(3) ///
 	drop(_cons) ///
-	star(* 0.1 ** 0.05 *** 0.01)///
-	addnotes("Robust standard errors in parentheses." "Business services are baselevel of sector variable." 
+	star(* 0.1 ** 0.05 *** 0.01) ///
+	addnotes("Robust standard errors in parentheses." "Business services are baselevel of sector variable.") 
 	
 cd "$final_figures"	
 graph hbar (sum) solarpatents, over (lcr, label(labs(vsmall))) over(sector, label(labs(vsmall))) blabel (bar) ///
