@@ -147,7 +147,7 @@ graph bar (sum)  `prepostsolar', over(lcr, label(labs(large))) ///
 	name(prepost_solar_LCR, replace)
 gr export prepost_solar_LCR.png, replace
 
-	* pre-post module/cell patents by LCR
+	/* pre-post module/cell patents by LCR
 graph bar (sum) pre_modcell_patent post_modcell_patent if patent_outliers == 0, over(lcr) ///
 	blabel(total, size(vsmall)) ///
 	title("{bf: Module & cell patents pre & post LCR auctions in India}") ///
@@ -156,7 +156,7 @@ graph bar (sum) pre_modcell_patent post_modcell_patent if patent_outliers == 0, 
 	note("Authors own calculations based on patent application at Indian patent office.", size(vsmall)) ///
 	name(prepost_cellpatents_no_outlier, replace)
 gr export prepost_cellpatents_no_outlier.png, replace
-
+*/
 cd "$lcr_descriptives"
 
 

@@ -14,7 +14,7 @@
 ***********************************************************************
 * 	PART 1: import the collapsed dataset & declara as panel data	  						
 ***********************************************************************
-use "${lcr_final}/eventstudy_final", clear	
+use "${lcr_final}/event_study_final", clear	
 
 set graphics on
 
@@ -29,11 +29,11 @@ set graphics on
 5: use 95% CI
 */ 
 * 1: main specification
-csdid solarpatent if d_winner != ., ivar(company_name2) time(year) gvar(first_treat1) rseed(21112022) notyet level(95)
+csdid solarpatent if d_winner != . & year>2007 , ivar(company_name2) time(year) gvar(first_treat1) rseed(21112022) notyet level(95)
 estat all // look at aggregated results
 estat event // run aggregated event study for visualisation
-csdid_plot, legend(pos(6) row(1)) ytitle(solar patents) ylabel(-2(1)5, nogrid) xtitle(Years to Treatment)
-gr export "${final_figures}/staggered_event.png", replace
+csdid_plot, legend(pos(6) row(1)) ytitle(solar patents) ylabel(-1.5(0.5)1.5, nogrid) xtitle(Years to Treatment)
+gr export "${final_figures}/staggered_event_nsm1.png", replace
 
 
 * 2: do not include not yet treated in control group
@@ -41,7 +41,7 @@ csdid solarpatent if d_winner != ., ivar(company_name2) time(year) gvar(first_tr
 estat all
 estat event
 csdid_plot
-
+gr export "${final_figures}/staggered_event_nsm1.png", replace
 
 * 3: take early, middle, and late treated as cohorts
 csdid solarpatent if d_winner != ., ivar(company_name2) time(year) gvar(first_treat2) rseed(21112022) notyet level(95)
@@ -87,7 +87,7 @@ local controls "indian manufacturer"
 csdid solarpatent `controls' if d_winner != ., ivar(company_name2) time(year) gvar(first_treat1) rseed(21112022) notyet level(95) dripw
 estat all
 estat event 
-csdid_plot, legend(pos(6) row(1)) ytitle(solar patents) ylabel(-2(1)5, nogrid) xtitle(Years to Treatment)
+csdid_plot, legend(pos(6) row(1)) ytitle(solar patents) ylabel(-4(1)4, nogrid) xtitle(Years to Treatment)
 gr export "${final_figures}/staggered_event_cov.png", replace
 
 
@@ -170,6 +170,7 @@ csdid solarpatent if d_winner2 != ., ivar(company_name2) time(year) gvar(first_t
 estat all
 estat event
 csdid_plot
+gr export "${final_figures}/staggered_event_nsm2_nevertreated.png", replace
 
 
 * 3: use bootstrap with 999 reps (default)
@@ -177,6 +178,7 @@ csdid solarpatent if d_winner2 != ., ivar(company_name2) time(year) gvar(first_t
 estat all
 estat event
 csdid_plot
+gr export "${final_figures}/staggered_event_nsm2_boot.png", replace
 
 
 * 4: use 90% CI
@@ -193,7 +195,7 @@ csdid_plot
 
 
 ***********************************************************************
-* 	PART 5: sample: NSM 1 + 2, with covariates
+* 	PART 5: sample: NSM 2, with covariates
 ***********************************************************************
 /* Specification decisions:
 1: restrict to lcr and open auction winners --> if d_winner != .
@@ -211,7 +213,7 @@ csdid solarpatent `controls' if d_winner2 != ., ivar(company_name2) time(year) g
 estat all
 estat event 
 csdid_plot, legend(pos(6) row(1)) ytitle(solar patents) ylabel(-1.5(1)1.5, nogrid) xtitle(Years to Treatment)
-gr export "${final_figures}/staggered_event_nsm2_cov.png", replace
+gr export "${final_figures}/staggered_event_nsm2_cov_static.png", replace
 
 
 * change specification decision 2: do not include not yet treated in control group
@@ -220,6 +222,7 @@ csdid solarpatent `controls' if d_winner2 != ., ivar(company_name2) time(year) g
 estat all
 estat event
 csdid_plot
+gr export "${final_figures}/staggered_event_nsm2_cov_nevertreated.png", replace
 
 
 * change specification decision 3: take early, middle, and late treated as cohorts
@@ -228,6 +231,7 @@ csdid solarpatent `controls' if d_winner2 != ., ivar(company_name2) time(year) g
 estat all
 estat event
 csdid_plot
+gr export "${final_figures}/staggered_event_nsm2_cov_static.png", replace
 
 * change specification decision 4: use bootstrap with 999 reps (default)
 local controls "indian manufacturer"
@@ -235,12 +239,13 @@ csdid solarpatent `controls'  if d_winner2 != ., ivar(company_name2) time(year) 
 estat all
 estat event
 csdid_plot
+gr export "${final_figures}/staggered_event_nsm2_cov_bootstrap.png", replace
 
 
 
 * 3.2.: time invariant & pre-policy covariates
 * main specification
-local controls "indian manufacturer pre_solar_patent_2010 revenue_2010"
+local controls "indian manufacturer revenue_2010"
 csdid solarpatent `controls' if d_winner2 != ., ivar(company_name2) time(year) gvar(first_treat3) rseed(21112022) notyet level(95) dripw
 estat all
 estat event 
@@ -254,6 +259,7 @@ csdid solarpatent `controls' if d_winner2 != ., ivar(company_name2) time(year) g
 estat all
 estat event
 csdid_plot
+gr export "${final_figures}/staggered_event_nsm2_cov2_nevertreated.png", replace
 
 
 * change specification decision 3: use bootstrap with 999 reps (default)
@@ -262,6 +268,7 @@ csdid solarpatent `controls'  if d_winner2 != ., ivar(company_name2) time(year) 
 estat all
 estat event
 csdid_plot
+gr export "${final_figures}/staggered_event_nsm2_cov2_boot.png", replace
 
 * change specification decision 4: use bootstrap with 999 reps + 90CI
 local controls "indian manufacturer pre_solar_patent_2010 revenue_2010"
@@ -269,13 +276,94 @@ csdid solarpatent `controls'  if d_winner2 != ., ivar(company_name2) time(year) 
 estat all
 estat event
 csdid_plot
+gr export "${final_figures}/staggered_event_nsm2_cov2_boot90.png", replace
 
 
 
+***********************************************************************
+* 	PART 6: sample: NSM 1+2, binary outcome
+***********************************************************************
+* 1: Incl. NSM batch 1 and covariates (annual cohorts)
+local controls "indian manufacturer revenue_2010"
+csdid solarpatent_bin `controls' if d_winner != . , ivar(company_name2) time(year) gvar(first_treat1) rseed(21112022) notyet level(95)
+estat all // look at aggregated results
+estat event // run aggregated event study for visualisation
+csdid_plot, legend(pos(6) row(1)) ytitle(solar patents) ylabel(-1.5(0.5)1.5, nogrid) xtitle(Years to Treatment)
+gr export "${final_figures}/staggered_event_nsm1_bin.png", replace
 
 
+* 2:  Incl. NSM batch and covariates take early, middle, and late treated as cohorts
+csdid solarpatent_bin `controls' if d_winner != . , ivar(company_name2) time(year) gvar(first_treat2) rseed(21112022) notyet level(95)
+estat all // look at aggregated results
+estat event // run aggregated event study for visualisation
+csdid_plot, legend(pos(6) row(1)) ytitle(solar patents) ylabel(-1.5(0.5)1.5, nogrid) xtitle(Years to Treatment)
+gr export "${final_figures}/staggered_event_nsm1_bin_grouped.png", replace
 
 
+* 3: Only NSM batch 2+ and covariates (second cohort variable)
+local controls "indian manufacturer revenue_2010"
+csdid solarpatent_bin `controls' if d_winner2 != ., ivar(company_name2) time(year) gvar(first_treat2) rseed(21112022) notyet level(95) dripw
+estat all
+estat event 
+csdid_plot, legend(pos(6) row(1)) ytitle(solar patents) ylabel(-1.5(1)1.5, nogrid) xtitle(Years to Treatment)
+
+* 4: Only NSM batch 2+ and covariates (third cohort variable)
+csdid solarpatent_bin `controls' if d_winner2 != ., ivar(company_name2) time(year) gvar(first_treat3) rseed(21112022) notyet level(95) dripw
+estat all
+estat event 
+csdid_plot, legend(pos(6) row(1)) ytitle(solar patents) ylabel(-1.5(1)1.5, nogrid) xtitle(Years to Treatment)
+
+***********************************************************************
+* 	PART 7: sample: NSM 1+2, revenues as DV (IHS-transformed)
+***********************************************************************
+csdid ihs_total_revenue if d_winner != . , ivar(company_name2) time(year) gvar(first_treat1) rseed(21112022) notyet level(95)
+estat all // look at aggregated results
+estat event // run aggregated event study for visualisation
+csdid_plot, legend(pos(6) row(1)) ytitle(solar patents) ylabel(-1.5(0.5)1.5, nogrid) xtitle(Years to Treatment)
 
 
+* 2:  Incl. NSM batch and covariates take early, middle, and late treated as cohorts
+csdid ihs_total_revenue if d_winner != . , ivar(company_name2) time(year) gvar(first_treat2) rseed(21112022) notyet level(95)
+estat all // look at aggregated results
+estat event // run aggregated event study for visualisation
+csdid_plot, legend(pos(6) row(1)) ytitle(solar patents) ylabel(-1.5(0.5)1.5, nogrid) xtitle(Years to Treatment)
 
+
+* 3: Only NSM batch 2+ and covariates (second cohort variable)
+csdid ihs_total_revenue if d_winner2 != ., ivar(company_name2) time(year) gvar(first_treat2) rseed(21112022) notyet level(95) dripw
+estat all
+estat event 
+csdid_plot, legend(pos(6) row(1)) ytitle(solar patents) ylabel(-1.5(1)1.5, nogrid) xtitle(Years to Treatment)
+
+* 4: Only NSM batch 2+ and covariates (third cohort variable)
+csdid ihs_total_revenue if d_winner2 != ., ivar(company_name2) time(year) gvar(first_treat3) rseed(21112022) notyet level(95) dripw
+estat all
+estat event 
+csdid_plot, legend(pos(6) row(1)) ytitle(solar patents) ylabel(-1.5(1)1.5, nogrid) xtitle(Years to Treatment)
+
+******with controls
+local controls "indian manufacturer"
+csdid ihs_total_revenue `controls' if d_winner != . , ivar(company_name2) time(year) gvar(first_treat1) rseed(21112022) notyet level(95)
+estat all // look at aggregated results
+estat event // run aggregated event study for visualisation
+csdid_plot, legend(pos(6) row(1)) ytitle(solar patents) ylabel(-1.5(0.5)1.5, nogrid) xtitle(Years to Treatment)
+
+
+* 2:  Incl. NSM batch and covariates take early, middle, and late treated as cohorts
+csdid ihs_total_revenue `controls' if d_winner != . , ivar(company_name2) time(year) gvar(first_treat2) rseed(21112022) notyet level(95)
+estat all // look at aggregated results
+estat event // run aggregated event study for visualisation
+csdid_plot, legend(pos(6) row(1)) ytitle(solar patents) ylabel(-1.5(0.5)1.5, nogrid) xtitle(Years to Treatment)
+
+
+* 3: Only NSM batch 2+ and covariates (second cohort variable)
+csdid ihs_total_revenue `controls' if d_winner2 != ., ivar(company_name2) time(year) gvar(first_treat2) rseed(21112022) notyet level(95) dripw
+estat all
+estat event 
+csdid_plot, legend(pos(6) row(1)) ytitle(solar patents) ylabel(-1.5(1)1.5, nogrid) xtitle(Years to Treatment)
+
+* 4: Only NSM batch 2+ and covariates (third cohort variable)
+csdid ihs_total_revenue `controls' if d_winner2 != ., ivar(company_name2) time(year) gvar(first_treat3) rseed(21112022) notyet level(95) dripw
+estat all
+estat event 
+csdid_plot, legend(pos(6) row(1)) ytitle(solar patents) ylabel(-1.5(1)1.5, nogrid) xtitle(Years to Treatment)
