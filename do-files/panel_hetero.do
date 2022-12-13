@@ -19,4 +19,9 @@ xtset company_name year
 ***********************************************************************
 * 	PART 2:  Which companies patent at all? 			
 ***********************************************************************
-eststo logit_sector, r:xtlogit solarpatent lcr_participant ib4.sector indian total_revenue i.year, fe
+eststo logit_sector, r:logit solarpatent lcr_participant indian energy_focus total_revenue total_employees manufacturer age i.year, vce(robust)
+
+***********************************************************************
+* 	PART 3:  Which companies patent at all? 			
+***********************************************************************
+eststo revenue, r:reg total_revenue lcr_participant indian manufacturer age i.year
