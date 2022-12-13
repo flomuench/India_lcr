@@ -76,16 +76,17 @@ panelview ihs_total_revenue d_winner, i(company_name) t(year) type(outcome) ///
 gr export "${lcr_descriptives}/panelview_revenue_winner_b2.png", replace
 
 *Visualise revenue by LCR winners and open winners over time
-frame put ihs_total_revenue year lcr_winner, into(revenue_frame)
+frame put ihs_total_revenue total_revenue year lcr_winner, into(revenue_frame)
 frame change revenue_frame
-collapse ihs_total_revenue, by(year lcr_winner)
+collapse ihs_total_revenue total_revenue, by(year lcr_winner)
 
 twoway ///
 	(line  ihs_total_revenue year if lcr_winner == 1) ///
-	(line  ihs_total_revenue year if lcr_winner == 0), legend(order(1 "LCR" 0 "Open"))
-	
-graph twoway connected ihs_total_revenue year if lcr_winner == 1 ///
-	||     ihs_total_revenue year if lcr_winner == 0  
+	(line  ihs_total_revenue year if lcr_winner == 0), legend(pos(6))
+
+twoway ///
+	(line  total_revenue year if lcr_winner == 1 & year>2009) ///
+	(line  total_revenue year if lcr_winner == 0 & year>2009), legend(order(1 "LCR" 0 "Open"))
 frame change default
 frame drop revenue_frame
 ***********************************************************************
