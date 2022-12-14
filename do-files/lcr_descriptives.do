@@ -180,6 +180,14 @@ gr hbar (sum) dif_solar_patents if solarpatents > 0 & solarpatents != ., over(co
 	name(firms_LCR_solarpatents, replace)
 gr export firms_LCR_dif_solarpatents.png, replace
 
+	*LOOK AT PATENTING AMONG MANUFACTURERS & NON-manufacturers (NEED VALUE LABELS TO LOOK NICE)
+
+graph bar (sum) pre_solar_patentor post_solar_patentor if won_total>0, ///
+ over(lcr_won) over(manufacturer) blabel(bar)
+
+
+***********************************************************************	
+
 ***********************************************************************
 * 	PART 2: auction participation 	  						
 ***********************************************************************

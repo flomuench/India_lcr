@@ -258,7 +258,7 @@ if (1) do "${lcr_github}/lcr_generate.do"
 /* --------------------------------------------------------------------
 	PART 7.0: descriptive statitics
 ----------------------------------------------------------------------*/	
-if (1) do "${lcr_github}/lcr_descriptives.do"
+if (0) do "${lcr_github}/lcr_descriptives.do"
 /* --------------------------------------------------------------------
 	PART 7.1: select variables to include into matching model
 ----------------------------------------------------------------------*/	

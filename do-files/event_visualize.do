@@ -79,14 +79,20 @@ gr export "${lcr_descriptives}/panelview_revenue_winner_b2.png", replace
 frame put ihs_total_revenue total_revenue year lcr_winner, into(revenue_frame)
 frame change revenue_frame
 collapse ihs_total_revenue total_revenue, by(year lcr_winner)
-
+gen total_revenue_billion= total_revenue/1000000000
+lab var total_revenue_billion "Average revenue in Bn. INR"
 twoway ///
-	(line  ihs_total_revenue year if lcr_winner == 1) ///
-	(line  ihs_total_revenue year if lcr_winner == 0), legend(pos(6))
-
-twoway ///
-	(line  total_revenue year if lcr_winner == 1 & year>2009) ///
-	(line  total_revenue year if lcr_winner == 0 & year>2009), legend(order(1 "LCR" 0 "Open"))
+	(connected 	total_revenue_billion year if lcr_winner == 1 & year>2009, lpattern(solid)) ///
+	(connected   total_revenue_billion year if lcr_winner == 0 & year>2009, lpattern(dash)), legend(order(1 "LCR Auction Winners" 2 "Open Auction Winners") pos(6) rows(1) symxsize(15) ) ///
+	xline(2011 2013 2017) ///
+	xlabel(2010(1)2020, nogrid) ///
+	ytitle("Average revenue in Bn. INR") ///
+	text(40 2011 "Auction scheme" "announced", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5)) ///
+	text(40 2014 "LCR introduced", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5)) ///
+	text(40 2017 "LCR ended", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5))
+gr export "${final_figures}/avg_revenues_bn.png", replace
+	
+	
 frame change default
 frame drop revenue_frame
 ***********************************************************************
