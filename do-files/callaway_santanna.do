@@ -180,60 +180,13 @@ estat event
 csdid_plot, legend(pos(6) row(1)) ytitle(solar patents) ylabel(-1.5(1)1.5, nogrid) xtitle(Years to Treatment)
 
 ***********************************************************************
-* 	PART 7: sample: NSM 1+2, revenues as DV (IHS-transformed)
+* 	PART 7: sample: NSM 2, revenues as DV (IHS-transformed)
 ***********************************************************************
-csdid ihs_total_revenue if d_winner != . , ivar(company_name2) time(year) gvar(first_treat1) rseed(21112022) notyet level(95)
-estat all // look at aggregated results
-estat event // run aggregated event study for visualisation
-csdid_plot, legend(pos(6) row(1)) ytitle(solar patents) ylabel(-1.5(0.5)1.5, nogrid) xtitle(Years to Treatment)
-
-
-* 2:  Incl. NSM batch and covariates take early, middle, and late treated as cohorts
-csdid ihs_total_revenue if d_winner != . , ivar(company_name2) time(year) gvar(first_treat2) rseed(21112022) notyet level(95)
-estat all // look at aggregated results
-estat event // run aggregated event study for visualisation
-csdid_plot, legend(pos(6) row(1)) ytitle(solar patents) ylabel(-1.5(0.5)1.5, nogrid) xtitle(Years to Treatment)
-
-
-* 3: Only NSM batch 2+ and covariates (second cohort variable)
-csdid ihs_total_revenue if d_winner2 != ., ivar(company_name2) time(year) gvar(first_treat2) rseed(21112022) notyet level(95) dripw
-estat all
-estat event 
-csdid_plot, legend(pos(6) row(1)) ytitle(solar patents) ylabel(-1.5(1)1.5, nogrid) xtitle(Years to Treatment)
-
-* 4: Only NSM batch 2+ and covariates (third cohort variable)
-csdid ihs_total_revenue if d_winner2 != ., ivar(company_name2) time(year) gvar(first_treat3) rseed(21112022) notyet level(95) dripw
-estat all
-estat event 
-csdid_plot, legend(pos(6) row(1)) ytitle(solar patents) ylabel(-1.5(1)1.5, nogrid) xtitle(Years to Treatment)
-
 ******with controls
 local controls "indian manufacturer"
-csdid ihs_total_revenue `controls' if d_winner != . , ivar(company_name2) time(year) gvar(first_treat1) rseed(21112022) notyet level(95)
-estat all // look at aggregated results
-estat event // run aggregated event study for visualisation
-csdid_plot, legend(pos(6) row(1)) ytitle(IHS revenue) ylabel(-10(1)10, nogrid) xtitle(Years to Treatment)
-
-local controls "indian manufacturer"
-csdid total_revenue `controls' if d_winner != . , ivar(company_name2) time(year) gvar(first_treat1) rseed(21112022) notyet level(95)
-estat all // look at aggregated results
-estat event // run aggregated event study for visualisation
-csdid_plot, legend(pos(6) row(1)) ytitle(Total revenue) ylabel(-10(1)10, nogrid) xtitle(Years to Treatment)
-
-csdid ihs_total_revenue `controls' if d_winner != . , ivar(company_name2) time(year) gvar(first_treat1) rseed(21112022) notyet level(95)
-estat all // look at aggregated results
-estat event // run aggregated event study for visualisation
-csdid_plot, legend(pos(6) row(1)) ytitle(IHS revenue) ylabel(-10(1)10, nogrid) xtitle(Years to Treatment)
-
-* 2:  Incl. NSM batch and covariates take early, middle, and late treated as cohorts
-csdid ihs_total_revenue `controls' if d_winner != . , ivar(company_name2) time(year) gvar(first_treat2) rseed(21112022) notyet level(95)
-estat all // look at aggregated results
-estat event // run aggregated event study for visualisation
-csdid_plot, legend(pos(6) row(1)) ytitle(solar patents) ylabel(-1.5(0.5)1.5, nogrid) xtitle(Years to Treatment)
-
 
 * 3: Only NSM batch 2+ and covariates (second cohort variable)
-csdid ihs_total_revenue `controls' if d_winner2 != ., ivar(company_name2) time(year) gvar(first_treat2) rseed(21112022) notyet level(95) dripw
+csdid total_revenue `controls' if d_winner2 != ., ivar(company_name2) time(year) gvar(first_treat2) rseed(21112022) notyet level(95) dripw
 estat all
 estat event 
 csdid_plot, legend(pos(6) row(1)) ytitle(solar patents) ylabel(-1.5(1)1.5, nogrid) xtitle(Years to Treatment)
@@ -244,3 +197,5 @@ csdid ihs_total_revenue `controls' if d_winner2 != ., ivar(company_name2) time(y
 estat all
 estat event 
 csdid_plot, legend(pos(6) row(1)) ytitle(Revenues) ylabel(, nogrid) xtitle(Years to Treatment)
+
+

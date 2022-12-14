@@ -313,6 +313,11 @@ _eststo outliers_patcaliper05, r: reg dif_solar_patents i.lcr [iweight=_weight] 
 	rename _weight weight_outliers05
 	matrix lcr_se[1,8] = _se[1.lcr]
 
+*Re-run specification 6 only with manufacturers
+_eststo manufacturers_patcaliper05, r:  reg dif_solar_patents i.lcr [iweight=weight_outliers05] if manufacturer==1, vce(hc3)
+
+graph bar (sum) pre_solar_patent post_solar_patent if manufacturer==1 & won_total>0, over(lcr_won) blabel(bar)
+graph bar (sum) pre_solar_patent post_solar_patent if manufacturer==1 & won_total>0, over(lcr)
 ***********************************************************************
 *Outcome 1.2: All Solar patents with continous treatment
 ***********************************************************************

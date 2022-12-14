@@ -69,6 +69,18 @@ rename *, lower
 rename total_revenueininr total_revenue
 
 ***********************************************************************
+* 	PART 4: 	Adapt founding year based on improved information 
+***********************************************************************
+replace founded=2006 if company_name=="alfanar"
+replace founded=2015 if company_name=="bastille"
+replace founded=2015 if company_name=="cambronne"
+replace founded=2015 if company_name=="duroc"
+replace founded=2011 if company_name=="natems"
+replace founded=2005 if company_name=="rishabh"
+replace founded=2015 if company_name=="segur"
+replace founded=2013 if company_name=="terraform"
+
+***********************************************************************
 * 	PART 5: 	Order the variables in the data set		  			
 ***********************************************************************
 order company_name year total_revenue
