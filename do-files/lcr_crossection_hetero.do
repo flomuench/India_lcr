@@ -26,10 +26,10 @@ cd "$lcr_rt"
 ***********************************************************************
 * 	PART 2:  Which companies patent at all? 			
 ***********************************************************************
-eststo logit_sector, r:logit solar_patentor lcr indian ihs_total_revenue ib4.sector , vce(robust)   
-eststo logit_manuf, r:logit solar_patentor lcr  indian ihs_total_revenue manufacturer, vce(robust)  
-eststo plogit_sector, r:logit post_solar_patentor lcr indian ihs_total_revenue ib4.sector, vce(robust)   
-eststo plogit_manuf, r:logit post_solar_patentor lcr indian ihs_total_revenue manufacturer, vce(robust)  
+eststo logit_sector, r:logit solar_patentor lcr indian ihs_total_revenue age total_employees ib4.sector , vce(robust)   
+eststo logit_manuf, r:logit solar_patentor lcr  indian ihs_total_revenue age total_employees manufacturer, vce(robust)  
+eststo plogit_sector, r:logit post_solar_patentor lcr indian ihs_total_revenue age total_employees ib4.sector, vce(robust)   
+eststo plogit_manuf, r:logit post_solar_patentor lcr indian ihs_total_revenue age total_employees manufacturer, vce(robust)  
 
 local regressions logit_sector logit_manuf plogit_sector plogit_manuf
 esttab `regressions' using "logit_patent_hetero.tex", replace ///
@@ -58,36 +58,33 @@ graph export firms_frequency_sector.png, replace
 
 	* set the directory to regressions table folder
 cd "$lcr_rt"
-encode auction, gen(auctions)
-xtset auctions auction_year
+
 lab var n_competitors "No. of bidders"
 lab var quantity_wanted_mw "Desired quantity in MW"
 lab var lcr "LCR auction"
+lab var indian "Firm of Indian origin"
 label define auction_types 1 "Build-own-operate" 2 "Engineering, Procurement, Construction"
 label value auction_type auction_types
 
 eststo lpm_winning1, r: reg won lcr, vce(robust)
-eststo lpm_winning2, r: reg won lcr n_competitors quantity_wanted_mw ///
-	i.auction_type, vce(robust)
-eststo logit_winning, r: logit won lcr n_competitors quantity_wanted_mw ///
-	i.auction_type, vce(robust)
-eststo probit_winning, r: probit won lcr n_competitors quantity_wanted_mw ///
-	i.auction_type, vce(robust)
+eststo lpm_winning2, r: reg won lcr n_competitors quantity_wanted_mw  solarpark age indian ///
+		 i.auction_type, vce(robust)
+eststo logit_winning, r: logit won lcr n_competitors quantity_wanted_mw solarpark age indian ///
+		 i.auction_type, vce(robust)
+margins, dydx(*) post
+eststo logit_winning2		 
+eststo probit_winning, r: probit won lcr n_competitors quantity_wanted_mw solarpark age indian ///
+		 i.auction_type, vce(robust)
+margins, dydx(*) post 		 
+eststo probit_winning2
 
-esttab lpm_winning1 lpm_winning2 logit_winning probit_winning  using "logit_bid_winning.tex", replace ///
+esttab lpm_winning1 lpm_winning2 logit_winning2 probit_winning2  using "logit_bid_winning.tex", replace ///
 	mtitles("LPM" "LPM" "Logit" "Probit") ///
 	label ///
 	b(3) ///
 	se(3) ///
 	drop(_cons) ///
 	star(* 0.1 ** 0.05 *** 0.01) ///
-	addnotes("Robust standard errors in parentheses.") 
+	addnotes("Robust standard errors in parentheses." ///
+	"For Model (3) and (4) coefficients denote the marginal effects.") 
 	
-
-
-logit won lcr final_price_after_era, vce(robust)
-logit won  final_price_after_era, vce(robust)
-
-logit won lcr i.auction_year
-logit won lcr i.auction_year i.auctions	
-logit won lcr i.auctions

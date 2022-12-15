@@ -108,6 +108,9 @@ lab def sectors 1 "real estate" 2 "industry" 3 "construction" 4 "business servic
 	6 "electronics, component manufacturers" 7 "utility"
 lab val sector sectors
 
+lab def manufacturers 1 "manufacturer" 0 "no manufacturer"
+lab val manufacturer manufacturers 
+
 
 ***********************************************************************
 * 	Save the changes made to the data		  			

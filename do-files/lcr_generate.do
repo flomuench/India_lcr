@@ -31,6 +31,7 @@ use "${lcr_intermediate}/lcr_inter", clear
 * 	PART 2: outcome variable for DiD		  										  
 ***********************************************************************
 gen dif_solar_patents = post_solar_patent-pre_solar_patent
+lab var dif_solar_patents "Pre-Post diff. solar patents"
 *gen dif_modcell_patents = post_modcell_patent - pre_modcell_patent
 *br company_name dif_solar_patents post_solar_patent pre_solar_patent
 
@@ -72,6 +73,17 @@ lab var lcr_both "firm participated in lcr & no lcr auctions"
 gen lcr_won = (won_lcr > 0 & won_lcr < .)
 lab var lcr_won "firm won LCR auction or not"
 
+lab def lcr_wons 1 "Won LCR auction" 0 "Did not win LCR auction"
+lab val lcr_won lcr_wons
+
+		*LCR vs. non-LCR winners
+gen winner_types= .
+replace winner_types=1 if won_lcr>0	& won_lcr < .
+replace winner_types=0 if won_no_lcr>0	& lcr_won==0
+lab var winner_types "Dummy distinguising LCR and open winners"
+lab def winners 1 "Won at least 1 LCR auction" 0 "Won only open auctions"
+lab val winner_types winners
+		
 ***********************************************************************
 * 	PART 4: create dummy for firm having filed a solar patent
 ***********************************************************************
@@ -79,14 +91,19 @@ gen solarpatents = pre_solar_patent + post_solar_patent
 lab var solarpatents "pre + post solar patents"
 
 gen solar_patentor = (solarpatents > 0 & solarpatents <.), b(solarpatents)
+lab var solar_patentor "At least one solar patent"
+lab def yesno 1 "Yes" 0 "No"
+lab val solar_patentor yesno
 
 gen post_solar_patentor = 0
 replace post_solar_patentor =1 if post_solar_patent>0 & post_solar_patent<.
 lab var post_solar_patentor "At least one solar patent after LCR introduction"
+lab val post_solar_patentor yesno
 
 gen pre_solar_patentor = 0
 replace pre_solar_patentor =1 if pre_solar_patent>0 & pre_solar_patent<.
 lab var pre_solar_patentor "At least one solar patent prior to LCR introduction"
+lab val pre_solar_patentor yesno
 
 gen diff_solar_patentor = post_solar_patentor - pre_solar_patentor
 lab var diff_solar_patentor "Solar patentor status changed after after LCR"
@@ -99,6 +116,7 @@ lab var total_patents "pre + post total patents"
 
 gen patentor = (pre_total_patent > 0 & pre_total_patent <.), b(pre_total_patent)
 lab var patentor "filed patent before 2012"
+lab val patentor yesno
 
 	* create ihs of total pre not solar patents
 ihstrans pre_not_solar_patent
@@ -159,7 +177,8 @@ replace patent_outliers = 1 if company_name == "bosch" | company_name == "sunedi
 gen electronics = 0
 replace electronics = 1 if sector == 6
 lab var electronics "electronics sector"
-
+lab def electro 1 "Firm in electronics sector" 0 "other sector"
+lab val electronics electro
 
 ***********************************************************************
 * 	PART 10: transform sales & employees variables	  					  			
@@ -196,13 +215,6 @@ gen share_lcr_mw_wanted = quantity_wanted_mw_lcr/ quantity_wanted_mw_total
 
  *Share of LCR MW allocated among total allocated
 gen share_lcr_mw_allocated = quantity_allocated_mw_lcr/ quantity_allocated_mw_total
-
-
-***********************************************************************
-* 	PART 12: label ununlabelled variables	  					  			
-***********************************************************************
-lab var solar_patentor "At least one solar patent"
-lab var dif_solar_patents "Pre-Post diff. solar patents"
 
 ***********************************************************************
 * 	Save the changes made to the data		  			

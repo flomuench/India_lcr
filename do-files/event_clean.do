@@ -216,10 +216,15 @@ egen pre_solar_patent_2012 = max(solar_patent_2012), by(company_name)
 drop total_revenue_latest_year
 
 ***********************************************************************
-* 	PART 9: Create binary outcome
+* 	PART 9: Create additional variables
 ***********************************************************************
+*firm-year binary solarpatent 
 gen solarpatent_bin = 0
 replace solarpatent_bin=1 if solarpatent>0
+
+*transform INR revenues in billion for visualisation
+gen total_revenue_billion= total_revenue/1000000000
+lab var total_revenue_billion "Total Revenue in Bn. INR"
 ***********************************************************************
 * 	PART: save dataset	  						
 ***********************************************************************
