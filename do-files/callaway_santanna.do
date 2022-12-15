@@ -151,51 +151,24 @@ csdid_plot
 ***********************************************************************
 * 1: Incl. NSM batch 1 and covariates (annual cohorts)
 local controls "indian manufacturer revenue_2010"
-csdid solarpatent_bin `controls' if d_winner != . , ivar(company_name2) time(year) gvar(first_treat1) rseed(21112022) notyet level(95)
-estat all // look at aggregated results
-estat event // run aggregated event study for visualisation
-csdid_plot, legend(pos(6) row(1)) ytitle(solar patents) ylabel(-1.5(0.5)1.5, nogrid) xtitle(Years to Treatment)
-gr export "${final_figures}/staggered_event_nsm1_bin.png", replace
-
-
-* 2:  Incl. NSM batch and covariates take early, middle, and late treated as cohorts
-csdid solarpatent_bin `controls' if d_winner != . , ivar(company_name2) time(year) gvar(first_treat2) rseed(21112022) notyet level(95)
-estat all // look at aggregated results
-estat event // run aggregated event study for visualisation
-csdid_plot, legend(pos(6) row(1)) ytitle(solar patents) ylabel(-1.5(0.5)1.5, nogrid) xtitle(Years to Treatment)
-gr export "${final_figures}/staggered_event_nsm1_bin_grouped.png", replace
-
-
-* 3: Only NSM batch 2+ and covariates (second cohort variable)
-local controls "indian manufacturer revenue_2010"
-csdid solarpatent_bin `controls' if d_winner2 != ., ivar(company_name2) time(year) gvar(first_treat3) rseed(21112022) notyet level(95) dripw
-estat all
-estat event 
-csdid_plot, legend(pos(6) row(1)) ytitle(solar patents) ylabel(-1.5(1)1.5, nogrid) xtitle(Years to Treatment)
 
 * 4: Only NSM batch 2+ and covariates (third cohort variable)
 csdid solarpatent_bin `controls' if d_winner2 != ., ivar(company_name2) time(year) gvar(first_treat3) rseed(21112022) notyet level(95) dripw
 estat all
 estat event 
 csdid_plot, legend(pos(6) row(1)) ytitle(solar patents) ylabel(-1.5(1)1.5, nogrid) xtitle(Years to Treatment)
+gr export "${final_figures}/solarpatent_bin_staggered_event_nsm2.png", replace
 
 ***********************************************************************
 * 	PART 7: sample: NSM 2, revenues as DV (IHS-transformed)
 ***********************************************************************
-******with controls
-local controls "indian manufacturer"
 
-* 3: Only NSM batch 2+ and covariates (second cohort variable)
-csdid total_revenue `controls' if d_winner2 != ., ivar(company_name2) time(year) gvar(first_treat2) rseed(21112022) notyet level(95) dripw
+* 4: Only NSM batch 2+ and covariates (third cohort variable), as there is an equal trend among LCR and non
+* LCR auction winners, no covariates are chosen in the estimation of revenue treatment effects
+csdid total_revenue_billion if d_winner2 != ., ivar(company_name2) time(year) gvar(first_treat3) rseed(21112022) notyet level(95) 
 estat all
 estat event 
-csdid_plot, legend(pos(6) row(1)) ytitle(solar patents) ylabel(-1.5(1)1.5, nogrid) xtitle(Years to Treatment)
-
-* 4: Only NSM batch 2+ and covariates (third cohort variable)
-local controls "indian manufacturer"
-csdid ihs_total_revenue `controls' if d_winner2 != ., ivar(company_name2) time(year) gvar(first_treat3) rseed(21112022) notyet level(95) dripw
-estat all
-estat event 
-csdid_plot, legend(pos(6) row(1)) ytitle(Revenues) ylabel(, nogrid) xtitle(Years to Treatment)
+csdid_plot, legend(pos(6) row(1)) ytitle(Revenues in Bn. INR) ylabel(, nogrid) xtitle(Years to Treatment)
+gr export "${final_figures}/revenue_staggered_event_nsm2.png", replace
 
 

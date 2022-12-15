@@ -64,8 +64,8 @@ esttab . using table1.tex, cells("mean(fmt(a3)) sd(fmt(a3)) min(fmt(a3)) max(fmt
 	
 	
 *Shaded Bar chart with treatment intensity
-graph hbar share_lcr_part if lcr==1, over(company_name, sort(share_lcr_part) descending) ///
-	ytitle("Share of auction participations that had LCR") yline(0.5)
+graph hbar share_lcr_won if won_lcr==1, over(company_name, sort(share_lcr_won) descending) ///
+	ytitle("Share of LCR auction wins (of total wins) among firms that won at least 1 LCR auction", size(small)) yline(0.5)
 gr export treatment_intensity.png, replace
 
 
@@ -181,11 +181,17 @@ gr hbar (sum) dif_solar_patents if solarpatents > 0 & solarpatents != ., over(co
 gr export firms_LCR_dif_solarpatents.png, replace
 
 	*LOOK AT PATENTING AMONG MANUFACTURERS & NON-manufacturers (NEED VALUE LABELS TO LOOK NICE)
+cd "$final_figures"
+graph bar (sum) pre_solar_patentor post_solar_patentor if won_total>0 ,  by(lcr_won, note("") iscale(0.8)) ///
+	over(manufacturer, lab(labs(small))) blabel(bar, pos(center)) legend(pos(6)  ///
+	label (1 "No. of firms that filed solar patents prior to LCR policy") label(2 "No of firms that filed solar patents after introduction of LCR policy"))
 
-graph bar (sum) pre_solar_patentor post_solar_patentor if won_total>0, ///
- over(lcr_won) over(manufacturer) blabel(bar)
+graph bar (sum) pre_solar_patent post_solar_patent if won_total>0 ,  by(winner_types, note("") iscale(0.8) ) ///
+	over(manufacturer, lab(labs(small))) blabel(bar, pos(center)) legend(pos(6)  ///
+	label (1 "No. of solar patents prior to announcement of LCR policy (pre-2011)") label(2 "No of solar patents after announcement of LCR policy (2011-2020)"))
+gr export manufacturer_LCR_solarpatents.png, replace
 
-
+	
 ***********************************************************************	
 
 ***********************************************************************
