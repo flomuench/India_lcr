@@ -36,7 +36,7 @@ set graphics on
 local controls "indian manufacturer revenue_2010"
 csdid solarpatent `controls' if d_winner2 != ., ivar(company_name2) time(year) gvar(first_treat3) rseed(21112022) notyet level(95) dripw
 estat all
-estat event 
+estat event, estore(nsm2_cov) 
 csdid_plot, legend(pos(6) row(1)) ytitle(solar patents) ylabel(-1.5(1)1.5, nogrid) xtitle(Years to Treatment)
 gr export "${final_figures}/staggered_event_nsm2_cov2.png", replace
 
@@ -155,7 +155,7 @@ local controls "indian manufacturer revenue_2010"
 * 4: Only NSM batch 2+ and covariates (third cohort variable)
 csdid solarpatent_bin `controls' if d_winner2 != ., ivar(company_name2) time(year) gvar(first_treat3) rseed(21112022) notyet level(95) dripw
 estat all
-estat event 
+estat event, estore(nsm2_cov_bin) 
 csdid_plot, legend(pos(6) row(1)) ytitle(solar patents) ylabel(-1.5(1)1.5, nogrid) xtitle(Years to Treatment)
 gr export "${final_figures}/solarpatent_bin_staggered_event_nsm2.png", replace
 
@@ -167,8 +167,17 @@ gr export "${final_figures}/solarpatent_bin_staggered_event_nsm2.png", replace
 * LCR auction winners, no covariates are chosen in the estimation of revenue treatment effects
 csdid total_revenue_billion if d_winner2 != ., ivar(company_name2) time(year) gvar(first_treat3) rseed(21112022) notyet level(95) 
 estat all
-estat event 
+estat event, estore(nsm2_cov_rev) 
 csdid_plot, legend(pos(6) row(1)) ytitle(Revenues in Bn. INR) ylabel(, nogrid) xtitle(Years to Treatment)
 gr export "${final_figures}/revenue_staggered_event_nsm2.png", replace
 
-
+cd "${lcr_rt}"
+local regressions nsm2_cov nsm2_cov_bin nsm2_cov_rev
+esttab `regressions' using "csdid_table.tex", replace ///
+	mtitles("Solar patents" "Solar patents binary" "Revenue") ///
+	label ///
+	b(3) ///
+	se(3) ///
+	star(* 0.1 ** 0.05 *** 0.01) ///
+	nobaselevels ///
+	addnotes("Column (1) and (2) include Indian origin dummy, Manufacturer dummy and pre-LCR revenues as matching covariates." "Column (3) does not include any covariates." "All estimations include not-yet treated observations as controls." )
