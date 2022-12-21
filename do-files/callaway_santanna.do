@@ -41,7 +41,7 @@ csdid_plot,  legend(pos(6) row(1)) ytitle(solar patents) ylabel(-1.5(1)1.5, nogr
 	text(1.5 0 "ATT = -.23, CI = [-.53; .07], z = -1.48", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5))
 gr export "${final_figures}/spatents_staggered_event_nsm2.png", replace
 
-* text(1.5 -5 "ATT = -.23, CI = -.53; .07", , box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5))
+
 
 
 * change specification decision 2: do not include not yet treated in control group
@@ -124,7 +124,7 @@ local controls "indian manufacturer revenue_2010"
 * 4: Only NSM batch 2+ and covariates (third cohort variable)
 csdid solarpatent_bin `controls' if d_winner2 != ., ivar(company_name2) time(year) gvar(first_treat3) rseed(21112022) notyet level(95) dripw
 estat all
-estat event 
+estat event, estore(nsm2_cov_bin) 
 csdid_plot, legend(pos(6) row(1)) ytitle(solar patents) ylabel(-1.5(1)1.5, nogrid) xtitle(Years to Treatment)
 gr export "${final_figures}/solarpatent_bin_staggered_event_nsm2.png", replace
 
@@ -141,4 +141,13 @@ csdid_plot, legend(pos(6) row(1)) ytitle(Revenues in Bn. INR) ylabel(, nogrid) x
 		text(100 0 "ATT = -.16, CI = [-36.03; 4.03], z = -1.57", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5))
 gr export "${final_figures}/revenue_staggered_event_nsm2.png", replace
 
-
+cd "${lcr_rt}"
+local regressions nsm2_cov nsm2_cov_bin nsm2_cov_rev
+esttab `regressions' using "csdid_table.tex", replace ///
+	mtitles("Solar patents" "Solar patents binary" "Revenue") ///
+	label ///
+	b(3) ///
+	se(3) ///
+	star(* 0.1 ** 0.05 *** 0.01) ///
+	nobaselevels ///
+	addnotes("Column (1) and (2) include Indian origin dummy, Manufacturer dummy and pre-LCR revenues as matching covariates." "Column (3) does not include any covariates." "All estimations include not-yet treated observations as controls." )
