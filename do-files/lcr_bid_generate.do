@@ -5,30 +5,38 @@
 *	PURPOSE: generate relevant variables for analysis & visualisation				  							  
 *																	  
 *	OUTLINE:														  
-*	1) 
-* 	2) 
-* 	3) 
-*	4) 
-*	5) 
-*	6) 
-*   7) 
-*	8) 
-*	9) 
-*
-*																	  															      
+*	1) import data
+* 	2) create dummy for successful bid
+* 	3) encode factor variables
+*	4) create dummy for firm having participated in LCR auction
+*	5) aggregate price variables (not only price per kwh)
+*	6) dummy for bid related to a solar park
+*   7) create dummy for Indian companies
+*	8) create dummy for company HQ main city in India
+*	9) create dummy for subsidiary
+*	10) create dummy for subsidy (VGF)
+*	11) generate cumulative mw won as measure of experience
+*	12) competition as defined in Probst et al. 2020
+*	13) create dummy for subsidiary
+*	14) ihs-transformed sales
+*	15) total MW won
+*		      
 *	Author:  	Florian Muench, Fabian Scheifele							  
-*	ID varialcre: 			  					  
+*	ID variable: 
+*		auction-level = auction
+*		company-level = companyname_correct
+*		bid-level	  = id			  					  
 *	Requires: lcr_bid_inter.dta 	  								  
 *	Creates:  lcr_bid_inter.dta			                          
 *																	  
 ***********************************************************************
-* 	PART 1:  set the scene  			
+* 	PART 1:  import the data  			
 ***********************************************************************
 use "${lcr_intermediate}/lcr_bid_inter", clear
 
 
 ***********************************************************************
-* 	PART 2: dummy for successful bid	  										  
+* 	PART 2: create dummy for successful bid	  										  
 ***********************************************************************
 tab has_won, gen(won)
 tab won2
@@ -52,17 +60,8 @@ foreach x of local vars  {
 }
 order city state subsidiary lob, a(employees)
 
-/*
-problem: implies having to relabel all the variables; can also be maintained as 1,2?
-	* replace dummies with 0,1 instead of 1,2
-foreach var in list contractual_arrangement {
-	replace `var' = 0 if `var' == 1
-	replace `var' = 1 if `var' == 2
-}
-*/
-
 ***********************************************************************
-* 	PART 3: create dummy for firm having participated in LCR auction		  										  
+*  PART 4: create dummy for firm having participated in LCR auction		  										  
 ***********************************************************************
 rename lcr LCR
 gen lcr = .
@@ -75,42 +74,8 @@ drop LCR
 lab def local_content_auction 1 "LCR auction" 0 "auction without LCR"
 lab val lcr local_content_auction
 
-/*
-egen lcr_only1 = sum(lcr), by(company_name)
-egen lcr_only2 = min(lcr_only1 > 0 & lcr_only1 <.), by(company_name)
-
-egen only_no_lcr1 = max(lcr_only1), by(company_name)
-egen only_no_lcr2 = mean(only_no_lcr1 == 0), by(company_name)
-
-egen both1 = sum(lcr_only2 only_no_lcr2), by(company_name)
-egen both2 = mean(both1 == 0), by(company_name)
-
-drop lcr_only1 only_no_lcr1 both1
-
-
-		* dummy for only LCR
-gen lcr_only = (total_auctions_lcr == total_auctions) if total_auctions != . , a(total_auctions_lcr)
-lab def just_lcr 1 "only participated in LCR" 0 "LCR & no LCR"
-lab val lcr_only just_lcr
-
-		* dummy for both LCR & no LCR 
-gen lcr_both = (total_auctions_lcr > 0 & total_auctions_lcr < . & total_auctions_no_lcr > 0 & total_auctions_no_lcr < .)
-lab var lcr_both "firm participated in lcr & no lcr auctions"
-
-		* dummy for at least 1x LCR
-gen lcr = (total_lcr > 0 & total_lcr <.), b(total_lcr)
-label var lcr "participated (or not) in LCR auction"
-lab def local_content 1 "participated in LCR" 0 "did not participate in LCR"
-lab val lcr local_content
-
-		* dummy for only LCR
-gen lcr_only = (total_lcr == total_auctions) if total_auctions != . , a(total_lcr)
-lab def just_lcr 1 "only participated in LCR" 0 "LCR & no LCR"
-lab val lcr_only just_lcr
-*/
-
 ***********************************************************************
-* 	PART 4: aggregate price variables (not only price per kwh)
+* 	PART 5: aggregate price variables (not only price per kwh)
 ***********************************************************************
 		* price per mwh
 gen price_mwh = 1000*final_price_after_era
@@ -128,23 +93,22 @@ label var total_plant_price_lifetime "total lifetime plant price for peak mwh"
 order total_plant_price_lifetime, a(contractlength)
 
 ***********************************************************************
-* 	PART 5: dummy for bid related to a solar park
+* 	PART 6: dummy for bid related to a solar park
 ***********************************************************************
 gen solar_park = (solarpark != "")
 drop solarpark
 rename solar_park solarpark
 lab var solarpark "bid related to a solar park"
 
-
 ***********************************************************************
-* 	PART 6: create dummy for Indian companies
+* 	PART 7: create dummy for Indian companies
 ***********************************************************************
 gen indian = (international < 1)
 lab def national 1 "indian" 0 "international"
 lab val indian national
 
 ***********************************************************************
-* 	PART 7: create dummy for company HQ main city in India
+* 	PART 8: create dummy for company HQ main city in India
 ***********************************************************************
 
 gen hq_indian_state = .
@@ -159,7 +123,7 @@ gen capital = (city == 21)
 
 
 ***********************************************************************
-* 	PART 8: subsidiary 
+* 	PART 9: create dummy for subsidiary 
 ***********************************************************************
 gen sub = .
 replace sub = 0 if subsidiary == 1
@@ -173,7 +137,7 @@ rename sub subsidiary
 
 
 ***********************************************************************
-* 	PART 9: subsidy dummy
+* 	PART 10: create subsidy dummy (viability gap funding)
 ***********************************************************************
 gen sub = .
 replace sub = 0 if subsidy == "no specifications"
@@ -186,7 +150,7 @@ drop subsidy
 rename sub subsidy
 
 ***********************************************************************
-* 	PART 10: generate cumulative mw won as measure of experience
+* 	PART 11: generate cumulative mw won as measure of experience
 ***********************************************************************
 bysort company_name (auction) : gen cum_mw = sum(quantity_allocated_mw)
 ihstrans cum_mw
@@ -194,24 +158,11 @@ lab var cum_mw "ihs transformed cumulative mw won"
  
  
 ***********************************************************************
-* 	PART 11: competition as defined in Probst et al. 2020
+* 	PART 12: competition as defined in Probst et al. 2020
 *********************************************************************** 
 gen competition = quantity_allocated / quantity_total
 replace competition = log(competition) if competition != 0
 lab var competition "quantity
-
-
-***********************************************************************
-* 	PART 12: uniform bid price
-*********************************************************************** 
-/*
-* uniform bid price
-	* boo
-gen uniform_price = final_bid_after_era(((quantity_allocated_mw*final_vgf_after_era)/(1.03^contractlength))/  ) if contractual arrangement == 1
-flh_single_axis
-	
-	* epc
-*/
 
 
 ***********************************************************************

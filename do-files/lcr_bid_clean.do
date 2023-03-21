@@ -6,24 +6,26 @@
 *																	  
 *																	  
 *	OUTLINE:														  
-*	1)		Format string & numerical varialcres				          
-*	2)   	Drop all text windows from the survey					  
-*	3)  	Make all varialcres names lower case						  
-*	4)  	Order the varialcres in the data set						  	  
-*	5)  	Rename the varialcres									  
-*	6)  	Label the varialcres										  
-*   7) 		Label varialcre values 								 
-*   8) 		Removing trailing & leading spaces from string varialcres										 
-*																	  													      
+*	1)		Format string & numerical variables				          
+*	2)   	Drop all unnecessary variables					  
+*	3)  	Make all variables names lower case						  
+*	4)  	Rename the variables
+*	5)  	Order the variables										  
+*	6)  	Label the variables											  
+*   7) 		Label variable values 								 
+*		      
 *	Author:  	Florian Muench, Fabian Scheifele					    
-*	ID varialcre: 	id (identifiant)			  					  
+*	ID variable:
+*		auction-level = auction
+*		company-level = companyname_correct
+*		bid-level	  = id
 *	Requires: lcr_raw.dta 	  										  
-*	Creates:  lcr_inter.dta			                                  
+*	Creates:  lcr_inter.dta		
+	                                  
 ***********************************************************************
-* 	PART 1: 	Format string & numerical & date varialcres		  			
+* 	PART 1: 	Format string & numerical & date variables			  			
 ***********************************************************************
 use "${lcr_raw}/lcr_bid_raw", clear
-
 
 {
 	* string
@@ -40,18 +42,9 @@ foreach x of local strvars {
 	replace `x' = lower(stritrim(strtrim(`x')))
 	}
 }
-	
-
-/*
-to do in terms of data cleaning:
-subsidiary --> true, false
-encode auction_type, location, lcr_content, scope, technology, plant_type_details, grid_connected, contractual_arrangement, subsidy_level
-create a solarpark dummy
-create a subsidy dummy
-*/
-	
+		
 ***********************************************************************
-* 	PART 2: 	Drop all text windows from the survey		  			
+* 	PART 2: 	Drop all unnecessary variables		  			
 ***********************************************************************
 drop A ID year year_dummy auction_date n database std_count_nov19 std_count_old
 drop bidsubmission eligibilitycriteria evaluationcriteria notes mstdct companyname_group msaname formername
@@ -67,7 +60,7 @@ drop employeestotalyear1 total_employees_tsd
 rename *, lower
 
 ***********************************************************************
-* 	PART 4: 	Rename the varialcres in line with GIZ contact list final	  			
+* 	PART 4: 	Rename the variables  			
 ***********************************************************************
 rename companyname_correct company_name
 format company_name bidder %-30s
@@ -91,13 +84,13 @@ rename sales_inr sales
 lab var sales "sales in INR"
 
 ***********************************************************************
-* 	PART 5: 	Order the varialcres in the data set		  			
+* 	PART 5: 	Order the variables	 in the data set		  			
 ***********************************************************************
 order quantity_allocated_mw, a(quantity_wanted_mw)
 
 
 ***********************************************************************
-* 	PART 6: 	Label the varialcres		  			
+* 	PART 6: 	Label the variables			  			
 ***********************************************************************
 label var employees "employees at HQ"
 label var city "primary city"
@@ -123,9 +116,7 @@ lab def foreign 1 "international" 0 "indian"
 lab val international foreign
 
 
-
 ***********************************************************************
 * 	Save the changes made to the data		  			
 ***********************************************************************
-cd "$lcr_intermediate"
-save "lcr_bid_inter", replace
+save "${lcr_intermediate}/lcr_bid_inter", replace

@@ -17,7 +17,10 @@
 *
 *																	  															      
 *	Author:  	Florian Muench, Fabian Scheifele							  
-*	ID varialcre: 			  					  
+*	ID variables:
+*		auction-level = auction
+*		company-level = companyname_correct
+*		bid-level	  = id 			  					  
 *	Requires: lcr_bid_final.dta 	  								  
 *	Creates:  lcr_bid_final.dta			                          
 *																	  
@@ -28,8 +31,11 @@ use "${lcr_final}/lcr_bid_final", clear
 
 	* change directory to output folder for descriptive stats
 cd "$lcr_descriptives"
+
+	* set scheme
 set scheme plotplain	
 set graphics on
+
 ******************* bid-level statistics ******************************
 
 ***********************************************************************
@@ -235,15 +241,6 @@ graph bar (count), over(lcr) over(contractual_arrangement) ///
 ***********************************************************************
 * 	PART 3: over time evolution of auctions  						
 ***********************************************************************
-/*gr bar (sum) auction_count quantity_allocated_mw, over(lcr, label(labs(small))) ///
-	blabel(total, size(vsmall)) ///
-	title("{bf:Number of bids & MW allocated}") ///
-	subtitle("Solar auctions 2013-2020", size(small)) ///
-	legend(label(1 "number of auctions") label(2 "MW allocated") rows(2) pos(6)) ///
-	note("Authors own calculations based on data from SECI online archives.", size(vsmall)) ///
-	name(auctions_mw_lcr, replace)
-gr export auctions_mw_lcr.png, replace
-	*/	
 		* per year
 gr bar (sum) lcr, over(auction_year, label(labs(small))) ///
 	blabel(total, size(vsmall)) ///

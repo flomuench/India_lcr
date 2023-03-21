@@ -8,11 +8,12 @@
 *	OUTLINE:														  
 *	1)	import as Excel or CSV														  
 *	2)	save the contact list as dta file in intermediate folder
-*																	 																      *
+*																	 												
+*
 *	Author: Florian Muench, Fabian Scheifele														  
 *	ID variable: companyname		  									  
-*	Requires:	
-*	Creates:							  
+*	Requires: firm_sales_employees.xlsx
+*	Creates: lcr_sales_raw.dta							  
 *																	  
 ***********************************************************************
 * 	PART 1: import SECI online archives data set

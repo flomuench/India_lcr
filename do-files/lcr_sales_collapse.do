@@ -3,16 +3,16 @@
 ***********************************************************************
 *																	  
 *	PURPOSE: collapse sales + employees on pre-treatment firm-level				  	  			
-*	to prepare merging  
+*
 *																	  
 *	OUTLINE:														  
-*	1)		missing values & availability
-*	2)   	extreme values					  									 
+*	1)		collapse pre-treatment sales
+*	2)   	collapse pre-treatment employees					  									 
 *																	  													      
 *	Author:  	Florian Muench, Fabian Scheifele					    
 *	ID varialcre: 	company_name			  					  
-*	Requires: lcr_raw.dta 	  										  
-*	Creates:  lcr_inter.dta			                                  
+*	Requires: lcr_sales_final.dta 	  										  
+*	Creates:  firm_sales.dta, firm_employees.dta			                                  
 ***********************************************************************
 * 	PART 0: set the scene 		  					  			
 ***********************************************************************
@@ -20,14 +20,11 @@ use "${lcr_final}/lcr_sales_final", clear
 
 
 ***********************************************************************
-* 	PART 1: collapse + save on firm level
+* 	PART 1: collapse + save sales
 ***********************************************************************
-	* firm-level data set
-		* which value to take for pre-treatment sales?
-			* approach 1: take the earliest available year
-sort company_name year
+* approach: take pre-treatment period average, or, the earliest available year
+sort company_name year, stable
 
-	* sales
 preserve
 		* create a post revenue variable taking the latest available year as a reference
 egen max_year = max(year), by(company_name)
@@ -47,7 +44,10 @@ drop ihs_total_revenue
 save "${lcr_final}/firm_sales", replace
 restore
 
-	* employees
+***********************************************************************
+* 	PART 2: collapse + save employees
+***********************************************************************
+* same approach as for sales
 preserve
 egen pre_employees = mean(total_employees) if year < 2013, by(company_name)
 collapse (firstnm) year pre_employees log_total_employees total_employees, by(company_name)

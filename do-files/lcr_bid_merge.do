@@ -1,21 +1,26 @@
 ***********************************************************************
-* 		merge with Probst replication data - the effect of lcr on innovation								  	  
+* 	merge with Probst replication data - the effect of lcr on innovation								  	  
 ***********************************************************************
 *																	    
-*	PURPOSE: import Probst replication data to get firm level control				  							  
-*	variables 
+*	PURPOSE: import & merge Probst replication data to get firm level control variables 
 *	OUTLINE:														  
-*	1) 
-* 	2) 
-*
-*																	  															      
-*	Author:  	Florian Muench, Fabian Scheifele							  
-*	ID varialcre: 			  					  
-*	Requires: lcr_bid_inter.dta 	  								  
-*	Creates:  lcr_bid_inter.dta			                          
+*	1) import + clean Probst et al. replication data set
+* 	2) collapse Probst el. data on company-level incl. relevant controls
+*	3) merge lcr_bid_inter with Probst replication data set
+*	4) manually replace mv for firms not included in Probst et al. 2020
+*	5) create sector dummy
+*	6) import missing values for manufacturer dummy & year founded from desktop research
+*	      
+*	Author:  	Florian Münch, Fabian Scheifele							  
+*	ID variables:
+*		auction-level = auction
+*		company-level = companyname_correct
+*		bid-level	  = id 			  					  
+*	Requires: "Ben India Data.xlsx", lcr_bid_inter.dta, manufacturer_year_data_researched01042022.xlsx  								  
+*	Creates:  probst2020.dta, lcr_bid_final.dta			                          
 *																	  
 ***********************************************************************
-* 	PART 1: import Probst et al. replication data set  										  
+* 	PART 1: import + clean Probst et al. replication data set  										  
 ***********************************************************************
 import excel "${lcr_raw}/Ben India Data.xlsx", firstrow clear
 	
@@ -39,7 +44,9 @@ foreach x of local strvars {
 	replace `x' = lower(stritrim(strtrim(`x')))
 	}
 		
-	* collapse on company-level to keep
+***********************************************************************
+* 	PART 2: collape Probst el. data on company-level incl. relevant controls
+***********************************************************************
 collapse (lastnm) indian soe_india part_jnnsm_1 empl manufacturer founded years_since_found energy_focus, by(bidder)
 
 	* check if there are duplicates
@@ -63,13 +70,11 @@ replace company_name = "patil" if company_name == "patil construction"
 replace company_name = "softbank" if company_name == "sbg cleantech"
 replace company_name = "sunil" if company_name == "sunil hitech"
 
-
 	* save
-cd "$lcr_raw"
-save "probst2020", replace
+save "${lcr_raw}/probst2020", replace
 
 ***********************************************************************
-* 	PART 2: merge lcr_bid_inter with Probst replication data set 										  
+* 	PART 3: merge lcr_bid_inter with Probst replication data set 										  
 ***********************************************************************
 use "${lcr_intermediate}/lcr_bid_inter", clear
 
@@ -85,13 +90,12 @@ lab var indian "indian firm = 1"
 
 
 ***********************************************************************
-* 	PART 3: manually replace mv for firms not included in Probst et al. 2020
+* 	PART 4: manually replace mv for firms not included in Probst et al. 2020
 ***********************************************************************
 	* participated/in JNNSM phase 1 batch 1 or batch 2
 br company_name bidder part_jnnsm_1 missing_probst if part_jnnsm_1 == .
-	* manually search and all firms with missing have not participated in the first phase
+		* manually search and all firms with missing have not participated in the first phase
 replace part_jnnsm_1 = 0 if part_jnnsm_1 == .
-
 
 
 	* energy focus
@@ -202,8 +206,6 @@ replace manufacturer = 1 if company_name == "mahindra" /* https://www.mahindrasu
 replace manufacturer = 1 if company_name == "exide" /* https://www.exideindustries.com/products/solar-solutions/solar-pv-modules.aspx */
 replace manufacturer = 1 if company_name == "solar" /* https://www.exideindustries.com/products/solar-solutions/solar-pv-modules.aspx */
 
-
-
 	* solar module manufacturer
 		* classification based on: 
 			*https://solarquarter.com/wp-content/uploads/2021/03/file_f-1615380939218.pdf
@@ -227,9 +229,8 @@ replace manufacturer_solar = 1 if company_name == "sunedison"
 replace manufacturer_solar = 1 if company_name == "alfanar" 
 replace manufacturer_solar = 1 if company_name == "solar" 
 
-
 ***********************************************************************
-* 	PART 4: create sector dummy
+* 	PART 5: create sector dummy
 ***********************************************************************
 lab def sectors 1 "real estate" 2 "industry" 3 "construction" 4 "business services" 5 "electrical services EPC" ///
 	6 "electronics manufacturer" 7 "utility"
@@ -253,7 +254,7 @@ lab val sector sectors
 lab var sector "sector"
 
 ***********************************************************************
-* 	PART 5:  import missing values for manufacturer + year founded from desktop research	  			
+* 	PART 6:  import missing values for manufacturer + year founded from desktop research	  			
 ***********************************************************************
 preserve
 import excel "$lcr_raw/manufacturer_year_data_researched01042022.xlsx", firstrow clear
@@ -269,10 +270,7 @@ drop years_since_found
 gen age = 2022 - founded
 format age %9.0g
 
-
-
 ***********************************************************************
 * 	Save the changes made to the data		  			
 ***********************************************************************
-	* save dta file
 save "${lcr_final}/lcr_bid_final", replace

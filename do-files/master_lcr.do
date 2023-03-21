@@ -23,6 +23,7 @@ clear all
 graph drop _all
 scalar drop _all
 set more off
+set varabbrev off // stops stata from referring to variables if only one part is the same
 set graphics off /* switch off to on to display graphs */
 capture program drop zscore /* drops the program programname */
 qui cap log c
@@ -37,8 +38,8 @@ ssc install betterbar
 ssc install mdesc 
 ssc install reclink
 ssc install matchit
-*ssc install strgroup
-*ssc install stripplot
+ssc install strgroup
+ssc install stripplot
 net install http://www.stata.com/users/kcrow/tab2docx
 ssc install labutil
 ssc install xtgraph
@@ -49,7 +50,6 @@ ssc install ihstrans, replace
 net install http://www.stata.com/users/kcrow/tab2xl
 net describe grc1leg, from(http://www.stata.com/users/vwiggins)
 net install grc1leg.pkg
-*
 net install grc1leg, from(http://www.stata.com/users/vwiggins) replace
 net install gr0075, from(http://www.stata-journal.com/software/sj18-4) replace
 ssc install labutil, replace
@@ -119,21 +119,18 @@ set sortseed 8413195
 ----------------------------------------------------------------------*/		
 if (1) do "${lcr_github}/lcr_sales_import.do"	
 /* --------------------------------------------------------------------
-	PART 3.2: Clean raw data 
+	PART 3.2: Clean raw data
+	Requires: lcr_sales_raw.dta. Creates: lcr_sales_inter.dta
 ----------------------------------------------------------------------*/		
 if (1) do "${lcr_github}/lcr_sales_clean.do"	
 /* --------------------------------------------------------------------
 	PART 3.3: Correct, generate, transform intermediate data
-	Creates: lcr_sales_final
+	Requires: lcr_sales_inter.dta. Creates: lcr_sales_final.dta.
 ----------------------------------------------------------------------*/		
 if (1) do "${lcr_github}/lcr_sales_transform.do"	
 /* --------------------------------------------------------------------
-	PART 3.4: Visualise employees + sales data 
-----------------------------------------------------------------------*/		
-if (1) do "${lcr_github}/lcr_sales_visualise.do"	
-/* --------------------------------------------------------------------
 	PART 3.4: Creates cross-sectional firm-level employees/sales data
-	Creates: firm_sales, firm_employees
+	Requires: lcr_sales_final.dta. Creates: firm_sales, firm_employees
 ----------------------------------------------------------------------*/		
 if (1) do "${lcr_github}/lcr_sales_collapse.do"
 	
@@ -144,44 +141,40 @@ if (1) do "${lcr_github}/lcr_sales_collapse.do"
 ***********************************************************************
 {
 /* --------------------------------------------------------------------
-	PART 3.1: Import & raw data
+	PART 4.1: Import & raw data
 ----------------------------------------------------------------------*/		
-if (1) do "${lcr_github}/lcr_heck_import.do"	
+if (1) do "${lcr_github}/lcr_bid_import.do"	
 /* --------------------------------------------------------------------
-	PART 3.2: Clean raw data & save as intermediate data
+	PART 4.2: Clean raw data & save as intermediate data
 ----------------------------------------------------------------------*/	
-if (1) do "${lcr_github}/lcr_heck_clean.do"
+if (1) do "${lcr_github}/lcr_bid_clean.do"
 /* --------------------------------------------------------------------
-	PART 3.3: Correct & save intermediate data
+	PART 4.3: Correct & save intermediate data
 ----------------------------------------------------------------------*/	
-if (1) do "${lcr_github}/lcr_heck_correct.do"
+if (1) do "${lcr_github}/lcr_bid_correct.do"
 /* --------------------------------------------------------------------
-	PART 3.4: Generate variables for analysis or implementation
+	PART 4.4: Generate variables for analysis or implementation
 ----------------------------------------------------------------------*/	
-if (1) do "${lcr_github}/lcr_heck_generate.do"
+if (1) do "${lcr_github}/lcr_bid_generate.do"
 /* --------------------------------------------------------------------
-	PART 3.5: Merge with Ben Probst et al. 2020 for firm controls
+	PART 4.5: Merge with Ben Probst et al. 2020 for firm controls
 	Creates: lcr_bid_final + several variables (solar_manufacture, energy_company)
 ----------------------------------------------------------------------*/
-if (1) do "${lcr_github}/lcr_heck_merge.do"
+if (1) do "${lcr_github}/lcr_bid_merge.do"
 /* --------------------------------------------------------------------
-	PART 3.6: Descriptive statistics
+	PART 4.6: Descriptive statistics
 ----------------------------------------------------------------------*/	
-if (1) do "${lcr_github}/lcr_heck_descriptives.do"
+if (1) do "${lcr_github}/lcr_bid_descriptives.do"
 /* --------------------------------------------------------------------
-	PART 3.6: Heckman regression - replication of Probst
-----------------------------------------------------------------------*/	
-if (0) do "${lcr_github}/lcr_heck_regresssion.do"
-/* --------------------------------------------------------------------
-	PART 3.7: collapse + aggregate cross-section
+	PART 4.7: collapse + aggregate cross-section
 	Creates: lcr_final
 ----------------------------------------------------------------------*/	
-if (1) do "${lcr_github}/lcr_heck_collapse_csection.do"
+if (1) do "${lcr_github}/lcr_bid_collapse_csection.do"
 /* --------------------------------------------------------------------
-	PART 3.8: collapse + aggregate firm-year panel
+	PART 4.8: collapse + aggregate firm-year panel
 	Creates: firmyear_auction.dta
 ----------------------------------------------------------------------*/	
-if (1) do "${lcr_github}/lcr_heck_collapse_panel.do"
+if (1) do "${lcr_github}/lcr_bid_collapse_panel.do"
 
 }
 

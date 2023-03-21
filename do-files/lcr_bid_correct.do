@@ -2,23 +2,21 @@
 * 	data corrections - the effect of LCR on innovation									  	  
 ***********************************************************************
 *																	    
-*	PURPOSE: correct all incoherent observations		  							  
+*	PURPOSE: correct all incoherent observations	  							  
 *																	  
 *																	  
 *	OUTLINE:														  
 *	1)	set the stage	
 * 	2) 	associate subsidiaries with mother firm for conglomerates	
-*	3)  	
-*	4)  	
-*	5)  	
-*	6)  	
-*   7)      
-*	8)		
-*	9)		
-*
-*																	  															      
-*	Author:  	Florian Muench & Kais Jomaa							  
-*	ID varialcre: 	id (example: f101)			  					  
+*	3)  miscallaneous corrections	
+*	4)  check for missing values	
+*	5)  Create id + identify duplicates	
+		      
+*	Author:  	Florian Muench, Fabian Scheifele							  
+*	ID variable:
+*		auction-level = auction
+*		company-level = companyname_correct
+*		bid-level	  = id			  					  
 *	Requires: lcr_bid_inter.dta 	  								  
 *	Creates:  lcr_bid_inter.dta			                          
 *																	  
@@ -26,7 +24,6 @@
 * 	PART 1:  set the stage			
 ***********************************************************************
 use "${lcr_intermediate}/lcr_bid_inter", clear
-
 
 ***********************************************************************
 * 	PART 2: associate subsidiaries with mother firm for conglomerates	  			
@@ -44,19 +41,13 @@ replace company_name = "canadian" if company_name == "rutherford"
 ***********************************************************************
 replace international = 0 if international == .
 
-
 ***********************************************************************
-* 	PART 4:  replace all MV = 0 for firms that did never patent
-***********************************************************************
-
-
-***********************************************************************
-* 	PART 5:  check for missing values
+* 	PART 4:  check for missing values
 ***********************************************************************
 misstable sum, all
 
 ***********************************************************************
-* 	PART 6:  Create id + identify duplicates
+* 	PART 5:  Create id + identify duplicates
 ***********************************************************************
 egen bid = group(auction company_name)
 order bid, first
@@ -72,5 +63,4 @@ duplicates tag bid, gen(dup_bid)
 ***********************************************************************
 * 	Save the changes made to the data		  			
 ***********************************************************************
-cd "$lcr_intermediate"
-save "lcr_bid_inter", replace
+save "${lcr_intermediate}/lcr_bid_inter", replace

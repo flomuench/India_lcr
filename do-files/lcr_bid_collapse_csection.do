@@ -6,22 +6,24 @@
 *	with aggregated values for participation in auctions 
 *
 *	OUTLINE:														  
-*	1) 
-* 	2) 
-* 	3) 
-*	4) 
+*	1) import the data
+* 	2) collapse + reshape the data on firm-level
+* 	3) add firm characteristics
+*	4) save cross-section data as raw
 *
-*																	  															      
-*	Author:  	Florian Muench, Fabian Scheifele							  
-*	ID varialcre: 			  					  
-*	Requires: lcr_bid_final.dta 	  								  
-*	Creates:  lcr_bid_final.dta			                          
+*		      
+*	Author:  	Florian Münch, Fabian Scheifele							  
+*	ID variable:
+*		auction-level = auction
+*		company-level = companyname_correct
+*		bid-level	  = id 			  					  
+*	Requires: lcr_bid_final.dta 								  
+*	Creates:  cross_section_new.dta, firm_characteristics.dta			                          
 *																	  
 ***********************************************************************
-* 	PART 0:  set the scene  			
+* 	PART 0:  import the data 			
 ***********************************************************************
 use "${lcr_final}/lcr_bid_final", clear
-
 
 ***********************************************************************
 * 	PART 1:  collapse + reshape the data  			
@@ -66,7 +68,6 @@ foreach var of local allvar {
 ***********************************************************************
 * 	PART 2:  conduct some data cleaning
 ***********************************************************************
-
 rename one_total total_auctions
 rename one_lcr total_auctions_lcr
 rename one_no_lcr total_auctions_no_lcr
@@ -88,15 +89,7 @@ drop _merge
 
 
 ***********************************************************************
-* 	PART 4: Export Excel with variables for manual search to reduce missing values
-***********************************************************************
-/*
-cd "$lcr_intermediate"
-export excel company_name bidder ultimateparent city state lob webaddress founded manufacturer totalemployees subsidiary using missing.xlsx if founded == . | manufacturer == . | totalemployees == . , firstrow(var) replace
-*/
-
-***********************************************************************
-* 	PART 5: save cross-section data as raw
+* 	PART 4: save cross-section data as raw
 ***********************************************************************
 	* save as cross_section_new to allow comparison with first cross-section file
 save "${lcr_raw}/cross_section_new", replace

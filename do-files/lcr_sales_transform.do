@@ -2,12 +2,12 @@
 * 	transform sales + employees - the effect of LCR on innovation									  		  
 ***********************************************************************
 *																	  
-*	PURPOSE: visualise sales + employees across firms and over time				  	  			
+*	PURPOSE: generate ihs-transformed sales & log-transformed employees				  	  			
 *																	  
 *																	  
 *	OUTLINE:														  
-*	1)		missing values & availability
-*	2)   	extreme values					  									 
+*	1)		ihs-transform sales
+*	2)   	log-transform employees					  									 
 *																	  													      
 *	Author:  	Florian Muench, Fabian Scheifele					    
 *	ID varialcre: 	company_name			  					  
@@ -19,7 +19,7 @@
 use "${lcr_intermediate}/lcr_sales_inter", clear
 
 ***********************************************************************
-* 	PART 1: transform sales variable		  					  			
+* 	PART 1: ihs-transform sales
 ***********************************************************************
 	* ihs transformation used given both zeros and extreme values
 ihstrans total_revenue
@@ -28,7 +28,9 @@ kdensity ihs_total_revenue
 kdensity ihs_total_revenue if year == 2019
 
 
-		* employees
+***********************************************************************
+* 	PART 2: log-transform employees variable		  					  			
+***********************************************************************
 gen log_total_employees = log(total_employees)
 kdensity log_total_employees
 

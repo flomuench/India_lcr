@@ -2,27 +2,31 @@
 * 	import bid data from auctions - the effect of LCR on innovation						
 ***********************************************************************
 *																	   
-*	PURPOSE: Import the data from SECI online archives about firms' 					  								  
-*	participation in LCR & no LCR auctions
+*	PURPOSE: Import the data from SECI online archives about
+*	firms' participation in auctions
 *																	  
 *	OUTLINE:														  
-*	1)	import contact list as Excel or CSV														  
-*	2)	save the contact list as dta file in intermediate folder
-*																	 																      *
+*	1)	import SECI online auction archives data set														  
+*	2)	save in dta format
+*																	 												
+*
 *	Author: Florian Muench, Fabian Scheifele														  
-*	ID variable: no id variable defined			  									  
-*	Requires:	
-*	Creates:							  
+*	ID variables: 
+*		auction-level = auction
+*		company-level = companyname_correct
+*		bid-level	  = id			  									  
+*	Requires: combined_results.xlsx
+*	Creates: lcr_bid_raw.dta	  
 *																	  
 ***********************************************************************
-* 	PART 1: import SECI online archives data set
+* 	PART 1: import SECI online auction archives data set
 ***********************************************************************
 	* excel
 import excel "${lcr_raw}/combined_results.xlsx", firstrow clear
 
 
 ***********************************************************************
-* 	PART 2: save list of lcrtered firms in lcrtration raw 			  						
+* 	PART 2: save in dta format			  						
 ***********************************************************************
 	* save 
 save "${lcr_raw}/lcr_bid_raw", replace

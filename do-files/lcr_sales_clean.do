@@ -2,23 +2,23 @@
 * 	clean the data (no corrections) - the effect of LCR on innovation									  		  
 ***********************************************************************
 *																	  
-*	PURPOSE: clean cross-section raw data					  	  			
+*	PURPOSE: clean firm-level sales and employee data					  	  			
 *																	  
 *																	  
 *	OUTLINE:														  
-*	1)		Format string & numerical variables				          
-*	2)   	Drop all text windows from the survey					  
+*	1)		Keep only important variables and actual observations				          
+*	2)   	Format string & numerical & date variables					  
 *	3)  	Make all variables names lower case						  
-*	4)  	Order the variables in the data set						  	  
-*	5)  	Rename the variables									  
-*	6)  	Label the variables										  
-*   7) 		Label varialcre values 								 
-*   8) 		Removing trailing & leading spaces from string variables										 
+*	4)  	Rename the variables						  	  
+*	5)  	Adapt founding year based on improved information									  
+*	6)  	Order the variables										  
+*   7) 		Label variables 								 
+*   8) 		Declare as panel data set										 
 *																	  													      
 *	Author:  	Florian Muench, Fabian Scheifele					    
-*	ID varialcre: 	company_name			  					  
-*	Requires: lcr_raw.dta 	  										  
-*	Creates:  lcr_inter.dta			                                  
+*	ID variable: 	company_name			  					  
+*	Requires: lcr_sales_raw.dta 	  										  
+*	Creates:  lcr_sales_inter.dta			                                  
 ***********************************************************************
 * 	PART 1: Keep only important variables and actual observations		  					  			
 ***********************************************************************
@@ -69,7 +69,7 @@ rename *, lower
 rename total_revenueininr total_revenue
 
 ***********************************************************************
-* 	PART 4: 	Adapt founding year based on improved information 
+* 	PART 5: 	Adapt founding year based on improved information 
 ***********************************************************************
 replace founded=2006 if company_name=="alfanar"
 replace founded=2015 if company_name=="bastille"
@@ -81,19 +81,16 @@ replace founded=2015 if company_name=="segur"
 replace founded=2013 if company_name=="terraform"
 
 ***********************************************************************
-* 	PART 5: 	Order the variables in the data set		  			
+* 	PART 6: 	Order the variables in the data set		  			
 ***********************************************************************
 order company_name year total_revenue
 sort company_name year
 
 ***********************************************************************
-* 	PART 6: 	Label the variables		  			
+* 	PART 7: 	Label the variables		  			
 ***********************************************************************
 lab var total_employees "number of employees"
 
-***********************************************************************
-* 	PART 7: 	Label variables values	  			
-***********************************************************************
 
 ***********************************************************************
 * 	PART 8: 	Declare as panel data set
@@ -109,5 +106,4 @@ xtset companyname year, y
 ***********************************************************************
 * 	Save the changes made to the data		  			
 ***********************************************************************
-cd "$lcr_intermediate"
-save "lcr_sales_inter", replace
+save "${lcr_intermediate}/lcr_sales_inter", replace
