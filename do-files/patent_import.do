@@ -2,17 +2,18 @@
 * 			LCR India: import patent data sets
 ***********************************************************************
 *																	   
-*	PURPOSE: 				  								  
-*				  
+*	PURPOSE: Import + identify solar patents filed by auction participants	  								  
 *																	  
-*	OUTLINE:														  
-		
-*																	 								
+*	OUTLINE: 	
+*	1) import patents filed by companies participating in auctions
+*	2) import patents identified as solar patents based on Shubbak
 *
-*	Author: Florian  														  
-*	ID variable: no id variable defined			  									  
-*	Requires:	
-*	Creates:							  
+*	Author: Florian Münch, Fabian Scheifele
+*	ID variables:
+* 	company = companyname_correct
+*	patent  = applicationnumber (contains duplicates)	  									  
+*	Requires: firmpatent.dta, solar_patents_addinfo.csv
+*	Creates: firmpatent_inter.dta, solar_patents.dta						  
 *																	  
 ***********************************************************************
 * 	PART 1: import the list of patents		  						
@@ -28,8 +29,3 @@ save "${lcr_intermediate}/firmpatent_inter", replace
 import delimited "${lcr_raw}/solar_patents_addinfo.csv", clear varn(1)
 
 save "${lcr_intermediate}/solarpatents", replace
-
-***********************************************************************
-* 	PART 3: import solar patents file with HS codes & complexity
-***********************************************************************
-use "${lcr_raw}/solar_components_updated_HS", clear

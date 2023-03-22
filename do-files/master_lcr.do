@@ -117,22 +117,22 @@ set sortseed 8413195
 	PART 3.1: Import & raw data
 	Requires: firm_sales_employees.xlsx. Creates: lcr_sales_raw.dta
 ----------------------------------------------------------------------*/		
-if (1) do "${lcr_github}/lcr_sales_import.do"	
+if (1) do "${lcr_github}/sales_import.do"	
 /* --------------------------------------------------------------------
 	PART 3.2: Clean raw data
 	Requires: lcr_sales_raw.dta. Creates: lcr_sales_inter.dta
 ----------------------------------------------------------------------*/		
-if (1) do "${lcr_github}/lcr_sales_clean.do"	
+if (1) do "${lcr_github}/sales_clean.do"	
 /* --------------------------------------------------------------------
 	PART 3.3: Correct, generate, transform intermediate data
 	Requires: lcr_sales_inter.dta. Creates: lcr_sales_final.dta.
 ----------------------------------------------------------------------*/		
-if (1) do "${lcr_github}/lcr_sales_transform.do"	
+if (1) do "${lcr_github}/sales_transform.do"	
 /* --------------------------------------------------------------------
 	PART 3.4: Creates cross-sectional firm-level employees/sales data
 	Requires: lcr_sales_final.dta. Creates: firm_sales, firm_employees
 ----------------------------------------------------------------------*/		
-if (1) do "${lcr_github}/lcr_sales_collapse.do"
+if (1) do "${lcr_github}/sales_collapse.do"
 	
 }
 	
@@ -143,38 +143,38 @@ if (1) do "${lcr_github}/lcr_sales_collapse.do"
 /* --------------------------------------------------------------------
 	PART 4.1: Import & raw data
 ----------------------------------------------------------------------*/		
-if (1) do "${lcr_github}/lcr_bid_import.do"	
+if (1) do "${lcr_github}/bid_import.do"	
 /* --------------------------------------------------------------------
 	PART 4.2: Clean raw data & save as intermediate data
 ----------------------------------------------------------------------*/	
-if (1) do "${lcr_github}/lcr_bid_clean.do"
+if (1) do "${lcr_github}/bid_clean.do"
 /* --------------------------------------------------------------------
 	PART 4.3: Correct & save intermediate data
 ----------------------------------------------------------------------*/	
-if (1) do "${lcr_github}/lcr_bid_correct.do"
+if (1) do "${lcr_github}/bid_correct.do"
 /* --------------------------------------------------------------------
 	PART 4.4: Generate variables for analysis or implementation
 ----------------------------------------------------------------------*/	
-if (1) do "${lcr_github}/lcr_bid_generate.do"
+if (1) do "${lcr_github}/bid_generate.do"
 /* --------------------------------------------------------------------
 	PART 4.5: Merge with Ben Probst et al. 2020 for firm controls
 	Creates: lcr_bid_final + several variables (solar_manufacture, energy_company)
 ----------------------------------------------------------------------*/
-if (1) do "${lcr_github}/lcr_bid_merge.do"
+if (1) do "${lcr_github}/bid_merge.do"
 /* --------------------------------------------------------------------
 	PART 4.6: Descriptive statistics
 ----------------------------------------------------------------------*/	
-if (1) do "${lcr_github}/lcr_bid_descriptives.do"
+if (1) do "${lcr_github}/bid_descriptives.do"
 /* --------------------------------------------------------------------
 	PART 4.7: collapse + aggregate cross-section
 	Creates: lcr_final
 ----------------------------------------------------------------------*/	
-if (1) do "${lcr_github}/lcr_bid_collapse_csection.do"
+if (1) do "${lcr_github}/bid_collapse_csection.do"
 /* --------------------------------------------------------------------
 	PART 4.8: collapse + aggregate firm-year panel
 	Creates: firmyear_auction.dta
 ----------------------------------------------------------------------*/	
-if (1) do "${lcr_github}/lcr_bid_collapse_panel.do"
+if (1) do "${lcr_github}/bid_collapse_panel.do"
 
 }
 
@@ -184,68 +184,67 @@ if (1) do "${lcr_github}/lcr_bid_collapse_panel.do"
 {
 /* --------------------------------------------------------------------
 	PART 5.1: Import patent datasets and put into frames
-	Requires: firmpatent.dta, solar_patents_addinfo
-	Creates:  firmpatent_inter, solarpatents
+	Requires: firmpatent.dta, solar_patents_addinfo.csv
+	Creates:  firmpatent_inter.dta, solarpatents.dta
 ----------------------------------------------------------------------*/		
-if (1) do "${lcr_github}/lcr_patent_import.do"
+if (1) do "${lcr_github}/patent_import.do"
 /* --------------------------------------------------------------------
 	PART 5.2: Patent datasets clean
 ----------------------------------------------------------------------*/		
-if (1) do "${lcr_github}/lcr_patent_clean.do"
+if (1) do "${lcr_github}/patent_clean.do"
 /* --------------------------------------------------------------------
 	PART 5.3: Patent datasets merge
 ----------------------------------------------------------------------*/		
-if (1) do "${lcr_github}/lcr_patent_merge.do"
+if (1) do "${lcr_github}/patent_merge.do"
 /* --------------------------------------------------------------------
 	PART 5.4: Patent datasets generate
 	Creates: firmpatent_final
 ----------------------------------------------------------------------*/		
-if (1) do "${lcr_github}/lcr_patent_generate.do"
+if (1) do "${lcr_github}/patent_generate.do"
 /* --------------------------------------------------------------------
 	PART 5.5: Patent datasets visualize
 ----------------------------------------------------------------------*/		
-if (1) do "${lcr_github}/lcr_patent_visualize.do"
+if (1) do "${lcr_github}/patent_visualize.do"
 /* --------------------------------------------------------------------
 	PART 5.6: Patent datasets collpase
 ----------------------------------------------------------------------*/		
-if (1) do "${lcr_github}/lcr_patent_collapse.do"
+if (1) do "${lcr_github}/patent_collapse.do"
 }
 		
 ***********************************************************************
-* 	PART 6: 	Run do-files for cross-section data cleaning
+* 	PART 6: 	Run do-files for cross-section (cs) data cleaning
 ***********************************************************************
 {
 /* --------------------------------------------------------------------
-	PART 6.0: Import & raw data
+	PART 6.1: Import & raw data
 ----------------------------------------------------------------------*/		
-if (1) do "${lcr_github}/lcr_import.do"
+if (1) do "${lcr_github}/cs_import.do"
 /* --------------------------------------------------------------------
-	PART 6.1: Import & merge patent data
+	PART 6.2: Import & merge patent data
 	Creates: firmyear_patents.dta
 ----------------------------------------------------------------------*/		
-if (1) do "${lcr_github}/lcr_merge_patents.do"
-*if (1) do "${lcr_github}/lcr_import_merge_patents.do"
+if (1) do "${lcr_github}/cs_merge_patents.do"
 /* --------------------------------------------------------------------
-	PART 6.2: Import & merge sales and employees data
+	PART 6.3: Import & merge sales and employees data
 ----------------------------------------------------------------------*/		
-if (1) do "${lcr_github}/lcr_import_merge_sales.do"
+if (1) do "${lcr_github}/cs_merge_sales.do"
 /* --------------------------------------------------------------------
-	PART 6.3: Clean raw data & save as intermediate data
+	PART 6.4: Clean raw data & save as intermediate data
 ----------------------------------------------------------------------*/	
-if (1) do "${lcr_github}/lcr_clean.do"
+if (1) do "${lcr_github}/cs_clean.do"
 /* --------------------------------------------------------------------
-	PART 6.4: Correct & save intermediate data
+	PART 6.5: Correct & save intermediate data
 ----------------------------------------------------------------------*/	
-if (1) do "${lcr_github}/lcr_correct.do"
+if (1) do "${lcr_github}/cs_correct.do"
 /* --------------------------------------------------------------------
-	PART 6.5: Generate variables for analysis or implementation
+	PART 6.6: Generate variables for analysis or implementation
 ----------------------------------------------------------------------*/	
-if (1) do "${lcr_github}/lcr_generate.do"
+if (1) do "${lcr_github}/cs_generate.do"
 
 }
 
 ***********************************************************************
-* 	PART 7: 	Run do-files for cross-section analysis (DiD + PSM)
+* 	PART 7: 	Run do-files for cross-section (cs) analysis (DiD + PSM)
 ***********************************************************************
 {
 /* --------------------------------------------------------------------
@@ -288,12 +287,13 @@ if (0) do "${lcr_github}/lcr_did_matching.do"
 	PART 7.9.: Robust 1: use "teffects psmatch" command
 ----------------------------------------------------------------------*/
 if (0) do "${lcr_github}/lcr_teffects_psmatch.do"
-}
 /* --------------------------------------------------------------------
 	PART 7.10.: Cross-section heterogeneity: Who patented?
 ----------------------------------------------------------------------*/
 if (0) do "${lcr_github}/lcr_crosssection_hetero.do"
 }
+
+
 ***********************************************************************
 * 	PART 8: 	Run do-files for firm-year panel, event study PSM DiD
 ***********************************************************************
@@ -311,21 +311,22 @@ if (1) do "${lcr_github}/event_clean.do"
 /* --------------------------------------------------------------------
 	PART 8.3: Visualize
 ----------------------------------------------------------------------*/
-if (0) do "${lcr_github}/event_visualize.do"
+if (1) do "${lcr_github}/event_visualize.do"
 /* --------------------------------------------------------------------
 	PART 8.4: Event study/dynamic DiD
 ----------------------------------------------------------------------*/
-if (0) do "${lcr_github}/event_study.do"
+if (1) do "${lcr_github}/event_study.do"
 /* --------------------------------------------------------------------
 	PART 8.5: Run staggered Did
 ----------------------------------------------------------------------*/
-if (0) do "${lcr_github}/callaway_santanna.do"
-
-}
+if (1) do "${lcr_github}/callaway_santanna.do"
 /* --------------------------------------------------------------------
 	PART 8.6: Panel heterogeneity
 ----------------------------------------------------------------------*/
 if (1) do "${lcr_github}/panel_hetero.do"
+
+}
+
 
 }
 ***********************************************************************

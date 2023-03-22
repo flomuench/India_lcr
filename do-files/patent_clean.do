@@ -1,17 +1,18 @@
 ***********************************************************************
 * 			LCR India: clean patent data sets
 ***********************************************************************
-*																	   
-*	PURPOSE: 				  								  
-*				  
-*																	  
+*	PURPOSE: clean (e.g. remove duplicates) patent data
+*															  
 *	OUTLINE:														  
 * 	1: clean firmpatent_inter (list with all scraped patents)
-*																	 																      *
-*	Author: Florian  														  
-*	ID variable: no id variable defined			  									  
-*	Requires:	
-*	Creates:							  
+*
+*
+*	Author: Florian Münch, Fabian Scheifele													  
+*	ID variable:
+* 		company = companyname_correct
+*		patent  = applicationnumber (contains duplicates)			  									  
+*	Requires:	firmpatent_inter.dta, solarpatents.dta
+*	Creates:	firmpatent_inter.dta, solarpatents.dta						  
 *																	  
 ***********************************************************************
 * 	PART 1: clean firmpatent_inter (list of all patents)	  						
@@ -29,7 +30,7 @@ order title abstract, a(applicantname)
 format title abstract %-30s
 duplicates report abstract /* 8307 unique values but also 141 dups */
 duplicates tag abstract if abstract!="", gen(dup_abstract)
-sort company_name abstract
+sort company_name abstract, stable
 *br if dup_abstract > 0
 
 			* in terms of abstract & title

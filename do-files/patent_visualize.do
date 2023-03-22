@@ -6,27 +6,30 @@
 *				  
 *																	  
 *	OUTLINE:														  
-* 	1: merge with solar patents/ipc groups from Shubbak 2020
+* 	1: import data + update directory + turn graphics on for export
 *
-*	Author: Florian  														  
+*	Author: Florian Münch, Fabian Scheifele 														  
 *	ID variable: no id variable defined			  									  
 *	Requires:	
 *	Creates:							  
 *																	  
 ***********************************************************************
-* 	PART 1: format changes for merger in two separate frames	  						
+* 	PART 1: import data + update directory + turn graphics on for export	  						
 ***********************************************************************
 	* use firmpatents
 use "${lcr_final}/firmpatent_final", clear
+
+	* change directory to output folder for descriptive stats
+cd "$lcr_descriptives"
+
+	* turn graphics on for export
+set graphics on
 
 
 ***********************************************************************
 * 	PART 2: over time evolution of patents 	  						
 ***********************************************************************
-	* change directory to output folder for descriptive stats
-cd "$lcr_descriptives"
 
-set graphics on
 sort year_application
 graph bar (sum) solarpatent not_solar_patent, over(year_application, label(labs(tiny))) ///
 	blabel(total, size(vsmall)) ///
