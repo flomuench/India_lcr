@@ -1,12 +1,13 @@
 ***********************************************************************
-* 			master file importing + cleaning + preparation India lcr prowess data
+* 						Master file: 
+*	Replication package for "Nurturing National Champions? 
+*	Local Content in Solar Auctions and Firm Innovation"
 ***********************************************************************
 *																	  
-*	PURPOSE: make all data work reproducible from first import to analysis
-* 	for all team members & outsiders								  
+*	PURPOSE: make all data work reproducible from first import onward 
 *																	  
 *	OUTLINE: 	PART 1: Set standard settings & install packages	  
-*				PART 2: Prepare dynamic folder paths & globals		  
+*				PART 2: Prepare folder paths & globals		  
 *				PART 3: Run all do-files                          
 *																	  
 *																	  
