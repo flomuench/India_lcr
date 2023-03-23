@@ -1,14 +1,15 @@
 ***********************************************************************
-* 			common support assessment - the effect of LCR on innovation									  	  
+* 	LCR India - common support
 ***********************************************************************
 *																	    
-*	PURPOSE: evaluate whether there is common support or positive 				  							  
-*	density along the propensity score distribution  
+*	PURPOSE: evaluate whether there is common support
 *																	  
 *	OUTLINE:														  
+*	1) set the scene
+*	2) figure 18 - evaluation of common support
+*	3) firms off common support
 *
-*																	  								      
-*	Author:  	Florian Muench & Fabian Scheifele						  
+*	Author:  	Florian Münch, Fabian Scheifele				  
 *	ID varialcre: 	company_name			  					  
 *	Requires: lcr_final.dta 	  								  
 *	Creates:  lcr_final.dta			                          
@@ -22,15 +23,15 @@ use "${lcr_final}/lcr_final", clear
 cd "$final_figures"
 
 ***********************************************************************
-* 	PART 2:  Evaluation of common support			
+* 	PART 2:  Evaluation of common support - Figure 18	
 ***********************************************************************
 	* criteria/techniques for decision of common support
 			* min-max
 			* trimming
 			* threshold amount q (density at x > q)
 			
-	* visualisation 
-			* attention: definition of bin size
+	* Figure 18
+			* vary bin size 
 set graphics on
 foreach sample in all won nooutliers {
 	forvalues binwidth = 5(5)20 {
@@ -69,17 +70,15 @@ gr export common_support_density.png, replace
 
 	
 	* eye-balling the firms & their pscores
-local matching_var5 ihs_pre_not_solar_patent soe_india indian manufacturer part_jnnsm_1
+local matching_var ihs_pre_not_solar_patent soe_india indian manufacturer part_jnnsm_1
+	
 	* sample in all won nooutliers 
 	sort pscore_all
-	br company_name pscore_all lcr pre_solar_patent post_solar_patent `matching_var5'
+	br company_name pscore_all lcr pre_solar_patent post_solar_patent `matching_var'
 
 ***********************************************************************
-* 	PART 2: who are the firms that fall outside the common support?	
+* 	PART 3: firms off common support	
 ***********************************************************************
-*br company_name pscore_all solar_patentor pre_solar_patent post_solar_patent total_auctions total_auctions_lcr if pscore_all > 0.72 & lcr == 1
-
-
 foreach sample in `sample' all won nooutliers {
 gr hbar pscore_`sample' if pscore_`sample' > .6 & pscore_`sample' != ., over(company_name) ///
 		by(lcr, title("{bf:Firms with propensity score > 0.6}") subtitle("Potential matches by LCR") note(sample = `sample')) ///
@@ -89,33 +88,10 @@ gr hbar pscore_`sample' if pscore_`sample' > .6 & pscore_`sample' != ., over(com
 gr export pscore_`sample'_lcr.png, replace
 }
 
-*br company_name pscore_all solar_patentor pre_solar_patent post_solar_patent total_auctions total_auctions_lcr if pscore_all > 0.6 & lcr == 0
-
-
-
 ***********************************************************************
 * 	Save the changes made to the data		  			
 ***********************************************************************
 set graphics off
-
-	* set export directory
-cd "$lcr_final"
-
-	* save dta file
-save "lcr_final", replace
+save "${lcr_final}/lcr_final", replace
 
 
-
-
-* Archive
-/*
-* psgraph
-* MODEL ALCOHOL CONSUMPTION
-logistic mbsmoke alcohol deadkids foreign rcs_* mhisp i.medu2 mmarried mrace i.prenatal
-
-* LOG ODDS OF SMOKING
-predict logodds, xb
-
-* GET A SENSE OF .25 SD OF LINEAR PROPENSITY SCORE
-summarize logodds
-*/

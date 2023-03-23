@@ -6,42 +6,51 @@
 *	on matching
 *	  
 *	OUTLINE:														  
-*
-*
-*																	  															      
-*	Author:  	Florian Muench 							  
-*	ID varialcre: 	company_name			  					  
+*	1) set the scene
+*	I: Nearest neighbor matching
+*		2) LCR participation - solar patents - nearest neighbor matching
+*		3) same as 2) but with solar cell patents
+*		4) same as 2) but for binary solar patentor dummy
+*		5) same as 2) but for sales
+*		6) export overview panel table
+*	II: Caliper/radius matching
+*		7) same as 2) but caliper matching
+* 
+*	Author:  	Florian Münch, Fabian Scheifele
+*	ID variable: 	company_name			  					  
 *	Requires: lcr_final.dta 	  								  
 *	Creates:  lcr_final.dta			                          
-*
-*	information about automatically exporting att from psmatch2: https://stackoverflow.com/questions/59950622/export-att-result-after-psmatch2-command										  
+*									  
 ***********************************************************************
 * 	PART 1:  set the scene  			
 ***********************************************************************
 use "${lcr_final}/lcr_final", clear
 
-	* set the directory to propensity matching folder
+	* set the directory
 *cd "$lcr_rt"
 cd "$lcr_final"
 
 *in case weight variables were saved from previous version, they are dropped here now
 
-	* generate random order of observations (note that sortseed and seed are defined in master do-file)
+	* generate random order of observations
+		* note that sortseed and seed are defined in master do-file
+		* random order relevant as may influence results from matching
 gen random_order = uniform()
-sort random_order
+sort random_order, stable
 
 ***********************************************************************
-* 	PART 2:  Nearest neighbor matching
+* 	PART I:  Nearest neighbor matching
 ***********************************************************************
+
+***********************************************************************
+* 	PART 2:  LCR participation - solar patents - nearest neighbor matching
+***********************************************************************
+{
 * 1: 1nn with replacement
 		* sample = all
 psmatch2 lcr, neighbor(1) outcome(post_solar_patent) pscore(pscore_all)
 _eststo all_nn, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(hc3)
 	rename _weight weight_nn_all
-	
-*_eststo all_nn_ate, r: reg post_solar_patent i.lcr
-*_eststo all_nn_att, r: reg post_solar_patent i.lcr [iweight= weight_nn_all]
-
 		
 		* sample = won
 psmatch2 lcr if won_total > 0, neighbor(1) outcome(post_solar_patent) pscore(pscore_won)
@@ -59,7 +68,6 @@ psmatch2 lcr, neighbor(2) outcome(post_solar_patent) pscore(pscore_all)
 _eststo all2_nn, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(hc3)
 	rename _weight weight_nn2_all
 	
-		
 		* sample = won
 psmatch2 lcr if won_total > 0, neighbor(2) outcome(post_solar_patent) pscore(pscore_won)
 _eststo won2_nn, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(hc3)
@@ -68,10 +76,12 @@ _eststo won2_nn, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(hc3)
 		* sample = no outliers
 psmatch2 lcr if patent_outliers == 0, neighbor(2) outcome(post_solar_patent) pscore(pscore_nooutliers)
 _eststo outlier2_nn, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(hc3)
-	rename _weight weight_nn2_outlie	
-	
-*PART 2.2. NN with cell patents
-
+	rename _weight weight_nn2_outlie
+}
+***********************************************************************
+* 	PART 3: same but only with solar cell patents
+***********************************************************************
+{
 * 1: 1nn with replacement
 		* sample = all
 psmatch2 lcr, neighbor(1) outcome(post_modcell_patent) pscore(pscore_all)
@@ -108,9 +118,12 @@ _eststo won2_nn_cell, r: reg dif_modcell_patents i.lcr [iweight=_weight], vce(hc
 psmatch2 lcr if patent_outliers == 0, neighbor(2) outcome(post_modcell_patent) pscore(pscore_nooutliers)
 _eststo outlier2_nn_cell, r: reg dif_modcell_patents i.lcr [iweight=_weight], vce(hc3)
 	rename _weight weight_nn2_outlier_cell	
-
+}
 	
-*****Part 2.3 BINARY POST SOLAR OUTCOME*****
+***********************************************************************
+* 	PART 4: same but for binary solar patentor dummy
+***********************************************************************
+{
 * 1: 1nn with replacement post_solar_patentor
 		* sample = all
 psmatch2 lcr, neighbor(1) outcome(post_solar_patentor) pscore(pscore_all)
@@ -143,14 +156,17 @@ _eststo won2_nn_bin, r: reg post_solar_patentor i.lcr [iweight=_weight], vce(hc3
 psmatch2 lcr if patent_outliers == 0, neighbor(2) outcome(post_solar_patentor) pscore(pscore_nooutliers)
 _eststo outlier2_nn_bin, r: reg post_solar_patentor i.lcr [iweight=_weight], vce(hc3)
 	rename _weight weight_nn2_outlier_bin	
+}
 
-**** Part. 2.4. NN with Sales**
+***********************************************************************
+* 	PART 5: same but for sales
+***********************************************************************
+{
 * 1: 1nn with replacement
 		* sample = all
 psmatch2 lcr, neighbor(1) outcome(post_revenue) pscore(pscore_all)
 _eststo all_nn_sales, r: reg diff_revenue i.lcr [iweight=_weight], vce(hc3)
 	rename _weight weight_nn_all_sales
-
 		
 		* sample = won
 psmatch2 lcr if won_total > 0, neighbor(1) outcome(post_revenue) pscore(pscore_won)
@@ -167,7 +183,6 @@ _eststo outlier_nn_sales, r: reg diff_revenue i.lcr [iweight=_weight] if sales_o
 psmatch2 lcr, neighbor(2) outcome(post_revenue) pscore(pscore_all)
 _eststo all2_nn_sales, r: reg diff_revenue i.lcr [iweight=_weight] , vce(hc3)
 	rename _weight weight_nn2_all_sales
-	
 		
 		* sample = won
 psmatch2 lcr if won_total > 0, neighbor(2) outcome(post_revenue) pscore(pscore_won)
@@ -178,26 +193,12 @@ _eststo won2_nn_sales, r: reg diff_revenue i.lcr [iweight=_weight], vce(hc3)
 psmatch2 lcr if sales_outliers == 0, neighbor(2) outcome(post_revenue) pscore(pscore_nosalesoutliers)
 _eststo outlier2_nn_sales, r: reg diff_revenue i.lcr [iweight=_weight] if sales_outliers == 0, vce(hc3)
 	rename _weight weight_nn2_outlie_sales	
+}
 	
-	
-	/* export results C1 C2 1 and 2 in a table
-cd "$final_figures"	
-esttab *_nn using did_robust_nn.tex, replace ///
-	title("Difference-in-difference combined with PSM: Nearest Neighbor"\label{nn_robust}) ///
-	mgroups("" "1 nearest neighbor" "2 nearest neighbors", ///
-		pattern(1 0 1 0 0 1 0 0)) ///
-	mtitles("Simple mean diff." "DiD" "All firms" "Winner firms" "All w/o outliers" "All firms" "Winner firms" "All w/o outliers") ///
-	label ///
-	b(2) ///
-	se(2) ///
-	width(0.8\hsize) ///
-	star(* 0.1 ** 0.05 *** 0.01) ///
-	nobaselevels ///
-	booktabs ///
-	addnotes("Estimates (3)-(5) based on nearest neighbor matching." "DiD based on solar patents 2011-2020 minus 2001-2010." "Common support imposed in all specifications." "Robust standard errors in parentheses.")
-*/
-
-	*Same four panel table like for caliper 
+***********************************************************************
+* 	PART 6: Four panel table for export
+***********************************************************************
+{
 cd "$final_figures"		
 	//top panel
 esttab  all_nn won_nn outlier_nn all2_nn won2_nn outlier2_nn using did_robust_nn.tex, replace ///
@@ -243,16 +244,16 @@ esttab all_nn_sales won_nn_sales outlier_nn_sales all2_nn_sales won2_nn_sales ou
 	b(2) se(2) nomtitles nonumbers  ///
 	prefoot("\hline") ///
 	postfoot("\hline\hline\hline \multicolumn{5}{l}{\footnotesize Robust Standard errors in parentheses}\\\multicolumn{2}{l}{\footnotesize \sym{**} \(p<0.05\), \sym{*} \(p<0.1\)}\\ \end{tabular} \\ \end{table}")
-
-		
-
-***********************************************************************
-* 	PART 3:  Radius/caliper matching
-***********************************************************************
+}	
 
 ***********************************************************************
-*Outcome 1.1: All Solar patents with binary treatment
+* 	PART II:  Radius/caliper matching
 ***********************************************************************
+
+***********************************************************************
+*	PART 7: All Solar patents with binary treatment
+***********************************************************************
+{
 	* create matrix to collect SE for ex post power calculation
 matrix def lcr_se = J(3,8,24)
 matrix rownames lcr_se = solar_patents, cell_patents, sales
@@ -318,9 +319,11 @@ _eststo manufacturers_patcaliper05, r:  reg dif_solar_patents i.lcr [iweight=wei
 
 graph bar (sum) pre_solar_patent post_solar_patent if manufacturer==1 & won_total>0, over(lcr_won) blabel(bar)
 graph bar (sum) pre_solar_patent post_solar_patent if manufacturer==1 & won_total>0, over(lcr)
+}
 ***********************************************************************
-*Outcome 1.2: All Solar patents with continous treatment
+* 	PART 8: All Solar patents with continous treatment
 ***********************************************************************
+{
 * C1: Simple post-difference
 _eststo cpost_patcaliper, r:reg post_solar_patent total_auctions_lcr
 *est store post_patcaliper
@@ -368,16 +371,16 @@ psmatch2 lcr if patent_outliers == 0, radius caliper(0.05) outcome(post_solar_pa
 _eststo coutliers_patcaliper05, r: reg dif_solar_patents total_auctions_lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
 *est store outliers_patcaliper05
 	rename _weight cweight_outliers05
-	
+}	
 ***********************************************************************	
-		* outcome 2.1: cell & module patents with binary treatment
+* 	PART 9:	Cell & module patents with binary treatment
 ***********************************************************************
+{
 		* Simple post-difference
 _eststo post_cell, r:reg post_modcell_patent i.lcr
 *est store post_cell
 	matrix lcr_se[2,1] = _se[1.lcr]
 
-		
 		* DiD
 _eststo did_cell, r:reg dif_modcell_patents i.lcr, vce(hc3)
 *est store did_cell
@@ -389,7 +392,6 @@ _eststo all_caliper01_cell, r: reg dif_modcell_patents i.lcr [iweight=_weight], 
 *est store all_caliper01_cell
 	rename _weight weight_cell_all01
 	matrix lcr_se[2,3] = _se[1.lcr]
-
 
 psmatch2 lcr, radius caliper(0.05) outcome(post_modcell_patent) pscore(pscore_all)
 _eststo all_caliper05_cell, r: reg dif_modcell_patents i.lcr [iweight=_weight], vce(hc3)
@@ -424,10 +426,11 @@ _eststo outliers_caliper05_cell, r: reg dif_modcell_patents i.lcr [iweight=_weig
 *est store outliers_caliper05_cell
 	rename _weight weight_cell_outliers05
 	matrix lcr_se[2,8] = _se[1.lcr]
-
+}
 ***********************************************************************	
-		* outcome 2.2: cell & module patents with continous treatment
+* 	PART 10: Cell & module patents with continous treatment
 ***********************************************************************
+{
 		* Simple post-difference
 _eststo cpost_cell, r:reg post_modcell_patent total_auctions_lcr
 *est store post_cell
@@ -470,10 +473,11 @@ psmatch2 lcr if patent_outliers == 0, radius caliper(0.05) outcome(post_modcell_
 _eststo coutliers_caliper05_cell, r: reg dif_modcell_patents total_auctions_lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
 *est store outliers_caliper05_cell
 	rename _weight cweight_cell_outliers05
-	
+}	
 ***********************************************************************
-*outcome 3.1: Binary post-patent indicator (1 if at least one patent post-2010)
+* 	PART 11: Binary post-patent indicator (1 if at least one patent post-2010)
 ***********************************************************************
+{		
 		* Simple post-difference
 _eststo post_binary, r:reg post_solar_patentor i.lcr
 *est store post_cell
@@ -504,10 +508,11 @@ _eststo outliers_caliper01_bin, r: reg post_solar_patentor i.lcr [iweight=_weigh
 psmatch2 lcr if patent_outliers == 0, radius caliper(0.05) outcome(post_solar_patentor) pscore(pscore_nooutliers)
 _eststo outliers_caliper05_bin, r: reg post_solar_patentor i.lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
 	rename _weight weight_binary_outliers05
-
+}
 ***********************************************************************
-*outcome 3.2: Binary post-patent indicator (1 if at least one patent post-2010) with continous treatment
+* 	PART 12: Binary post-patent indicator (1 if at least one patent post-2010) with continous treatment
 ***********************************************************************
+{
 		* Simple post-difference
 _eststo cpost_binary, r:reg post_solar_patentor total_auctions_lcr
 *est store post_cell
@@ -539,55 +544,13 @@ _eststo coutliers_caliper01_bin, r: reg post_solar_patentor total_auctions_lcr [
 psmatch2 lcr if patent_outliers == 0, radius caliper(0.05) outcome(post_solar_patentor) pscore(pscore_nooutliers)
 _eststo coutliers_caliper05_bin, r: reg post_solar_patentor total_auctions_lcr [iweight=_weight] if patent_outliers == 0, vce(hc3)
 	rename _weight cweight_binary_outliers05	
+}
 
-/*		
-***********************************************************************
-* 	PART 4:  Kernel matching
-***********************************************************************
-	* counterfactual = participated
-		* sample = all
-cd "$lcr_rt"
-psmatch2 lcr, kernel outcome(post_solar_patent) pscore(pscore_all) k(epan) bw(0.1)
-psmatch2 lcr, kernel outcome(post_solar_patent) pscore(pscore_all) k(epan) bw(0.05)
-		* sample = only winners
-		
-		* sample = without patent_outliers
-psmatch2 lcr if patent_outliers == 0, kernel outcome(post_solar_patent) pscore(pscore_all) k(epan) bw(0.1)
-scalar t = r(att)/ r(seatt)
-mat kbw01 = ( r(att) \ t )
-
-psmatch2 lcr if patent_outliers == 0, kernel outcome(post_solar_patent) pscore(pscore_all) k(epan) bw(0.05)
-scalar t = r(att)/ r(seatt)
-mat kbw005 = ( r(att) \ t )
-
-mat kernel = kbw01, kbw005
-mat colnames kernel = "BW = 0.1" "BW = 0.05"
-mat rownames kernel = att t
-
-esttab matrix(kernel, fmt(%9.2fc)) using kernelmatching.csv, replace ///
-	title("Results for kernel matching") ///
-	width(0.8\hsize) ///
-	addnotes("All estimtes are based on a Logit model with robust standard errors in parentheses.")
 
 ***********************************************************************
-* 	PART 5:  Mahalanobis matching
+* 	PART III:  Radius/caliper matching
 ***********************************************************************
-	* counterfactual = participated
-		* sample = all
-psmatch2 lcr, mahalanobis(patentor soe_india manufacturer_solar) outcome(post_solar_patent)
-_eststo mahalanobis01, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(hc3)
 
-		* sample = without patent outliers
-psmatch2 lcr if patent_outliers == 0 , mahalanobis(patentor soe_india manufacturer_solar) outcome(post_solar_patent)
-_eststo mahalanobis02, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(hc3)	
-
-
-	* counterfactual = won
-		* sample = all
-psmatch2 lcr if won_total>0, mahalanobis(patentor soe_india manufacturer_solar) outcome(post_solar_patent)
-_eststo mahalanobis01, r: reg dif_solar_patents i.lcr [iweight=_weight], vce(hc3)
-	
-	*/
 ***********************************************************************
 * 	PART 6.1:  Alternative outcome variable: sales with binary treatment
 ***********************************************************************
@@ -691,6 +654,10 @@ psmatch2 lcr if sales_outliers == 0, radius caliper(0.05) outcome(post_revenue) 
 _eststo csales_outliers_caliper05, r: reg diff_revenue total_auctions_lcr [iweight=_weight] if sales_outliers == 0, vce(hc3)
 *est store sales_outliers_caliper05
 	rename _weight cweight_sales_outliers05
+
+***********************************************************************
+* 	PART IV:  Export results in regression tables
+***********************************************************************
 
 ***********************************************************************
 * Part 7.1 Make nice three panel table with Solar patents, cell patents and Sales for binary treatment variable		  			

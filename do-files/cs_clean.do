@@ -1,26 +1,25 @@
 ***********************************************************************
-* 	clean the data (no corrections) - the effect of LCR on innovation									  		  
+* 	LCR India - clean cross-section								  		  
 ***********************************************************************
 *																	  
-*	PURPOSE: clean cross-section raw data					  	  			
+*	PURPOSE: clean cross-section data					  	  			
 *																	  
 *																	  
 *	OUTLINE:														  
-*	1)		Format string & numerical varialcres				          
+*	1)		Format string & numerical variables				          
 *	2)   	Drop all text windows from the survey					  
-*	3)  	Make all varialcres names lower case						  
-*	4)  	Order the varialcres in the data set						  	  
-*	5)  	Rename the varialcres									  
-*	6)  	Label the varialcres										  
-*   7) 		Label varialcre values 								 
-*   8) 		Removing trailing & leading spaces from string varialcres										 
-*																	  													      
-*	Author:  	Florian Muench & Kais Jomaa & Teo Firpo						    
-*	ID varialcre: 	id (identifiant)			  					  
+*	3)  	Make all variables names lower case						  
+*	4)  	Rename the variables
+*	5)  	Order the variables in the data set
+*	6)  	Label the variables					  
+*   7) 		Label variables values
+*    
+*	Author:  	Florian Münch, Fabian Scheifele
+*	ID variable: 	company_name
 *	Requires: lcr_raw.dta 	  										  
 *	Creates:  lcr_inter.dta			                                  
 ***********************************************************************
-* 	PART 1: 	Format string & numerical & date varialcres		  			
+* 	PART 1: 	Format string & numerical & date variables		  			
 ***********************************************************************
 use "${lcr_raw}/lcr_raw", clear
 
@@ -46,13 +45,12 @@ foreach x of local strvars {
 *drop id domesticduns dunsno rough_estimation_foreign0indian1 primarycountryregion
 
 ***********************************************************************
-* 	PART 3: 	Make all varialcres names lower case		  			
+* 	PART 3: 	Make all variables names lower case		  			
 ***********************************************************************
 rename *, lower
 
-
 ***********************************************************************
-* 	PART 4: 	Rename the varialcres in line with GIZ contact list final	  			
+* 	PART 4: 	Rename the variables
 ***********************************************************************
 * rename
 rename totalemployees employees
@@ -66,13 +64,12 @@ rename totalemployees employees
 rename final_vgf_after_era vgf_total
 
 ***********************************************************************
-* 	PART 5: 	Order the varialcres in the data set		  			
+* 	PART 5: 	Order the variables in the data set		  			
 ***********************************************************************
 order company_name bidder sales *patent* employees city state international subsidiary
 
-
 ***********************************************************************
-* 	PART 6: 	Label the varialcres		  			
+* 	PART 6: 	Label the variables		  			
 ***********************************************************************
 label var employees "employees at HQ"
 label var city "primary city"
@@ -80,7 +77,6 @@ label var state "primary state"
 label var international "foreign vs. indian company"
 label var lob "primary line of business"
 lab var indian "indian company"
-
 lab var energy_focus "main business is energy"
 lab var age "age"
 lab var soe_india "Indian SOE"
@@ -91,15 +87,13 @@ lab var sales "total sales in INR"
 lab var subsidiary "subsidiary of mother company"
 lab var sector "sector"
 lab var part_jnnsm_1 "part 1 NSM"
-
 lab var vgf_total " total VGF in INR"
-
 lab var ihs_sales "sales, ihs transformed"
 lab var total_revenue "pre-LCR sales"
 lab var total_employees "pre-LCR employees"
 
 ***********************************************************************
-* 	PART 7: 	Label varialcres values	  			
+* 	PART 7: 	Label variables values	  			
 ***********************************************************************
 lab def foreign 1 "international" 0 "indian"
 lab val international foreign
@@ -111,9 +105,7 @@ lab val sector sectors
 lab def manufacturers 1 "manufacturer" 0 "no manufacturer"
 lab val manufacturer manufacturers 
 
-
 ***********************************************************************
 * 	Save the changes made to the data		  			
 ***********************************************************************
-cd "$lcr_intermediate"
-save "lcr_inter", replace
+save "${lcr_intermediate}/lcr_inter", replace

@@ -1,32 +1,29 @@
 ***********************************************************************
-* 	lcr India paper: import and merge with firm sales + employees data						
+* 	Lcr India - import and merge with firm sales + employees data						
 ***********************************************************************
 *																	   
-*	PURPOSE: 				  								  
+*	PURPOSE: 	add firm sales & employees to cross-section			  								  
 *				  
 *																	  
 *	OUTLINE:														  
 *	1)		import pre-treatment firm sales and employees data										  
-*	2)		merge
+*	2)		merge firm sales and employees
+*	3)		save as lcr_raw
 *
 *	Author: Florian Münch, Fabian Scheifele			  
 *	ID variable: company_name
 *	Requires:	firmpatent.dta, lcr_sales_final
-*	Creates:							  
+*	Creates:	lcr_raw.dta					  
 *																	  
 ***********************************************************************
 * 	PART 1: import cross-section dta 	  						
 ***********************************************************************
 use "${lcr_raw}/lcr_raw", clear
 
-	* change folder direction to lcr_final to get sales_final & employees_final
-cd "$lcr_final"
-
 ***********************************************************************
 * 	PART 2: merge pre-treatment sales to firms				
 ***********************************************************************
-merge 1:1 company_name using "firm_sales"
-
+merge 1:1 company_name using "${lcr_final}/firm_sales"
 
 /*
 
@@ -46,7 +43,7 @@ drop _merge
 ***********************************************************************
 * 	PART 3: merge pre-treatment employees to firms				
 ***********************************************************************
-merge 1:1 company_name using "firm_employees"
+merge 1:1 company_name using "${lcr_final}/firm_employees"
 
 /*
     Result                      Number of obs
@@ -62,7 +59,6 @@ drop _merge
 
 
 ***********************************************************************
-* 	PART 3: save as new main lcr.dta
+* 	PART 4: save as lcr_raw.dta
 ***********************************************************************
-cd "$lcr_raw"
-save "lcr_raw", replace
+save "${lcr_raw}/lcr_raw", replace

@@ -1,16 +1,20 @@
 ***********************************************************************
-* 			variable choice - the effect of LCR on innovation									  	  
+* 	LCR India - propensity score matching (psm) variable choice 	  
 ***********************************************************************
 *																	    
-*	PURPOSE: identify the variables 			  							  
+*	PURPOSE: identify variables to include in psm
 *																	  
 *																	  
 *	OUTLINE:														  
-*	1) sector
-*
-*																	  															      
-*	Author:  	Florian Muench							  
-*	ID varialcre: 	company_name		  					  
+*	1) set the scene
+*	2) iteratively test-up - all observations
+*	3) iteratively test-up	- excluding patent_outlier
+*	4) iteratively test-up	- only winners
+*	5) iteratively test-up	- won lcr vs. did not win lcr, w/o outlier Barat, Sunedison
+*	6) explore pre-matching balance in selected variables
+*											      
+*	Author:  	Florian Münch, Fabian Scheifele						  
+*	ID variable: 	company_name		  					  
 *	Requires: lcr_final.dta 	  								  
 *	Creates:  lcr_final.dta			                          
 *																	  
@@ -18,13 +22,14 @@
 * 	PART 1:  set the scene  			
 ***********************************************************************
 use "${lcr_final}/lcr_final", clear
-*drop pscore common_support
+	
 	* set the directory to propensity matching folder
 cd "$lcr_psm"
 
 ***********************************************************************
-* 	PART 1: variable selection: iteratively test-up	 - all
+* 	PART 2: iteratively test-up - all observations
 ***********************************************************************
+{
 	* include variables that simultaneously
 		*1: influence LCR participation choice
 			* Indian company, Indian city or state as HQ
@@ -116,10 +121,11 @@ esttab `regressions' using variable_choice_all.tex, replace ///
 	star(* 0.1 ** 0.05 *** 0.01) ///
 	nobaselevels ///
 	addnotes("All estimtes are based on a Logit model with robust standard errors in parentheses.")	
-	
+}
 ***********************************************************************
-* 	PART 2: variable selection: iteratively test-up	- excluding patent_outlier Bharat, Sunedison	
+* 	PART 3: iteratively test-up	- excluding patent_outlier
 ***********************************************************************
+{
 			* (1-3) indian
 _eststo indian, r: logit lcr i.indian if patent_outlier == 0, vce(robust)
 *_eststo india_state, r: logit lcr i.hq_indian_state if patent_outlier == 0, vce(robust)
@@ -183,11 +189,12 @@ esttab `regressions' using variable_choice2_nooutlier.csv, replace ///
 	star(* 0.1 ** 0.05 *** 0.01) ///
 	nobaselevels ///
 	addnotes("All estimtes are based on a Logit model with robust standard errors in parentheses.")
-		
+}
 ***********************************************************************
-* 	PART 3: variable selection: iteratively test-up	- only winners
+* 	PART 4: iteratively test-up	- only winners
 ***********************************************************************
-			* (1-3) indian
+{
+		* (1-3) indian
 _eststo indian, r: logit lcr i.indian if won_total == 1, vce(robust)
 *_eststo india_state, r: logit lcr i.hq_indian_state if won_total == 1, vce(robust)
 _eststo india_capital, r: logit lcr i.capital if won_total == 1, vce(robust)
@@ -250,10 +257,11 @@ esttab `regressions' using variable_choice2_won_total.csv, replace ///
 	star(* 0.1 ** 0.05 *** 0.01) ///
 	nobaselevels ///
 	addnotes("All estimtes are based on a Logit model with robust standard errors in parentheses.")
-	
+}
 ***********************************************************************
-* 	PART 4: variable selection: iteratively test-up	- counterfactual changed: won lcr vs. did not win lcr (sample: w/o outlier Barat, Sunedison)
+* 	PART 5: iteratively test-up	- won lcr vs. did not win lcr, w/o outlier Barat, Sunedison
 ***********************************************************************
+{
 		* (1-3) indian
 _eststo indian, r: logit lcr_won i.indian if patent_outlier == 0, vce(robust)
 *_eststo india_state, r: logit lcr_won i.hq_indian_state if patent_outlier == 0, vce(robust)
@@ -312,27 +320,23 @@ esttab `regressions' using variable_choice3.csv, replace ///
 	star(* 0.1 ** 0.05 *** 0.01) ///
 	nobaselevels ///
 	addnotes("All estimtes are based on a Logit model with robust standard errors in parentheses.")
-	
-
+}	
 ***********************************************************************
-* 	PART 5:  explore pre-matching balance based on selected variables 			
+* 	PART 6:  explore pre-matching balance in selected variables 			
 ***********************************************************************
+{
 	* put variables for matching into a local
-local matching_var indian patentor pre_not_solar_patent total_revenue total_employees soe age energy_focus manufacturer manufacturer_solar subsidiary
-local matching_var2 indian pre_not_solar_patent soe manufacturer manufacturer_solar
-local matching_var3 indian pre_not_solar_patent soe manufacturer
-local matching_var4 indian pre_not_solar_patent soe manufacturer total_revenue total_employees age
-local matching_var5 log_total_employees ihs_total_revenue pre_solar_patent indian manufacturer part_jnnsm_1
+local matching_var log_total_employees ihs_total_revenue pre_solar_patent indian manufacturer part_jnnsm_1
 
 set graphics on
 
 	* pre-matching table 1 / balance table
-iebaltab `matching_var5', grpvar(lcr) savetex(baltab_lcr_pre) replace ///
+iebaltab `matching_var', grpvar(lcr) savetex(baltab_lcr_pre) replace ///
 			 vce(robust) pttest rowvarlabels balmiss(mean) onerow stdev notecombine ///
 			 format(%12.2fc)
 	
 	* pre-matching standardised bias
-pstest `matching_var5', raw rubin treated(lcr) graph ///
+pstest `matching_var', raw rubin treated(lcr) graph ///
 		title(Standardized bias LCR vs. no LCR firms) ///
 		subtitle(Pre-matching) ///
 		note(Standardised bias should between [-25%-25%]., size(small)) ///
@@ -340,12 +344,8 @@ pstest `matching_var5', raw rubin treated(lcr) graph ///
 gr export pre_bias.png, replace
 
 set graphics off
-
+}
 ***********************************************************************
 * 	Save the changes made to the data		  			
 ***********************************************************************
-	* set export directory
-cd "$lcr_final"
-
-	* save dta file
-save "lcr_final", replace
+save "${lcr_final}/lcr_final", replace

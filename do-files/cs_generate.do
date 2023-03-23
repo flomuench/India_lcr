@@ -1,31 +1,32 @@
 ***********************************************************************
-* 		generate variables - the effect of lcr on innovation								  	  
+* 		India LCR - generate variables								  	  
 ***********************************************************************
 *																	    
-*	PURPOSE: generate relevant variables for analysis & visualisation				  							  
+*	PURPOSE: generate derived variables				  
 *																	  
 *	OUTLINE:														  
-*	1) 
-* 	2) 
-* 	3) 
-*	4) 
-*	5) 
-*	6) 
-*   7) 
-*	8) 
-*	9) 
-*
-*																	  															      
-*	Author:  	Florian Muench, Fabian Scheifele							  
-*	ID varialcre: 			  					  
+*	1)		import data
+* 	2) 		generate pre-post difference in solar patents
+* 	3) 		encode factor variables
+*	4) 		dummy for LCR auction participation
+*	5) 		dummy for solar patent
+*	6)		dummy for any patent 
+*   7) 		dummy for Indian companies
+*	8) 		dummy for company HQ main city in India
+*	9) 		dummy HQ in capital
+*	10)		dummy patent outliers
+*	11)		dummy electronics
+*	12)		ihs-and log-transform sales & employees variables
+*								      
+*	Author: Florian Muench, Fabian Scheifele				  
+*	ID varialble: 	company_name		  					  
 *	Requires: lcr_bid_inter.dta 	  								  
 *	Creates:  lcr_bid_inter.dta			                          
 *																	  
 ***********************************************************************
-* 	PART 1:  set the scene  			
+* 	PART 1:  import data			
 ***********************************************************************
 use "${lcr_intermediate}/lcr_inter", clear
-
 
 ***********************************************************************
 * 	PART 2: outcome variable for DiD		  										  
@@ -51,7 +52,7 @@ foreach x in city state subsidiary lob  {
 }
 
 ***********************************************************************
-* 	PART 3: create dummy for firm having participated in LCR auction		  										  
+* 	PART 4: dummy for LCR auction participation
 ***********************************************************************
 		* dummy for at least 1x LCR
 gen lcr = (total_auctions_lcr > 0 & total_auctions_lcr <.), b(total_auctions_lcr)
@@ -67,7 +68,6 @@ lab val lcr_only just_lcr
 		* dummy for both LCR & no LCR 
 gen lcr_both = (total_auctions_lcr > 0 & total_auctions_lcr < . & total_auctions_no_lcr > 0 & total_auctions_no_lcr < .)
 lab var lcr_both "firm participated in lcr & no lcr auctions"
-
 
 		* won LCR
 gen lcr_won = (won_lcr > 0 & won_lcr < .)
@@ -85,7 +85,7 @@ lab def winners 1 "Won at least 1 LCR auction" 0 "Won only open auctions"
 lab val winner_types winners
 		
 ***********************************************************************
-* 	PART 4: create dummy for firm having filed a solar patent
+* 	PART 5: dummy for solar patent
 ***********************************************************************
 gen solarpatents = pre_solar_patent + post_solar_patent
 lab var solarpatents "pre + post solar patents"
@@ -109,7 +109,7 @@ gen diff_solar_patentor = post_solar_patentor - pre_solar_patentor
 lab var diff_solar_patentor "Solar patentor status changed after after LCR"
 
 ***********************************************************************
-* 	PART 5: create dummy for firm having filed a patent
+* 	PART 6: dummy for any patent
 ***********************************************************************
 gen total_patents = pre_total_patent + post_total_patent
 lab var total_patents "pre + post total patents"
@@ -122,57 +122,28 @@ lab val patentor yesno
 ihstrans pre_not_solar_patent
 lab var ihs_pre_not_solar_patent "not solar patents, ihs transformed"
 
-
 ***********************************************************************
-* 	PART 6: create dummy for Indian companies
+* 	PART 7: dummy for Indian companies
 ***********************************************************************
 *gen indian = (international < 1)
 
 lab def national 1 "indian" 0 "international"
 lab val indian national
 
-
 ***********************************************************************
-* 	PART 7: create dummy for company HQ main city in India
+* 	PART 8: dummy HQ in capital
 ***********************************************************************
-
-/*
-gen hq_indian_state = .
-replace hq_indian_state = 1 if state1 != .
-local not_indian 5 11 19 9 6 16 15
-foreach x of local not_indian  {
-	replace hq_indian_state = 0 if state1 == `x'
-}
-*/
-
-	* dummy for delhi
 gen capital = (city == 21)
 lab var capital "HQ in Delhi"
 
-
 ***********************************************************************
-* 	PART 8: create dummy patent outliers
+* 	PART 9: dummy patent outliers
 ***********************************************************************
-cd "$lcr_descriptives"
-set graphics on
-
-	* graph 
-graph box total_patents, mark(1, mlab(company_name)) ///
-	title("Identification of outliers in terms of total patents") ///
-	name(outlier_patents, replace)
-gr export outlier_patents.png, replace
-
-graph box solarpatents, mark(1, mlab(company_name)) ///
-	title("Identification of outliers in terms of solar patents") ///
-	name(outlier_solarpatents, replace)
-gr export outlier_solarpatents.png, replace
-	
-	* define dummy for outliers
 gen patent_outliers = 0
 replace patent_outliers = 1 if company_name == "bosch" | company_name == "sunedison" /* | company_name == "bharat" | company_name == "larsen" */
 
 ***********************************************************************
-* 	PART 9: electronics vs. rest sector dummy
+* 	PART 10: electronics
 ***********************************************************************
 gen electronics = 0
 replace electronics = 1 if sector == 6
@@ -181,7 +152,7 @@ lab def electro 1 "Firm in electronics sector" 0 "other sector"
 lab val electronics electro
 
 ***********************************************************************
-* 	PART 10: transform sales & employees variables	  					  			
+* 	PART 11: transform sales & employees variables
 ***********************************************************************
 	* sales: ihs transformation used given both zeros and extreme values
 ihstrans total_revenue
@@ -200,9 +171,8 @@ lab var diff_revenue "Difference in Revenues pre- vs. post-LCR"
 gen log_total_employees = log(total_employees)
 kdensity log_total_employees
 
-
 ***********************************************************************
-* 	PART 11: Create variables to display share of LCR auctions	  					  			
+* 	PART 12: Create variables to display share of LCR auctions	  					  			
 ***********************************************************************
 *Share of LCR particitation among total
 gen share_lcr_part = total_auctions_lcr/total_auctions
@@ -219,10 +189,5 @@ gen share_lcr_mw_allocated = quantity_allocated_mw_lcr/ quantity_allocated_mw_to
 ***********************************************************************
 * 	Save the changes made to the data		  			
 ***********************************************************************
-set graphics off 
-
-	* set export directory
-cd "$lcr_final"
-
 	* save dta file
-save "lcr_final", replace
+save "${lcr_final}/lcr_final", replace

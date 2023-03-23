@@ -71,7 +71,7 @@ set scheme plotplain
 		* dynamic folder path for gdrive(data,output), github(code), backup(local computer)
 if c(os) == "Windows" {
 	global lcr_gdrive = "G:"
-	global lcr_github = "C:/Users/`c(username)'/Documents/GitHub/India_lcr/do-files"
+	global lcr_github = "C:/Users/`c(username)'/Documents/GitHub/India_lcr_replication_package/do-files"
 	
 }
 
@@ -251,47 +251,35 @@ if (1) do "${lcr_github}/cs_generate.do"
 /* --------------------------------------------------------------------
 	PART 7.0: descriptive statitics
 ----------------------------------------------------------------------*/	
-if (0) do "${lcr_github}/lcr_descriptives.do"
+if (0) do "${lcr_github}/cs_descriptives.do"
 /* --------------------------------------------------------------------
-	PART 7.1: select variables to include into matching model
+	PART 7.1.: select model for estimation of propensity score
 ----------------------------------------------------------------------*/	
-if (0) do "${lcr_github}/lcr_model_choice.do"
+if (1) do "${lcr_github}/cs_variable_choice.do"
 /* --------------------------------------------------------------------
-	PART 7.2.: select model for estimation of propensity score
+	PART 7.2.: estimate the propensity score
 ----------------------------------------------------------------------*/	
-if (1) do "${lcr_github}/lcr_variable_choice.do"
+if (1) do "${lcr_github}/cs_ps_estimation.do"
 /* --------------------------------------------------------------------
-	PART 7.3.: estimate the propensity score
-----------------------------------------------------------------------*/	
-if (1) do "${lcr_github}/lcr_ps_estimation.do"
-/* --------------------------------------------------------------------
-	PART 7.4.: evaluate common support
+	PART 7.3.: evaluate common support
 ----------------------------------------------------------------------*/
-if (1) do "${lcr_github}/lcr_common_support.do"
+if (1) do "${lcr_github}/cs_common_support.do"
 /* --------------------------------------------------------------------
-	PART 7.5.: PSM estimation
+	PART 7.4.: PSM regressions - get weights
 ----------------------------------------------------------------------*/
-if (1) do "${lcr_github}/lcr_main_regression.do"
+if (1) do "${lcr_github}/cs_regression.do"
 /* --------------------------------------------------------------------
-	PART 7.6.: power size calculations
+	PART 7.5.: Assess quality of match in terms of reduction in bias
 ----------------------------------------------------------------------*/
-if (0) do "${lcr_github}/power.do"
+if (1) do "${lcr_github}/cs_match_quality.do"
 /* --------------------------------------------------------------------
-	PART 7.7.: Assess quality of match in terms of reduction in bias
+	PART 7.6.: DiD combined with matching
 ----------------------------------------------------------------------*/
-if (1) do "${lcr_github}/lcr_match_quality.do"
+if (1) do "${lcr_github}/cs_did_matching.do"
 /* --------------------------------------------------------------------
-	PART 7.8.: DiD combined with matching
+	PART 7.7.: Cross-section heterogeneity: Who patented?
 ----------------------------------------------------------------------*/
-if (0) do "${lcr_github}/lcr_did_matching.do"
-/* --------------------------------------------------------------------
-	PART 7.9.: Robust 1: use "teffects psmatch" command
-----------------------------------------------------------------------*/
-if (0) do "${lcr_github}/lcr_teffects_psmatch.do"
-/* --------------------------------------------------------------------
-	PART 7.10.: Cross-section heterogeneity: Who patented?
-----------------------------------------------------------------------*/
-if (0) do "${lcr_github}/lcr_crosssection_hetero.do"
+if (1) do "${lcr_github}/cs_hetero.do"
 }
 
 
@@ -303,7 +291,7 @@ if (0) do "${lcr_github}/lcr_crosssection_hetero.do"
 	PART 8.1: Merge auction panel, patent panel, employees/sales panel
 	Creates: event_study_raw.dta
 ----------------------------------------------------------------------*/
-if (1) do "${lcr_github}/merge_firmyeardata.do"
+if (1) do "${lcr_github}/event_merge.do"
 /* --------------------------------------------------------------------
 	PART 8.2: Prepare data set
 	Creates: event_study_final.dta
@@ -320,11 +308,11 @@ if (1) do "${lcr_github}/event_study.do"
 /* --------------------------------------------------------------------
 	PART 8.5: Run staggered Did
 ----------------------------------------------------------------------*/
-if (1) do "${lcr_github}/callaway_santanna.do"
+if (1) do "${lcr_github}/event_callaway_santanna.do"
 /* --------------------------------------------------------------------
 	PART 8.6: Panel heterogeneity
 ----------------------------------------------------------------------*/
-if (1) do "${lcr_github}/panel_hetero.do"
+if (1) do "${lcr_github}/event_hetero.do"
 
 }
 
@@ -337,15 +325,15 @@ if (1) do "${lcr_github}/panel_hetero.do"
 /* --------------------------------------------------------------------
 	PART 9.1: Calculate (ex-post) power
 ----------------------------------------------------------------------*/
-if (1) do "${lcr_github}/lcr_post_power.do"
+if (1) do "${lcr_github}/mechanism_post_power.do"
 /* --------------------------------------------------------------------
 	PART 9.2: Check which type of solar patents were filed
 ----------------------------------------------------------------------*/
-if (0) do "${lcr_github}/patent_analysis.do"
+if (0) do "${lcr_github}/mechanism_patents.do"
 /* --------------------------------------------------------------------
 	PART 9.3: demand shock from LCRs in MW & financial value of modules
 ----------------------------------------------------------------------*/
-if (1) do "${lcr_github}/lcr_demand_shock.do"
+if (1) do "${lcr_github}/mechanism_demand_shock.do"
 
 }
 
