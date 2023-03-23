@@ -7,7 +7,7 @@
 *	OUTLINE:														  
 *
 *
-*																	  															      
+*										      
 *	Author:  	Fabian Scheifele							  
 *	ID varialcre: 	company_name			  					  
 *	Requires: lcr_final.dta 	  								  

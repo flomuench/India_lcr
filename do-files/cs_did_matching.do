@@ -1,5 +1,5 @@
 ***********************************************************************
-* 			main regression - the effect of LCR on innovation									  	  
+* 	LCR India - 							  	  
 ***********************************************************************
 *																	    
 *	PURPOSE: estimation of effect of LCR on solar patents based
@@ -9,12 +9,12 @@
 *
 *
 *																	  															      
-*	Author:  	Florian Muench 							  
-*	ID varialcre: 	company_name			  					  
+*	Author:  	Florian Münch, Fabian Scheifele
+*	ID variable: 	company_name			  					  
 *	Requires: lcr_final.dta 	  								  
 *	Creates:  lcr_final.dta			                          
 *
-*	information about automatically exporting att from psmatch2: https://stackoverflow.com/questions/59950622/export-att-result-after-psmatch2-command										  
+*									  
 ***********************************************************************
 * 	PART 1:  set the scene  			
 ***********************************************************************
