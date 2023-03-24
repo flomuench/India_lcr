@@ -1,14 +1,19 @@
 ***********************************************************************
-* 			lcr India paper: visualize staggered Did, outcomes
-***********************************************************************														  
-*	PURPOSE: visualize t			  								  
-*				  
-*																	  
-*	OUTLINE:														  
-*	Author: Florian, Fabian  														  
+* 			LCR India: visualize panel data
+***********************************************************************
+*
+*	PURPOSE: visualize outcomes & treatment status over time
+*				  		  
+*	OUTLINE:		
+*	1)		import panel data set
+*	2)		visualize solar patents
+*	3)		visualize revenue
+*	4)		visualize timing in LCR/treatment participation
+*												  
+*	Author: Florian Münch, Fabian Scheifele
 *	ID variable: company_name, year	  									  
 *	Requires:	event_study_final
-
+*
 ***********************************************************************
 * 	PART 1: import panel data set					
 ***********************************************************************
@@ -17,11 +22,10 @@ use "${lcr_final}/event_study_final", clear
 set graphics on
 
 xtset company_name year
+
 ***********************************************************************
 * 	PART 2: visualize solar patents
 ***********************************************************************
-* xtline
-
 xtline solarpatent, overlay legend(off) ///
 	xlabel(2005 2006 2007 2008 2009 2010 2011 "{bf:2011}" 2012 2013 "{bf:2013}" 2014 2015 2016 2017 "{bf:2017}" 2018 2019 2020, labs(small) nogrid) ///
 	xline(2011 2013 2017) ///
@@ -43,7 +47,7 @@ xtline solarpatent, overlay legend(off) ///
 	text(15 2013 "LCR introduced", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5)) ///
 	text(5 2017 "LCR ended", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5))
 
-* panelview
+	* using panelview instead of xtline
 panelview solarpatent d_winner, i(company_name) t(year) type(outcome) ///
 	xlabel(2005 2006 2007 2008 2009 2010 2011 "{bf:2011}" 2012 2013 "{bf:2013}" 2014 2015 2016 2017 "{bf:2017}" 2018 2019 2020, labs(small) nogrid) ///
 	xtitle("Year") ytitle("Solar Patents") title("") ///
@@ -61,7 +65,7 @@ gr export "${lcr_descriptives}/panelview_patents_winner_b2.png", replace
 ***********************************************************************
 * 	PART 3: visualize revenue
 ***********************************************************************
-* panelview
+		* panelview
 panelview ihs_total_revenue d_winner, i(company_name) t(year) type(outcome) ///
 	xlabel(2005 2006 2007 2008 2009 2010 2011 "{bf:2011}" 2012 2013 "{bf:2013}" 2014 2015 2016 2017 "{bf:2017}" 2018 2019 2020, labs(small) nogrid) ///
 	xtitle("Year") ytitle("ihs. total revenue") title("") ///
@@ -75,7 +79,7 @@ panelview ihs_total_revenue d_winner, i(company_name) t(year) type(outcome) ///
 	name(panelview_revenue_winner_b2, replace)
 gr export "${lcr_descriptives}/panelview_revenue_winner_b2.png", replace
 
-*Visualise revenue by LCR winners and open winners over time
+		* Visualise revenue by LCR winners and open winners over time
 frame put ihs_total_revenue total_revenue year lcr_winner, into(revenue_frame)
 frame change revenue_frame
 collapse ihs_total_revenue total_revenue, by(year lcr_winner)
@@ -95,6 +99,7 @@ gr export "${final_figures}/avg_revenues_bn.png", replace
 	
 frame change default
 frame drop revenue_frame
+
 ***********************************************************************
 * 	PART 4: visualize timing in LCR/treatment participation
 ***********************************************************************
@@ -135,26 +140,6 @@ panelview d_lcrwon_nsm_panel, i(company_name_str) t(year) type(treat) prepost by
 gr export "${lcr_descriptives}/panel_auctions_won_b1.png", replace
 	
 	
-	
-/*
-firmyear_auction.dta
-tab year if won_lcr > 0
-    year of |
-    auction |      Freq.     Percent        Cum.
-------------+-----------------------------------
-       2013 |         16       61.54       61.54
-       2014 |          1        3.85       65.38
-       2015 |          2        7.69       73.08
-       2016 |          6       23.08       96.15
-       2017 |          1        3.85      100.00
-------------+-----------------------------------
-      Total |         26      100.00
-
-
-
-*/
-
-
 
 drop company_name_str
 

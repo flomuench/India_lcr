@@ -282,7 +282,6 @@ if (1) do "${lcr_github}/cs_did_matching.do"
 if (1) do "${lcr_github}/cs_hetero.do"
 }
 
-
 ***********************************************************************
 * 	PART 8: 	Run do-files for firm-year panel, event study
 ***********************************************************************
@@ -293,31 +292,30 @@ if (1) do "${lcr_github}/cs_hetero.do"
 ----------------------------------------------------------------------*/
 if (1) do "${lcr_github}/event_merge.do"
 /* --------------------------------------------------------------------
-	PART 8.2: Prepare data set
-	Creates: event_study_final.dta
+	PART 8.2: Clean and correct to put into panel format
+	Creates: event_study_inter.dta
 ----------------------------------------------------------------------*/
 if (1) do "${lcr_github}/event_clean.do"
 /* --------------------------------------------------------------------
-	PART 8.3: Visualize
+	PART 8.3: Generate panel-level variables for analysis
+	Creates: event_study_final.dta
+----------------------------------------------------------------------*/
+if (1) do "${lcr_github}/event_generate.do"
+/* --------------------------------------------------------------------
+	PART 8.4: Visualize
 ----------------------------------------------------------------------*/
 if (1) do "${lcr_github}/event_visualize.do"
 /* --------------------------------------------------------------------
-	PART 8.4: Event study/dynamic DiD
+	PART 8.5: Event study/dynamic DiD
 ----------------------------------------------------------------------*/
 if (1) do "${lcr_github}/event_study.do"
 /* --------------------------------------------------------------------
-	PART 8.5: Run staggered Did
+	PART 8.6: Staggered Did à la Callaway-Sant'Anna
 ----------------------------------------------------------------------*/
 if (1) do "${lcr_github}/event_callaway_santanna.do"
-/* --------------------------------------------------------------------
-	PART 8.6: Panel heterogeneity
-----------------------------------------------------------------------*/
-if (1) do "${lcr_github}/event_hetero.do"
 
 }
 
-
-}
 ***********************************************************************
 * 	PART 9: 	Run do-files for Interpretation & explanation of results
 ***********************************************************************

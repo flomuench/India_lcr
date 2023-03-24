@@ -1,5 +1,5 @@
 ***********************************************************************
-* 			lcr India paper: event or dynamic Did estimates		
+* 		India LCR: event or dynamic Did estimates		
 ***********************************************************************
 *																	   
 *	PURPOSE: examine effect of LCR on firm innovation		  								  
@@ -9,15 +9,15 @@
 *	1) prepare the ground
 *	2) unmatched event study
 *	3) matched event study
-*	Author: Florian Münch, Fabian Scheifele  														  
+*
+*	Author: Florian Münch, Fabian Scheifele
 *	ID variable: company_name, year		  									  
-*	Requires:	eventstudy_final
-*	Creates:	
-
+*	Requires:	event_study_final
+*
 ***********************************************************************
 * 	PART 1: import the collapsed dataset & declara as panel data	  						
 ***********************************************************************
-use "${lcr_final}/event_study", clear	
+use "${lcr_final}/event_study_final", clear	
 
 rename year_application year
 
@@ -163,73 +163,4 @@ gen year_offset = year+0.3
 			legend(order(2 "Matched (caliper = 0.1)" 4 "Unmatched") rows(1) pos(6)) ///
 			name(matched_unmatched_combined, replace)
 	graph export matched_unmatched_combined.png, replace
-	
-	
-	
-	
-	
-***********************************************************************
-* 	archive
-***********************************************************************
-	
-/*
-/*	
-
-***********************************************************************
-* 	PART 2:   revenue 
-***********************************************************************
-/*
-	* winsorize variable
-winsor2 total_revenue, cuts(0 95)
-ihstrans total_revenue_w
-
-
-preserve
-
-panelview ihs_total_revenue_w lcr, i(company_name) t(year_application) type(outcome) prepost
-
-preserve 
-collapse , by(year)
-
-tsline total_revenue
-
-twoway ///
-	(line total_revenue year_application if lcr == 1) ///
-	(line total_revenue year_application if lcr == 0)
-
-tsline solarpatent if year >= 2005, ///
-	legend(pos(6) row(1)) ///
-	xlabel(2005 2006 2007 2008 2009 2010 2011 "{bf:2011}" 2012 2013 "{bf:2013}" 2014 2015 2016 2017 "{bf:2017}" 2018 2019 2020, labs(small) nogrid) ///
-	xline(2011 2013 2017) ///
-	ylabel(0(5)25, nogrid) ///
-	ytitle("solar patents") ///
-	text(20 2011 "Auction scheme" "announced", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5)) ///
-	text(15 2013 "LCR introduced", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5)) ///
-	text(5 2017 "LCR ended", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5)) ///
-	name(spatents_ts, replace)
-gr export "${lcr_descriptives}/spatents_ts.png", replace
-
-*/
-	
-	* firm fixed effects
-xtreg solarpatent i.lcr##ib2010.year, fe vce(robust)
-
-	*FE poisson model
-xtpoisson solarpatent i.lcr##ib2010.year, fe vce(robust)
-
-	*zero-inflated model (does not converge
-		*solarpatent is zero for 1911/1955 firm-year instances (97%) so zero inflated model needed
-zinb solarpatent i.lcr##ib2010.year, inflate(i.year##lcr)
-*/
-
-		levelsof year, local(levels)
-foreach l of local levels {
-    local mylist "`mylist' `l'.year"
-}
-coefplot, xline (0) drop(_cons lcr `mylist' ) rename(^1.lcr#([0-9]+)year$ = \1, regex)
-*with firm-fixed effects (treatment alone is omitted now, but interaction terms still there)
-xtreg solarpatent i.year##lcr, fe
-coefplot, vertical drop(_cons 1.t_2004 1.t_2005 1.t_2006 1.t_2007 1.t_2008 1.t_2009 1.t_2010 1.t_2011 1.t_2012 1.t_2013 1.t_2014 1.t_2015 1.t_2016 1.t_2017 1.t_2018 1.t_2019 1.t_2020 1.lcr) yline(0) plotlabel(2004(1)2020)
-
-*/
 

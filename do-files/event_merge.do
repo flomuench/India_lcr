@@ -1,8 +1,8 @@
 ***********************************************************************
-* 			lcr India paper: create a balanced firm-year panel and test-pre trends					
+* 		LCR India: create panel dataset for event study					
 ***********************************************************************
 *																	   
-*	PURPOSE: 				  								  
+*	PURPOSE: combine auction, patent, sales & employees data sets
 *				  
 *																	  
 *	OUTLINE:														  
@@ -10,7 +10,7 @@
 *	2) merge with patent panel
 *	3) merge with sales & employees panel
 *
-*	Author: Florian, Fabian  														  
+*	Author: Florian Münch, Fabian Scheifele									  
 *	ID variable: company_name, year		  									  
 *	Requires:	firmyear_patents, firmyear_auction, firm_sales, firm_employees
 *	Creates:	event_study
@@ -37,7 +37,6 @@ merge 1:1 company_name year using "${lcr_final}/firmyear_patents", keepusing(sol
 
     Matched                               175  (_merge==3)
     -----------------------------------------
-
 */
 
 drop _merge
