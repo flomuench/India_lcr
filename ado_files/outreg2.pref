@@ -1,0 +1,3 @@
+31 May 2022
+using `"patents_interact_table.txt"'
+excel append ctitle("Patents in t") fmt(g) dec(2) label
