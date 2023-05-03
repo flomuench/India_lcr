@@ -86,7 +86,7 @@ gr export "${final_figures}/staggered_event_nsm2_cov2_boot90.png", replace
 local controls "indian manufacturer revenue_2010"
 csdid solarpatent `controls' if d_winner != ., ivar(company_name2) time(year) gvar(first_treat1) rseed(21112022) notyet level(95) dripw
 estat all
-estat event 
+estat event, estore(nsm2_cov) 
 csdid_plot, legend(pos(6) row(1)) ytitle(solar patents) ylabel(-2(1)5, nogrid) xtitle(Years to Treatment)
 gr export "${final_figures}/staggered_event_nsm1_cov.png", replace
 
@@ -134,7 +134,7 @@ gr export "${final_figures}/solarpatent_bin_staggered_event_nsm2.png", replace
 		* LCR auction winners, no covariates are chosen in the estimation of revenue treatment effects
 csdid total_revenue_billion if d_winner2 != ., ivar(company_name2) time(year) gvar(first_treat3) rseed(21112022) notyet level(95) 
 estat all
-estat event 
+estat event, estore(nsm2_cov_rev) 
 csdid_plot, legend(pos(6) row(1)) ytitle(Revenues in Bn. INR) ylabel(, nogrid) xtitle(Years to Treatment) ///
 		text(100 0 "ATT = -.16, CI = [-36.03; 4.03], z = -1.57", box lcolor(black) bcolor(white) margin(l+.5 t+.5 b+.5 r+.5))
 gr export "${final_figures}/revenue_staggered_event_nsm2.png", replace

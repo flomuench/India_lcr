@@ -93,10 +93,10 @@ foreach x in 0.05 /* 0.1 for some reason does not converge */ {
 	local ++i
 	
 		* caliper matching
-	psmatch2 lcr if patent_outlier == 0, radius caliper(`x') outcome(post_solar_patent) pscore(pscore_nooutliers)
+	psmatch2 lcr if patent_outliers == 0, radius caliper(`x') outcome(post_solar_patent) pscore(pscore_nooutliers)
 
 		* pre-matching standardised bias
-	pstest `matching_var' if patent_outlier == 0 & _weight != ., both rubin treated(lcr) graph ///
+	pstest `matching_var' if patent_outliers == 0 & _weight != ., both rubin treated(lcr) graph ///
 			title(Standardized bias LCR vs. no LCR firms) ///
 			subtitle(Post vs. pre-matching on caliper = `x') ///
 			ylabel(-60(5)60, labs(vsmall)) ///
@@ -106,7 +106,7 @@ foreach x in 0.05 /* 0.1 for some reason does not converge */ {
 	gr export bias_nooutliers_radius`i'.png, replace
 
 		* table 1 / balance table post matching
-	iebaltab `matching_var' if patent_outlier == 0 [iweight=_weight], grpvar(lcr) savetex(baltab_post_nooutliers_radius`i') replace ///
+	iebaltab `matching_var' if patent_outliers == 0 [iweight=_weight], grpvar(lcr) savetex(baltab_post_nooutliers_radius`i') replace ///
 			 vce(robust) pttest rowvarlabels balmiss(mean) onerow stdev notecombine ///
 			 format(%12.2fc)
 }

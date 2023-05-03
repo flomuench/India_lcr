@@ -53,12 +53,12 @@ frame copy default solar_patent_time_series, replace
 frame change solar_patent_time_series
 
 collapse (sum) solarpatent, by (year_application lcr_participation)
-reshape wide solarpatent, i(year) j(lcr_participation)
+reshape wide solarpatent, i(year_application) j(lcr_participation)
 drop if year_application == .
 replace solarpatent0 = 0 if solarpatent0 == .
 replace solarpatent1 = 0 if solarpatent1 == .
 
-tsset year
+tsset year_application
 tsline solarpatent1 solarpatent0  if year_application >= 2005, ///
 	legend(ring(0) pos(9) row(2) order(1 "LCR participants" 2 "No LCR")) ///
 	xlabel(2005 2006 2007 2008 2009 2010 2011 "{bf:2011}" 2012 2013 "{bf:2013}" 2014 2015 2016 2017 "{bf:2017}" 2018 2019 2020, labs(small) nogrid) ///
@@ -82,7 +82,7 @@ frame drop solar_patent_time_series
 format title abstract %-150s
 format abstract %-300s
 sort company_name year_application
-br if solarpatent == 1 & lcr == 1 & year_application > 2013
+br if solarpatent == 1 & lcr_participation == 1 & year_application > 2013
 
 /*
 Note, only 5 companies in the LCR group have filed a patent after LCR. 
@@ -123,7 +123,7 @@ Vikram (1)
 
 */
 
-br if solarpatent == 1 & lcr == 0 & year_application > 2013
+br if solarpatent == 1 & lcr_participation == 0 & year_application > 2013
 
 /* 
 Mahindra (6)

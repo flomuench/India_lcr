@@ -33,7 +33,7 @@ use "${lcr_intermediate}/lcr_inter", clear
 ***********************************************************************
 gen dif_solar_patents = post_solar_patent-pre_solar_patent
 lab var dif_solar_patents "Pre-Post diff. solar patents"
-*gen dif_modcell_patents = post_modcell_patent - pre_modcell_patent
+gen dif_modcell_patents = post_modcell_patent - pre_modcell_patent
 *br company_name dif_solar_patents post_solar_patent pre_solar_patent
 
 

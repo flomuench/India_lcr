@@ -1,0 +1,37 @@
+\begin{table}[htbp]\centering \\  \def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi} \\ \caption{Results of Matching combined with Difference in Differences} \\ \begin{tabular}{l*{8}{c}} \hline\hline
+                    &                     &                     &   All firms         &                     &Winner firms         &                     &All w/o outliers         &                     \\
+                    &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}&\multicolumn{1}{c}{(3)}&\multicolumn{1}{c}{(4)}&\multicolumn{1}{c}{(5)}&\multicolumn{1}{c}{(6)}&\multicolumn{1}{c}{(7)}&\multicolumn{1}{c}{(8)}\\
+                    &\multicolumn{1}{c}{Simple post difference}&\multicolumn{1}{c}{DiD}&\multicolumn{1}{c}{caliper = 0.1}&\multicolumn{1}{c}{caliper = 0.05}&\multicolumn{1}{c}{caliper = 0.1}&\multicolumn{1}{c}{caliper = 0.05}&\multicolumn{1}{c}{caliper = 0.1}&\multicolumn{1}{c}{caliper = 0.05}\\
+\hline \\ \multicolumn{8}{c}{\textbf{Panel A: Solar PV Patents}} \\\\[-1ex]
+participated in LCR &        0.99\sym{*}  &        0.44         &       -0.06         &       -0.03         &       -0.93         &       -0.80         &       -0.85         &       -0.78         \\
+                    &      (0.58)         &      (0.57)         &      (0.82)         &      (0.83)         &      (1.48)         &      (0.76)         &      (0.85)         &      (0.69)         \\
+[1em]
+Constant            &        0.40         &        0.37\sym{*}  &        0.89         &        0.87         &        1.45         &        0.80         &        1.00         &        0.82         \\
+                    &      (0.31)         &      (0.19)         &      (0.59)         &      (0.58)         &      (1.44)         &      (0.76)         &      (0.84)         &      (0.69)         \\
+\hline
+Observations        &         113         &         113         &         110         &         109         &          66         &          60         &         106         &         104         \\
+\hline \\ \multicolumn{8}{c}{\textbf{Panel B: PV Module \& PV Cell Patents only}} \\\\[-1ex]
+participated in LCR &        0.61         &        0.25         &       -0.33         &       -0.36         &       -0.69         &       -0.65         &       -0.47         &       -0.54         \\
+                    &      (0.38)         &      (0.27)         &      (0.50)         &      (0.50)         &      (1.24)         &      (0.63)         &      (0.74)         &      (0.58)         \\
+[1em]
+Constant            &        0.21         &        0.20         &        0.65         &        0.66         &        1.21         &        0.65         &        0.72         &        0.58         \\
+                    &      (0.21)         &      (0.14)         &      (0.46)         &      (0.46)         &      (1.20)         &      (0.63)         &      (0.72)         &      (0.58)         \\
+\hline
+Observations        &         113         &         113         &         110         &         109         &          66         &          60         &         106         &         104         \\
+\hline \\ \multicolumn{8}{c}{\textbf{Panel C: Post-LCR solar patent (binary)}} \\\\[-1ex]
+participated in LCR &        0.06         &       -0.00         &       -0.05         &       -0.07         &       -0.12         &       -0.17         &       -0.13         &       -0.16         \\
+                    &      (0.06)         &      (0.07)         &      (0.10)         &      (0.10)         &      (0.25)         &      (0.12)         &      (0.15)         &      (0.12)         \\
+[1em]
+Constant            &        0.09\sym{**} &        0.06\sym{*}  &        0.18\sym{**} &        0.17\sym{**} &        0.27         &        0.17         &        0.23\sym{*}  &        0.20\sym{*}  \\
+                    &      (0.03)         &      (0.03)         &      (0.08)         &      (0.08)         &      (0.23)         &      (0.12)         &      (0.14)         &      (0.12)         \\
+\hline
+Observations        &         113         &         113         &         110         &         109         &          66         &          60         &         106         &         104         \\
+\hline \\ \multicolumn{8}{c}{\textbf{Panel D: Revenues (in INR)}} \\\\[-1ex]
+participated in LCR &   -2.00e+10         &   -2.00e+10         &   -1.29e+10         &   -1.04e+10         &   -3.07e+10\sym{*}  &   -1.97e+10         &   -2.81e+09         &   -6.60e+09         \\
+                    &  (1.33e+10)         &  (1.24e+10)         &  (8.15e+09)         &  (6.86e+09)         &  (1.76e+10)         &  (1.22e+10)         &  (4.18e+09)         &  (4.93e+09)         \\
+[1em]
+Constant            &    1.49e+10\sym{**} &    1.49e+10\sym{*}  &    1.76e+10\sym{**} &    1.49e+10\sym{**} &    1.91e+10\sym{**} &    2.13e+10\sym{*}  &    7.47e+09\sym{*}  &    9.95e+09\sym{**} \\
+                    &  (7.16e+09)         &  (7.57e+09)         &  (8.00e+09)         &  (6.68e+09)         &  (8.51e+09)         &  (1.21e+10)         &  (3.89e+09)         &  (4.67e+09)         \\
+\hline
+Observations        &         113         &         113         &         110         &         109         &          66         &          60         &         108         &         104         \\
+\hline\hline\hline \multicolumn{8}{l}{\footnotesize Results in columns (1) \& (2) use unmatched counterfactuals and columns (3)-(8) use matched counterfactuals based on the specified parameters. }\\\multicolumn{5}{l}{\footnotesize Robust Standard errors in parentheses}\\\multicolumn{2}{l}{\footnotesize \sym{**} \(p<0.05\), \sym{*} \(p<0.1\)}\\ \end{tabular} \\ \end{table}

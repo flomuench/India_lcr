@@ -36,7 +36,7 @@ cd "$final_figures"
 * 	PART 2: balance table			
 ************************************************************************
 	* sample level statistics
-local firm_characteristics indian patentor pre_not_solar_patent pre_solar_patent post_solar_patent post_not_solar_patent soe age energy_focus manufacturer manufacturer_solar subsidiary 
+local firm_characteristics indian patentor pre_not_solar_patent pre_solar_patent post_solar_patent post_not_solar_patent soe_india age energy_focus manufacturer manufacturer_solar subsidiary 
 iebaltab `firm_characteristics', grpvar(lcr) save(baltab_firmlevel) replace ///
 			 vce(robust) pttest rowvarlabels balmiss(mean) onerow stdev notecombine ///
 			 format(%12.2fc)	
@@ -58,6 +58,17 @@ esttab . using table1.tex, cells("mean(fmt(a3)) sd(fmt(a3)) min(fmt(a3)) max(fmt
 	title("Descriptive Statistics"\label{table1}) ///
 	label
 	
+
+************************************************************************
+* 	PART 4: Figure 5		
+************************************************************************
+local prepostsolar pre_solar_patent post_solar_patent
+graph bar (sum)  `prepostsolar', over(lcr, label(labs(large))) ///
+	blabel(total, size(medium)) ///
+	legend(label(1 "solar patents 2001-2010") label(2 "solar patents 2011-2020") rows(1) pos(6)) ///
+	name(prepost_solar_LCR, replace)
+gr export prepost_solar_LCR.png, replace
+	
 ************************************************************************
 * 	PART 4: Figure 12 Share of LCR auction wins among LCR firms
 ************************************************************************
@@ -72,13 +83,17 @@ graph hbar (count), over(sector) by(lcr, note("") iscale(0.8)) blabel(bar) ///
 	ytitle("Number of firms")
 graph export firms_frequency_sector.png, replace
 
+************************************************************************
+* 	PART 5: Figure 14
+************************************************************************
+graph hbar (sum) solarpatents, over (sector) by(lcr, note("") iscale(0.8)) ///
+ ytitle("Number of solar patents") blabel (bar) 
+graph export solarpatents_sector.png, replace
+
+
 ***********************************************************************
 * 	PART 6: Figure 15 Solar patents by manufacturing status and auction type				
 ************************************************************************
-graph bar (sum) pre_solar_patentor post_solar_patentor if won_total>0 ,  by(lcr_won, note("") iscale(0.8)) ///
-	over(manufacturer, lab(labs(small))) blabel(bar, pos(center)) legend(pos(6)  ///
-	label (1 "No. of firms that filed solar patents prior to LCR policy") label(2 "No of firms that filed solar patents after introduction of LCR policy"))
-
 graph bar (sum) pre_solar_patent post_solar_patent if won_total>0 ,  by(winner_types, note("") iscale(0.8) ) ///
 	over(manufacturer, lab(labs(small))) blabel(bar, pos(center)) legend(pos(6)  ///
 	label (1 "No. of solar patents prior to announcement of LCR policy (pre-2011)") label(2 "No of solar patents after announcement of LCR policy (2011-2020)"))

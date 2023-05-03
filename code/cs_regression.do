@@ -29,7 +29,7 @@ use "${lcr_final}/lcr_final", clear
 	* set the directory
 *cd "$lcr_rt"
 cd "$lcr_final"
-
+set scheme plotplain
 *in case weight variables were saved from previous version, they are dropped here now
 
 	* generate random order of observations

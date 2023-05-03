@@ -29,10 +29,10 @@ frame change patent_cross_section
 
 
 	* collapse patents on firm-level & time (historic, pre, post LCR)
-collapse (sum) solarpatent not_solar_patent onepatent, by(company_name post2) // modcell_patent
-reshape wide solarpatent not_solar_patent onepatent, i(company_name) j(post2) // modcell_patent
+collapse (sum) solarpatent not_solar_patent onepatent modcell_patent, by(company_name post2) // modcell_patent
+reshape wide solarpatent not_solar_patent onepatent modcell_patent, i(company_name) j(post2) // modcell_patent
 forvalues z = 1(1)3 {
-	foreach x in solarpatent`z' not_solar_patent`z' onepatent`z' {  // modcell_patent`z'
+	foreach x in solarpatent`z' not_solar_patent`z' onepatent`z'  modcell_patent`z' {  // modcell_patent`z'
 		replace `x' = 0 if `x' == .
 	}
 }	
@@ -48,9 +48,9 @@ rename onepatent1 historic_total_patent
 rename onepatent2 pre_total_patent
 rename onepatent3 post_total_patent
 
-*rename modcell_patent1 historic_modcell_patent
-*rename modcell_patent2 pre_modcell_patent
-*rename modcell_patent3 post_modcell_patent
+rename modcell_patent1 historic_modcell_patent
+rename modcell_patent2 pre_modcell_patent
+rename modcell_patent3 post_modcell_patent
 
 lab var historic_solar_patent "solar patents 1982-2000"
 lab var pre_solar_patent "solar patents 2001-2010"
@@ -64,9 +64,9 @@ lab var historic_total_patent "total patents 1982-2000"
 lab var pre_total_patent "total patents 2005-2010"
 lab var post_total_patent "total patents 2011-2020"
 
-*lab var historic_modcell_patent "module & cell patents 1982-2000"
-*lab var pre_modcell_patent "module & cell patents 2005-2010"
-*lab var post_modcell_patent "module & cell patents 2011-2020"
+lab var historic_modcell_patent "module & cell patents 1982-2000"
+lab var pre_modcell_patent "module & cell patents 2005-2010"
+lab var post_modcell_patent "module & cell patents 2011-2020"
 
 save "${lcr_final}/patent_cross_section.dta", replace
 frame change default
@@ -84,7 +84,7 @@ tab solarpatent if year_publication == . /* no solar patent are concerned */
 
 
 	* collapse data to company-year panel
-collapse (sum) solarpatent not_solar_patent onepatent, by(company_name year_application) // modcell_patent
+collapse (sum) solarpatent not_solar_patent onepatent modcell_patent, by(company_name year_application) // modcell_patent
 rename year_application year
 
 	*Cut off all years before 2004
@@ -111,7 +111,7 @@ rename company_name4 company_name
 
 	*replace missing values of newly created firm-year instances with zero
 *tsfill, full
-local patents solarpatent not_solar_patent onepatent // modcell_patent
+local patents solarpatent not_solar_patent onepatent modcell_patent // modcell_patent
 foreach var of local patents {
 		replace `var' = 0 if `var' == .
 	}

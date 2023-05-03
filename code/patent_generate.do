@@ -57,21 +57,21 @@ foreach company of local lcr_participants {
 }
 
 	* number of LCR firms that also patented
-codebook company_name if lcr == 1 /* 10 */
-codebook company_name if lcr == 1 & solarpatent == 1 /* 6 firms in LCR also have solarpatent */
+codebook company_name if lcr_participation == 1 /* 10 */
+codebook company_name if lcr_participation == 1 & solarpatent == 1 /* 6 firms in LCR also have solarpatent */
 
 
 
 ***********************************************************************
 * 	PART 4: create a dummy for cell/module patents only (rather than solar patents)					
 ***********************************************************************
-/*
+
 	* re-name some of the elements for better understanding
 replace subgroups = "cells or panels" if subgroups == "Combinations of the groups above"
 replace subgroups = "H02N6/00" if ipc == "H02N6/00"
 replace subgroups = "common cell elements" if subgroups == "Common Elements"
-replace group= "cells or panels" if subgroups == "cells or panels"
-replace group = "H02N6/00" if subgroups == "H02N6/00"
+replace groups= "cells or panels" if subgroups == "cells or panels"
+replace groups = "H02N6/00" if subgroups == "H02N6/00"
 replace subgroups = "Thin film technologies" if subgroups == "Thin-<U+FB01>lm Technologies"
 
 	* eye-ball the data to get better understanding of patents in different IPC subgroups
@@ -109,7 +109,7 @@ gen modcell_patent = 0
 	replace modcell_patent = 1 if subgroups == "Roof Covering and Supporting Structures"
 	replace modcell_patent = 1 if subgroups == "cells or panels"
 	replace modcell_patent = 1 if subgroups == "common cell elements"
-*/
+
 
 
 ***********************************************************************

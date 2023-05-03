@@ -28,6 +28,10 @@ set graphics off /* switch off to on to display graphs */
 capture program drop zscore /* drops the program programname */
 qui cap log c
 
+	*IF you dont have the following packages installed, please first install them: 
+	*ssc install blindschemes
+	*ssc install estout
+
 	* define graph scheme for visual outputs
 *set scheme burd
 set scheme plotplain
@@ -42,20 +46,20 @@ if c(os) == "Windows" {
 }
 		
 		* code
-global code = "${user_location}/India_lcr_replication_package/code"
+global code = "${user_location}/India_lcr/code"
 		
 		* ado-files
-global ado_files = "${user_location}/India_lcr_replication_package/ado_files"
+global ado_files = "${user_location}/India_lcr/ado_files"
 sysdir set PLUS "${ado_files}"	// set system directory for ado-files to make sure all packages are available locally
 
 		* data
-global data = "${user_location}/India_lcr_replication_package/data"
+global data = "${user_location}/India_lcr/data"
 global lcr_raw = "${data}/raw"
 global lcr_intermediate = "${data}/intermediate"
 global lcr_final = "${data}/final"
 
 		* output
-global output = "${user_location}/India_lcr_replication_package/output"
+global output = "${user_location}/India_lcr/output"
 global lcr_rt = "${output}/regression-tables"
 global lcr_descriptives = "${output}/descriptive-statistics-figures"
 global lcr_psm = "${output}/propensity-score-matching"
@@ -65,7 +69,7 @@ global final_figures = "${output}/final-figures"
 		* dynamic folder path for gdrive(data,output), github(code), backup(local computer)
 if c(os) == "Windows" {
 	global lcr_gdrive = "G:"
-	global lcr_github = "C:/Users/`c(username)'/Documents/GitHub/India_lcr_replication_package/do-files"
+	global lcr_github = "C:/Users/`c(username)'/Documents/GitHub/India_lcr/do-files"
 	
 }
 
@@ -244,7 +248,7 @@ if (1) do "${code}/cs_generate.do"
 /* --------------------------------------------------------------------
 	PART 7.0: descriptive statitics
 ----------------------------------------------------------------------*/	
-if (0) do "${code}/cs_descriptives.do"
+if (1) do "${code}/cs_descriptives.do"
 /* --------------------------------------------------------------------
 	PART 7.1.: select model for estimation of propensity score
 ----------------------------------------------------------------------*/	
@@ -293,11 +297,11 @@ if (1) do "${code}/event_generate.do"
 /* --------------------------------------------------------------------
 	PART 8.4: Visualize
 ----------------------------------------------------------------------*/
-if (1) do "${code}/event_visualize.do"
+if (0) do "${code}/event_visualize.do"
 /* --------------------------------------------------------------------
-	PART 8.5: Event study/dynamic DiD
+	PART 8.5: Event study/dynamic DiD (KANN raus oder???)
 ----------------------------------------------------------------------*/
-if (1) do "${code}/event_study.do"
+if (0) do "${code}/event_study.do"
 /* --------------------------------------------------------------------
 	PART 8.6: Staggered Did à la Callaway-Sant'Anna
 ----------------------------------------------------------------------*/

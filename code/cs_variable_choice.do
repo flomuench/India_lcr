@@ -8,7 +8,7 @@
 *	OUTLINE:														  
 *	1) set the scene
 *	2) iteratively test-up - all observations
-*	3) iteratively test-up	- excluding patent_outlier
+*	3) iteratively test-up	- excluding patent_outliers
 *	4) iteratively test-up	- only winners
 *	5) iteratively test-up	- won lcr vs. did not win lcr, w/o outlier Barat, Sunedison
 *	6) explore pre-matching balance in selected variables
@@ -123,60 +123,60 @@ esttab `regressions' using variable_choice_all.tex, replace ///
 	addnotes("All estimtes are based on a Logit model with robust standard errors in parentheses.")	
 }
 ***********************************************************************
-* 	PART 3: iteratively test-up	- excluding patent_outlier
+* 	PART 3: iteratively test-up	- excluding patent_outliers
 ***********************************************************************
 {
 			* (1-3) indian
-_eststo indian, r: logit lcr i.indian if patent_outlier == 0, vce(robust)
-*_eststo india_state, r: logit lcr i.hq_indian_state if patent_outlier == 0, vce(robust)
-_eststo india_capital, r: logit lcr i.capital if patent_outlier == 0, vce(robust)
+_eststo indian, r: logit lcr i.indian if patent_outliers == 0, vce(robust)
+*_eststo india_state, r: logit lcr i.hq_indian_state if patent_outliers == 0, vce(robust)
+_eststo india_capital, r: logit lcr i.capital if patent_outliers == 0, vce(robust)
 
 		* (4) pre patented
-_eststo patentor, r: logit lcr i.indian i.patentor if patent_outlier == 0, vce(robust)
+_eststo patentor, r: logit lcr i.indian i.patentor if patent_outliers == 0, vce(robust)
 		
 		* (5) pre amount of other patents
-_eststo otherprepatents, r: logit lcr i.indian ihs_pre_not_solar_patent if patent_outlier == 0, vce(robust)
+_eststo otherprepatents, r: logit lcr i.indian ihs_pre_not_solar_patent if patent_outliers == 0, vce(robust)
 
 		* (6) pre solar patents
-_eststo solarprepatents, r: logit lcr i.indian pre_solar_patent if patent_outlier == 0, vce(robust)
+_eststo solarprepatents, r: logit lcr i.indian pre_solar_patent if patent_outliers == 0, vce(robust)
 
 		* (7) total_revenue
-_eststo size1, r: logit lcr i.indian ihs_total_revenue if patent_outlier == 0, vce(robust)
+_eststo size1, r: logit lcr i.indian ihs_total_revenue if patent_outliers == 0, vce(robust)
 
 		* (8) total_employees
-_eststo size2, r: logit lcr i.indian log_total_employees if patent_outlier == 0, vce(robust)
-*_eststo size2, r: logit lcr total_revenue empl if patent_outlier == 0, vce(robust)
+_eststo size2, r: logit lcr i.indian log_total_employees if patent_outliers == 0, vce(robust)
+*_eststo size2, r: logit lcr total_revenue empl if patent_outliers == 0, vce(robust)
 
 		* (9) sector
-_eststo lob, r: logit lcr i.indian i.sector if patent_outlier == 0, vce(robust)
+_eststo lob, r: logit lcr i.indian i.sector if patent_outliers == 0, vce(robust)
 
 		* (10) sector - electronics
-_eststo electronics, r: logit lcr i.indian i.electronics if patent_outlier == 0, vce(robust)
+_eststo electronics, r: logit lcr i.indian i.electronics if patent_outliers == 0, vce(robust)
 	
 		* (11) soe
-_eststo soe, r: logit lcr i.indian i.electronics i.soe_india if patent_outlier == 0, vce(robust)
+_eststo soe, r: logit lcr i.indian i.electronics i.soe_india if patent_outliers == 0, vce(robust)
 
 		* (12) age
-_eststo age, r: logit lcr i.indian i.electronics age if patent_outlier == 0, vce(robust)
+_eststo age, r: logit lcr i.indian i.electronics age if patent_outliers == 0, vce(robust)
 
 		* (13) energy focus
-_eststo energy, r: logit lcr i.indian i.electronics i.energy_focus if patent_outlier == 0, vce(robust)
+_eststo energy, r: logit lcr i.indian i.electronics i.energy_focus if patent_outliers == 0, vce(robust)
 
 		* (14) manufacturer
-_eststo manuf, r: logit lcr i.indian i.manufacturer if patent_outlier == 0, vce(robust)
+_eststo manuf, r: logit lcr i.indian i.manufacturer if patent_outliers == 0, vce(robust)
 * high correlation manufacturer electronics (0.8)
 
 		* (15) solar manufacturer
-_eststo manuf_solar, r: logit lcr i.indian i.manufacturer i.manufacturer_solar if patent_outlier == 0, vce(robust)
+_eststo manuf_solar, r: logit lcr i.indian i.manufacturer i.manufacturer_solar if patent_outliers == 0, vce(robust)
 
 		* (16) subsidiary
-_eststo subsidiary, r: logit lcr i.indian i.manufacturer_solar subsidiary if patent_outlier == 0, vce(robust)
+_eststo subsidiary, r: logit lcr i.indian i.manufacturer_solar subsidiary if patent_outliers == 0, vce(robust)
 
 		* (17) phase 1 participation NSM
-_eststo phase, r: logit lcr i.indian i.manufacturer_solar i.part_jnnsm_1 if patent_outlier == 0, vce(robust)
+_eststo phase, r: logit lcr i.indian i.manufacturer_solar i.part_jnnsm_1 if patent_outliers == 0, vce(robust)
 
 		* (18) all
-_eststo all, r: logit lcr i.indian /*i.patentor*/ ihs_pre_not_solar_patent pre_solar_patent ihs_total_revenue log_total_employees sector i.soe_india age i.energy_focus i.manufacturer /*i.manufacturer_solar*/ i.subsidiary i.part_jnnsm_1 if patent_outlier == 0, vce(robust)
+_eststo all, r: logit lcr i.indian /*i.patentor*/ ihs_pre_not_solar_patent pre_solar_patent ihs_total_revenue log_total_employees sector i.soe_india age i.energy_focus i.manufacturer /*i.manufacturer_solar*/ i.subsidiary i.part_jnnsm_1 if patent_outliers == 0, vce(robust)
 
 local regressions indian /*india_state*/ india_capital /*patentor*/ otherprepatents solarprepatents size1 size2 lob electronics soe age energy manuf subsidiary phase all
 esttab `regressions' using variable_choice2_nooutlier.csv, replace ///
@@ -263,50 +263,50 @@ esttab `regressions' using variable_choice2_won_total.csv, replace ///
 ***********************************************************************
 {
 		* (1-3) indian
-_eststo indian, r: logit lcr_won i.indian if patent_outlier == 0, vce(robust)
-*_eststo india_state, r: logit lcr_won i.hq_indian_state if patent_outlier == 0, vce(robust)
-_eststo india_capital, r: logit lcr_won i.capital if patent_outlier == 0, vce(robust)
+_eststo indian, r: logit lcr_won i.indian if patent_outliers == 0, vce(robust)
+*_eststo india_state, r: logit lcr_won i.hq_indian_state if patent_outliers == 0, vce(robust)
+_eststo india_capital, r: logit lcr_won i.capital if patent_outliers == 0, vce(robust)
 
 		* (4) pre patented
-_eststo patentor, r: logit lcr_won i.indian i.patentor if patent_outlier == 0, vce(robust)
+_eststo patentor, r: logit lcr_won i.indian i.patentor if patent_outliers == 0, vce(robust)
 		
 		* (5) pre amount of other patents
-_eststo otherprepatents, r: logit lcr_won i.indian ihs_pre_not_solar_patent if patent_outlier == 0, vce(robust)
+_eststo otherprepatents, r: logit lcr_won i.indian ihs_pre_not_solar_patent if patent_outliers == 0, vce(robust)
 
 		* (6) total_revenue
-_eststo size1, r: logit lcr_won i.indian ihs_total_revenue if patent_outlier == 0, vce(robust)
+_eststo size1, r: logit lcr_won i.indian ihs_total_revenue if patent_outliers == 0, vce(robust)
 
 		* (7) total_employees
-_eststo size2, r: logit lcr_won i.indian log_total_employees if patent_outlier == 0, vce(robust)
-*_eststo size2, r: logit lcr_won total_revenue empl if patent_outlier == 0, vce(robust)
+_eststo size2, r: logit lcr_won i.indian log_total_employees if patent_outliers == 0, vce(robust)
+*_eststo size2, r: logit lcr_won total_revenue empl if patent_outliers == 0, vce(robust)
 
 		* (8) sector
-_eststo lob, r: logit lcr_won i.indian i.sector if patent_outlier == 0, vce(robust)
+_eststo lob, r: logit lcr_won i.indian i.sector if patent_outliers == 0, vce(robust)
 
 		* (9) sector - electronics
-_eststo electronics, r: logit lcr_won i.indian i.electronics if patent_outlier == 0, vce(robust)
+_eststo electronics, r: logit lcr_won i.indian i.electronics if patent_outliers == 0, vce(robust)
 	
 		* (10) soe
-_eststo soe, r: logit lcr_won i.indian i.electronics i.soe_india if patent_outlier == 0, vce(robust)
+_eststo soe, r: logit lcr_won i.indian i.electronics i.soe_india if patent_outliers == 0, vce(robust)
 
 		* (11) age
-_eststo age, r: logit lcr_won i.indian i.electronics age if patent_outlier == 0, vce(robust)
+_eststo age, r: logit lcr_won i.indian i.electronics age if patent_outliers == 0, vce(robust)
 
 		* (12) energy focus
-_eststo energy, r: logit lcr_won i.indian i.electronics i.energy_focus if patent_outlier == 0, vce(robust)
+_eststo energy, r: logit lcr_won i.indian i.electronics i.energy_focus if patent_outliers == 0, vce(robust)
 
 		* (13) manufacturer
-_eststo manuf, r: logit lcr_won i.indian i.manufacturer if patent_outlier == 0, vce(robust)
+_eststo manuf, r: logit lcr_won i.indian i.manufacturer if patent_outliers == 0, vce(robust)
 * high correlation manufacturer electronics (0.8)
 
 		* (14) solar manufacturer
-_eststo manuf_solar, r: logit lcr_won i.indian i.manufacturer i.manufacturer_solar if patent_outlier == 0, vce(robust)
+_eststo manuf_solar, r: logit lcr_won i.indian i.manufacturer i.manufacturer_solar if patent_outliers == 0, vce(robust)
 
 		* (15) subsidiary
-_eststo subsidiary, r: logit lcr_won i.indian i.manufacturer_solar subsidiary if patent_outlier == 0, vce(robust)
+_eststo subsidiary, r: logit lcr_won i.indian i.manufacturer_solar subsidiary if patent_outliers == 0, vce(robust)
 
 		* (14) all
-_eststo all, r: logit lcr_won i.indian /*i.patentor*/ ihs_pre_not_solar_patent ihs_sales total_employees sector i.soe_india age i.energy_focus i.manufacturer i.manufacturer_solar i.subsidiary if patent_outlier == 0, vce(robust)
+_eststo all, r: logit lcr_won i.indian /*i.patentor*/ ihs_pre_not_solar_patent ihs_sales total_employees sector i.soe_india age i.energy_focus i.manufacturer i.manufacturer_solar i.subsidiary if patent_outliers == 0, vce(robust)
 
 
 local regressions indian /*india_state*/ india_capital /*patentor*/ otherprepatents size1 size2 lob electronics soe age energy manuf manuf_solar subsidiary all
