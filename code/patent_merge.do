@@ -21,11 +21,9 @@ use "${lcr_intermediate}/firmpatent_inter", clear
 
 
 	* merge with solarpatents ipc groups
-*merge m:1 applicantname abstract using "${lcr_intermediate}/solarpatents", keepusing(groups subgroups subsubgroups)
+merge m:1 applicationnumber using "${lcr_intermediate}/solarpatents", keepusing(groups subgroups subsubgroups)
 
-	* merge with solarpatents hs code/complexity
-*merge m:1 applicantname abstract using "${lcr_raw}/solar_components_updated_HS", keepusing(groups subgroups subsubgroups)
-
+drop _merge
 
 ***********************************************************************
 * 	PART 2: save in inter

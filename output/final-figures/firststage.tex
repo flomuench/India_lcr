@@ -1,0 +1,37 @@
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{Predicting participation in LCR auctions}
+\begin{tabular*}{0.8\hsize}{@{\hskip\tabcolsep\extracolsep\fill}l*{1}{c}}
+\hline\hline
+                    &\multicolumn{1}{c}{(1)}\\
+                    &\multicolumn{1}{c}{participated (or not) in LCR auction}\\
+\hline
+participated (or not) in LCR auction&                     \\
+log\_total\_employees &       -0.28\sym{*}  \\
+                    &      (0.15)         \\
+[1em]
+ihs transf. pre-LCR sales&        0.04         \\
+                    &      (0.03)         \\
+[1em]
+solar patents 2001-2010&        1.70\sym{*}  \\
+                    &      (0.96)         \\
+[1em]
+indian company      &        1.85\sym{**} \\
+                    &      (0.84)         \\
+[1em]
+solar manufacturing &        1.58\sym{**} \\
+                    &      (0.68)         \\
+[1em]
+part 1 NSM          &        1.06         \\
+                    &      (1.13)         \\
+[1em]
+Constant            &       -2.09\sym{**} \\
+                    &      (0.87)         \\
+\hline
+Observations        &         112         \\
+\hline\hline
+\multicolumn{2}{l}{\footnotesize Standard errors in parentheses}\\
+\multicolumn{2}{l}{\footnotesize Estimates are based on a Logit model with robust standard errors in parentheses.}\\
+\multicolumn{2}{l}{\footnotesize \sym{*} \(p<0.1\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\end{tabular*}
+\end{table}

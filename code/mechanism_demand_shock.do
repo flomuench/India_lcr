@@ -26,7 +26,7 @@ set scheme plotplain
 set graphics on
 
 *Change name of one firm for visualisation purposes
-replace company_name = "odisha" if company_name == "development corporation odisha"
+replace company_name = "D.C. Odisha" if company_name == "development corporation odisha"
  
 	* create additional variables needed for visualisation
 	* quantity firm won in LCR

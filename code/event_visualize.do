@@ -21,6 +21,9 @@ use "${lcr_final}/event_study_final", clear
 
 set graphics on
 
+encode company_name,gen(company_name1)
+drop company_name
+rename company_name1 company_name
 xtset company_name year
 
 ***********************************************************************
@@ -104,7 +107,7 @@ frame drop revenue_frame
 * 	PART 4: visualize timing in LCR/treatment participation
 ***********************************************************************
 decode company_name, gen(company_name_str)
-	
+
 *** excluding nsm first batch
 		* times auctions won
 panelview won_lcr, i(company_name) t(year) type(treat) bytiming mycolor(lean) ///

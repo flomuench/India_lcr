@@ -1,0 +1,231 @@
+* 00000005
+*! version 1.0.0
+* Do not erase or edit this file
+* It is used by Stata to track the ado and help
+* files you have installed.
+
+S http://fmwww.bc.edu/repec/bocode/e
+N estout.pkg
+D  3 May 2023
+U 1
+d 'ESTOUT': module to make regression tables
+d 
+d  estout produces a table of regression results from one or
+d several models for use with spreadsheets, LaTeX, HTML, or a
+d word-processor table. eststo stores a quick copy of the active
+d estimation results for later tabulation. esttab is a wrapper for
+d estout. It displays a pretty looking publication-style regression
+d table without much typing. estadd adds additional results to the
+d e()-returns for one or several models previously fitted and
+d stored. This package subsumes the previously circulated esto,
+d esta, estadd,  and estadd_plus. An earlier version of estout is
+d available  as estout1.
+d 
+d KW: estimates
+d KW: LaTeX
+d KW: HTML
+d KW: word processor
+d KW: output
+d 
+d Requires: Stata version 8.2
+d 
+d Distribution-Date: 20230212
+d 
+d Author: Ben Jann, University of Bern
+d Support: email jann@@soz.unibe.ch
+d 
+f _\_eststo.ado
+f _\_eststo.hlp
+f e\estadd.ado
+f e\estadd.hlp
+f e\estout.ado
+f e\estout.hlp
+f e\eststo.ado
+f e\eststo.hlp
+f e\estpost.ado
+f e\estpost.hlp
+f e\esttab.ado
+f e\esttab.hlp
+e
+S http://fmwww.bc.edu/repec/bocode/l
+N labutil.pkg
+D  3 May 2023
+U 2
+d 'LABUTIL': modules for managing value and variable labels
+d 
+d labcopy copies value labels, or swaps them around. labdel deletes
+d  them.  lablog defines value labels for values which are base 10
+d logarithms containing the antilogged values. labcd defines value
+d labels in which decimal points and commas are  interchanged
+d compared with the Stata default. labdtch detaches value labels.
+d labmap maps numeric  values to numeric labels. labnoeq removes
+d text up to and including "==" from variable labels. labvalch
+d supersedes labcopy and labdel.   labvarch is a more general tool
+d to change variable labels.  labmask assigns the values (or
+d value labels) of one variable  to another.  These  command-line
+d tools may complement John Gleason's interactive  labedit
+d (STB-51). labvalclone clones a set of value labels under a new
+d label name.  labvalcombine combines two or more sets of value
+d labels. It requires Stata 8.
+d 
+d KW: value labels
+d KW: variable labels
+d KW: data management
+d KW: logarithm
+d 
+d Requires: Stata version 7.0 (version 8 for labvalcombine).
+d 
+d 
+d Author: Nicholas J. Cox, University of Durham
+d Support: email N.J.Cox@@durham.ac.uk
+d 
+d Distribution-Date: 20131123
+d 
+f l\labcd.ado
+f l\labcd.hlp
+f l\labcopy.ado
+f l\labcopy.hlp
+f l\labdel.ado
+f l\labdel.hlp
+f l\lablog.ado
+f l\lablog.hlp
+f l\labdtch.ado
+f l\labdtch.hlp
+f l\labmap.ado
+f l\labmap.hlp
+f l\labnoeq.ado
+f l\labnoeq.hlp
+f l\labvarch.ado
+f l\labvarch.hlp
+f l\labvalch.ado
+f l\labvalch.hlp
+f l\labmask.ado
+f l\labmask.hlp
+f l\labvalclone.ado
+f l\labvalclone.sthlp
+f l\labvalcombine.ado
+f l\labvalcombine.hlp
+e
+S http://fmwww.bc.edu/repec/bocode/s
+N sencode.pkg
+D  3 May 2023
+U 3
+d 'SENCODE': module to encode a string variable non-alphanumerically into a numeric variable
+d 
+d   sencode is a sequential version of encode. It takes, as input,
+d a string variable, and generates, as output, a numeric
+d variable, with value labels    corresponding to values of the
+d string variable. Unlike encode, sencode      orders the numeric
+d values corresponding to string values in the sequential
+d order of appearance in the input string variable in the data set,
+d or in      another order specified by the user, instead of
+d ordering them in alphanumeric      order of the string value, as
+d encode does. The mapping from numeric code   values to string
+d labels may be one-to-one (coded in order of first  appearance
+d of the string value) or many-to-one (coded in each observation
+d   by the position of that observation in the data set, or in the
+d user-specified      ordering).
+d 
+d KW: data manipulation
+d 
+d Requires: Stata version 10.0
+d 
+d Distribution-Date: 20130930
+d 
+d Author: Roger Newson,  King's College London
+d Support: email roger.newson@@kcl.ac.uk
+d 
+f s\sencode.ado
+f s\sencode.sthlp
+e
+S http://fmwww.bc.edu/repec/bocode/d
+N drdid.pkg
+D  3 May 2023
+U 4
+d 'DRDID': module for the estimation of Doubly Robust Difference-in-Difference models
+d 
+d  DRDID implements Sant'Anna and Zhao (2020) proposed estimators
+d for the Average Treatment Effect on the Treated (ATT) in
+d Difference-in-Differences (DID) setups where the parallel trends
+d assumption holds after conditioning on a vector of pre-treatment
+d covariates. For a generalization to multiple periods see CSDID.
+d  The main estimators in DRDID are locally efficient and
+d doubly-robust estimators, because they combine Inverse
+d probability weighting and outcome regression to estimate ATT's.
+d  DRDID can be applied to both balanced/unbalanced panel data, or
+d repeated cross-section.
+d 
+d KW: difference in differences
+d KW: DID
+d KW: pretreatment covariates
+d KW: csdid
+d 
+d Requires: Stata version 14
+d 
+d Distribution-Date: 20221018
+d 
+d Author: Fernando Rios-Avila, Levy Economics Institute of Bard College
+d Support: email friosavi@@levy.org
+d 
+d Author: Pedro H.C. Sant'Anna, Vanderbilt University
+d Support: email pedro.h.santanna@@vanderbilt.edu
+d 
+d Author:  Asjad Naqvi, International Institute for Applied Systems Analysis
+d Support: email snaqvi@@wu.ac.at
+d 
+f d\drdid.ado
+f d\drdid_display.ado
+f d\drdid_predict.ado
+f _\_gmm_regipw.ado
+f _\_het_did_gmm.ado
+f _\_gmm_dripw.ado
+f _\_gmm_repeated.ado
+f d\drdid.sthlp
+e
+S http://fmwww.bc.edu/repec/bocode/c
+N csdid.pkg
+D  3 May 2023
+U 5
+d 'CSDID': module for the estimation of Difference-in-Difference models with multiple time periods
+d 
+d  CSDID implements Callaway and Sant'Anna (2020) estimator for DID
+d models with multiple time periods. The main idea of CSDID is that
+d consistent estimations for ATT's can be obtained by ignoring 2x2
+d DID design that compare late treated units with earlier treated
+d units. In the presence of heterogeneous and dynamic effects, this
+d type of comparison can severely bias the estimation of Treatment
+d effects. CSDID at its core uses DRDID for the estimation of all
+d 2x2 DID designs to estimate all relevant ATTGT's (Average
+d treatment effects of the treated for group G at time T). Post
+d estimation commands can be used to obtain important aggregations.
+d CSDID can be used with panel data and repeated cross-section. 
+d 
+d KW: difference in differences
+d KW: DID
+d KW: event studies
+d KW: drdid
+d 
+d Requires: Stata version 14 and drdid from SSC (q.v.)
+d 
+d Distribution-Date: 20230225
+d 
+d Author: Fernando Rios-Avila, Levy Economics Institute of Bard College
+d Support: email friosavi@@levy.org
+d 
+d Author: Pedro H.C. Sant'Anna, Vanderbilt University
+d Support: email pedro.h.santanna@@vanderbilt.edu
+d 
+d Author: Brantly Callaway, University of Georgia
+d Support: email brantly.callaway@@uga.edu
+d 
+f c\csdid.ado
+f c\csdid_estat.ado
+f c\csdid_rif.ado
+f c\csdid_stats.ado
+f c\csdid_table.ado
+f c\csdid_plot.ado
+f _\_gcsgvar.ado
+f t\tsvmat.ado
+f c\csdid.sthlp
+f c\csdid_postestimation.sthlp
+e

@@ -19,7 +19,7 @@
 ***********************************************************************
 use "${lcr_final}/event_study_final", clear	
 
-rename year_application year
+*rename year_application year
 
 xtset company_name2 year
 
