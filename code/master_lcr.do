@@ -23,14 +23,14 @@ clear all
 graph drop _all
 scalar drop _all
 set more off
-set varabbrev off // stops stata from referring to variables if only one part is the same
-set graphics off /* switch off to on to display graphs */
-capture program drop zscore /* drops the program programname */
+set varabbrev off 					// stops stata from referring to variables if only one part is the same
+set graphics off 					// switch off to on to display graphs
+capture program drop zscore 		// drops the program programname
 qui cap log c
 
 	*IF you dont have the following packages installed, please first install them: 
-	*ssc install blindschemes
-	*ssc install estout
+*ssc install blindschemes
+*ssc install estout
 
 	* define graph scheme for visual outputs
 *set scheme burd
@@ -65,42 +65,6 @@ global lcr_descriptives = "${output}/descriptive-statistics-figures"
 global lcr_psm = "${output}/propensity-score-matching"
 global final_figures = "${output}/final-figures"
 
-/*
-		* dynamic folder path for gdrive(data,output), github(code), backup(local computer)
-if c(os) == "Windows" {
-	global lcr_gdrive = "G:"
-	global lcr_github = "C:/Users/`c(username)'/Documents/GitHub/India_lcr/do-files"
-	
-}
-
-		* user specific
-if "`c(username)'" == "ASUS" {
-		global lcr_gdrive_user = "${lcr_gdrive}/Meine Ablage"
-}
-else{
-	
-		global lcr_gdrive_user = "${lcr_gdrive}/.shortcut-targets-by-id\1t09p3JqyHkjvrE8TEqosOpHm-GiD94Q3"
-}
-
-		* path to gdrive
-global lcr_project_folder =  "${lcr_gdrive_user}/Research_Solar India TU-IASS-PTB/Paper effect of LCR on innovation"
-
-		* paths within gdrive
-global lcr_gdrive_data = "${lcr_project_folder}/data"
-global lcr_gdrive_output = "${lcr_project_folder}/output"
-
-			* within data
-global lcr_raw = "${lcr_gdrive_data}/raw"
-global lcr_intermediate "${lcr_gdrive_data}/intermediate"
-global lcr_final = "${lcr_gdrive_data}/final"
-
-
-			* within output (regression tables, figures)
-global lcr_rt = "${lcr_gdrive_output}/regression-tables"
-global lcr_descriptives = "${lcr_gdrive_output}/descriptive-statistics-figures"
-global lcr_psm = "${lcr_gdrive_output}/propensity-score-matching"
-global final_figures = "${lcr_gdrive_output}/final-figures"
-*/		
 		* set seeds for replication
 set seed 8413195
 set sortseed 8413195
