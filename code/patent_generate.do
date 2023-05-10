@@ -2,16 +2,19 @@
 * 			LCR India: generate variables in patent data sets
 ***********************************************************************
 *																	   
-*	PURPOSE: 				  								  
+*	PURPOSE: merge with solar patents/ipc groups from Shubbak 2020			  								  
 *				  
 *																	  
 *	OUTLINE:														  
-* 	1: merge with solar patents/ipc groups from Shubbak 2020
+* 	1: 		format changes for merger in two separate frames
+*	2:		create pre-post-LCR dummy	
+*	3:		create a LCR dummy
+*	4:		create a dummy for cell/module patents only (rather than solar patents)
 *
-*	Author: Florian  														  
+*	Author: Florian Münch, Fabian Scheifele 														  
 *	ID variable: no id variable defined			  									  
-*	Requires:	
-*	Creates:							  
+*	Requires:	firmpatent_inter
+*	Creates:	firmpatent_final					  
 *																	  
 ***********************************************************************
 * 	PART 1: format changes for merger in two separate frames	  						
@@ -55,11 +58,6 @@ gen lcr_participation = 0
 foreach company of local lcr_participants {
 	replace lcr_participation = 1 if company_name == "`company'"
 }
-
-	* number of LCR firms that also patented
-codebook company_name if lcr_participation == 1 /* 10 */
-codebook company_name if lcr_participation == 1 & solarpatent == 1 /* 6 firms in LCR also have solarpatent */
-
 
 
 ***********************************************************************
@@ -113,6 +111,6 @@ gen modcell_patent = 0
 
 
 ***********************************************************************
-* 	PART 2: save in final
+* 	PART: save in final
 ***********************************************************************
 save "${lcr_final}/firmpatent_final", replace

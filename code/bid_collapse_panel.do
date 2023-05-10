@@ -128,7 +128,7 @@ drop ihs_sales sales totalemployees empl totalemployees age
 * create age_at_bid variable
 gen age_at_bid = auction_year - founded, a(founded)
 order founded age_at_bid, a(auction_year)
-br if age_at_bid < 0
+*br if age_at_bid < 0
 codebook company_name2 if age_at_bid < 0 /* 24 firms participated in auctions before they were founded...obviously erroneous. requires correction. */
 
 
