@@ -82,7 +82,7 @@ frame drop solar_patent_time_series
 format title abstract %-150s
 format abstract %-300s
 sort company_name year_application
-br if solarpatent == 1 & lcr_participation == 1 & year_application > 2013
+*br if solarpatent == 1 & lcr_participation == 1 & year_application > 2013
 
 /*
 Note, only 5 companies in the LCR group have filed a patent after LCR. 
@@ -123,11 +123,9 @@ Vikram (1)
 
 */
 
-br if solarpatent == 1 & lcr_participation == 0 & year_application > 2013
+*br if solarpatent == 1 & lcr_participation == 0 & year_application > 2013
 
 /* 
 Mahindra (6)
-
-
 
 */
