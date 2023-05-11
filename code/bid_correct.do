@@ -58,7 +58,7 @@ duplicates tag bid, gen(dup_bid)
 
 * --> duplicates report to firm bidding under same auction for different parts of the auction,e.g. one with dcr one w/o
 	* or from several plants/parcels getting auctioned under the same scheme
-
+sort bid, stable // implicit reordering of obs through duplicates command
 
 ***********************************************************************
 * 	Save the changes made to the data		  			

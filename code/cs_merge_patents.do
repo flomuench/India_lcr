@@ -25,6 +25,8 @@ merge m:1 company_name using "${lcr_final}/patent_cross_section.dta"
 drop if _merge == 2 
 drop _merge
 
+sort company_name, stable
+
 ***********************************************************************
 * 	PART 2: save as lcr raw
 ***********************************************************************

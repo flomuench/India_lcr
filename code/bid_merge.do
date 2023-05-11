@@ -44,6 +44,8 @@ foreach x of local strvars {
 	replace `x' = lower(stritrim(strtrim(`x')))
 	}
 		
+		* sort, stable for replicability
+sort bidder, stable
 ***********************************************************************
 * 	PART 2: collape Probst el. data on company-level incl. relevant controls
 ***********************************************************************
@@ -70,6 +72,9 @@ replace company_name = "patil" if company_name == "patil construction"
 replace company_name = "softbank" if company_name == "sbg cleantech"
 replace company_name = "sunil" if company_name == "sunil hitech"
 
+	* sort, stable to guarantee replicability
+sort company_name, stable
+
 	* save
 save "${lcr_raw}/probst2020", replace
 
@@ -88,7 +93,7 @@ drop _merge
 
 lab var indian "indian firm = 1"
 
-
+sort bid, stable 
 ***********************************************************************
 * 	PART 4: manually replace mv for firms not included in Probst et al. 2020
 ***********************************************************************
@@ -269,6 +274,8 @@ format founded %9.0g
 drop years_since_found
 gen age = 2022 - founded
 format age %9.0g
+
+sort bid, stable
 
 ***********************************************************************
 * 	Save the changes made to the data		  			

@@ -1,5 +1,5 @@
 ***********************************************************************
-* 			variable choice - the effect of LCR on innovation					  	  
+* 			India LCR: descriptive statistics				  	  
 ***********************************************************************
 *
 *	PURPOSE: generate descriptive statistics
@@ -8,9 +8,11 @@
 *	1) 		set the scene
 *	2) 		balance table
 *	3)		table 1
-*	4)
-*	5)
-*	6)
+*	4)		Figure 5
+*	5)		Figure 12 Share of LCR auction wins among LCR firms
+*	6)		Figure 14
+*	7)		Figure 11 Auction participants by main sector
+*	8)		Figure 15 Solar patents by manufacturing status and auction type				
 *											      
 *	Author:  	Florian Münch, Fabian Scheifele
 *	ID variable: 	company_name			  					  
@@ -70,21 +72,21 @@ graph bar (sum)  `prepostsolar', over(lcr, label(labs(large))) ///
 gr export prepost_solar_LCR.png, replace
 	
 ************************************************************************
-* 	PART 4: Figure 12 Share of LCR auction wins among LCR firms
+* 	PART 5: Figure 12 Share of LCR auction wins among LCR firms
 ************************************************************************
 graph hbar share_lcr_won if won_lcr==1, over(company_name, sort(share_lcr_won) descending) ///
 	ytitle("Share of LCR auction wins (of total wins) among firms that won at least 1 LCR auction", size(small)) yline(0.5)
 gr export treatment_intensity.png, replace
 
 ************************************************************************
-* 	PART 5: Figure 11 Auction participants by main sector
+* 	PART 6: Figure 11 Auction participants by main sector
 ************************************************************************
 graph hbar (count), over(sector) by(lcr, note("") iscale(0.8)) blabel(bar) ///
 	ytitle("Number of firms")
 graph export firms_frequency_sector.png, replace
 
 ************************************************************************
-* 	PART 5: Figure 14
+* 	PART 7: Figure 14
 ************************************************************************
 graph hbar (sum) solarpatents, over (sector) by(lcr, note("") iscale(0.8)) ///
  ytitle("Number of solar patents") blabel (bar) 
@@ -92,7 +94,7 @@ graph export solarpatents_sector.png, replace
 
 
 ***********************************************************************
-* 	PART 6: Figure 15 Solar patents by manufacturing status and auction type				
+* 	PART 8: Figure 15 Solar patents by manufacturing status and auction type				
 ************************************************************************
 graph bar (sum) pre_solar_patent post_solar_patent if won_total>0 ,  by(winner_types, note("") iscale(0.8) ) ///
 	over(manufacturer, lab(labs(small))) blabel(bar, pos(center)) legend(pos(6)  ///

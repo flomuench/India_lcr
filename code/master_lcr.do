@@ -42,24 +42,24 @@ set scheme plotplain
 {
 		* user specific part - USER LOCATION NEEDS TO BE ADJUSTED MANUALLY AND DEPENDS ON WHERE YOU DECIDE TO SAVE REPLICATION PACKAGE
 if c(os) == "Windows" {
-	global user_location = "C:/Users/`c(username)'/Documents/GitHub"
+	global user_location = "C:/Users/`c(username)'/Documents/GitHub/India_lcr_replication_package"
 }
 		
 		* code
-global code = "${user_location}/India_lcr/code"
+global code = "${user_location}/code"
 		
 		* ado-files
-global ado_files = "${user_location}/India_lcr/ado_files"
-sysdir set PLUS "${ado_files}"	// set system directory for ado-files to make sure all packages are available locally
+global ado_files = "${user_location}/ado_files"
+sysdir set PLUS "${ado_files}"					// set system directory for ado-files to make sure all packages are available locally
 
 		* data
-global data = "${user_location}/India_lcr/data"
+global data = "${user_location}/data"
 global lcr_raw = "${data}/raw"
 global lcr_intermediate = "${data}/intermediate"
 global lcr_final = "${data}/final"
 
 		* output
-global output = "${user_location}/India_lcr/output"
+global output = "${user_location}/output"
 global lcr_rt = "${output}/regression-tables"
 global lcr_descriptives = "${output}/descriptive-statistics-figures"
 global lcr_psm = "${output}/propensity-score-matching"

@@ -48,15 +48,6 @@ foreach sample in all won nooutliers {
 gr export common_support_`sample'.png, replace
 }
 
-
-	* range of propensity score in both groups
-foreach sample in all won nooutliers {
-bysort lcr: sum pscore_`sample'
-/* LCR = 1 min: 0 ; max.: .95 
-   LCR = 0 min: 0 ; max.: .72
-*/
-}
-
 	* change directory to bundled psm 
 cd "$lcr_psm"
 
@@ -73,8 +64,7 @@ gr export common_support_density.png, replace
 local matching_var ihs_pre_not_solar_patent soe_india indian manufacturer part_jnnsm_1
 	
 	* sample in all won nooutliers 
-	sort pscore_all
-	br company_name pscore_all lcr pre_solar_patent post_solar_patent `matching_var'
+*	br company_name pscore_all lcr pre_solar_patent post_solar_patent `matching_var'
 
 ***********************************************************************
 * 	PART 3: firms off common support	

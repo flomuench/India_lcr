@@ -50,7 +50,7 @@ summ len
 recast str2045 abstract, force  // Convert to a fixed-length string If the longest is less than 2045, use that number instead of 2045; 51 values changed
 
 *recode application numbers that were wrongly formatted from numeric to string
-sort applicantname applicationdatedv abstract,stable
+sort applicantname applicationdatedv abstract, stable
 
 replace applicationnumber = "201611021203" in 146 
 replace applicationnumber = "201711029640" in 148 
