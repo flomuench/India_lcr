@@ -35,6 +35,8 @@ merge m:1 applicationnumber using "${lcr_intermediate}/solarpatents", keepusing(
 */
 
 drop _merge
+sort applicantname applicationdatedv abstract, stable
+
 
 ***********************************************************************
 * 	PART 2: save in inter

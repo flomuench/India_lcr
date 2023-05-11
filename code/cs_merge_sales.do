@@ -57,6 +57,7 @@ merge 1:1 company_name using "${lcr_final}/firm_employees"
 */
 drop _merge
 
+sort company_name, stable
 
 ***********************************************************************
 * 	PART 4: save as lcr_raw.dta

@@ -27,6 +27,8 @@
 ***********************************************************************
 use "${lcr_raw}/lcr_bid_raw", clear
 
+sort ID, stable
+
 {
 	* string
 ds, has(type string) 

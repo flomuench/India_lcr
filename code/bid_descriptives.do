@@ -63,7 +63,7 @@ lab val lcr local_content_auction
 local auction_characteristics n_competitors /* contractual_arrangement */ quantity_total scope solarpark location climate_zone technology plant_type maxprojectsize final_bid_after_era contractlength std_count_feb20 final_vgf_after_era
 cd "$final_figures"
 		* Excel
-iebaltab `auction_characteristics' if auction_year <= 2017 & contractual_arrangement == 1, grpvar(lcr) save(baltab_auctions) replace ///
+iebaltab `auction_characteristics', grpvar(lcr) save(baltab_auctions) replace ///
 			 vce(robust) pttest rowvarlabels balmiss(mean) onerow stdev notecombine ///
 			 format(%12.2fc)
 		* Tex

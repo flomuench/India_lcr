@@ -30,6 +30,7 @@ keep company_name year total_employees total_revenueinINR founded
 		* keep only actual observations
 sum year
 keep in 1/`r(N)'
+sort company_name year, stable
 
 	
 ***********************************************************************
@@ -102,6 +103,7 @@ duplicates list company_name year
 	* make company_name a numerical variable
 encode company_name, gen(companyname)
 xtset companyname year, y
+sort company_name year, stable
 
 ***********************************************************************
 * 	Save the changes made to the data		  			

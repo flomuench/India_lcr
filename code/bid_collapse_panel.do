@@ -22,7 +22,7 @@
 * 	PART 0:  import the data  			
 ***********************************************************************
 use "${lcr_final}/lcr_bid_final", clear
-sort auction company_name, stable 
+sort bid, stable 
 
 ***********************************************************************
 * 	PART 1:  collapse + reshape the data for firm-level characteristics  			
