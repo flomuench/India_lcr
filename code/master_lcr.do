@@ -46,7 +46,7 @@ if c(os) == "Windows" {
 }
 		
 		* code
-x
+global code = "${user_location}/code"
 		
 		* ado-files
 global ado_files = "${user_location}/ado_files"

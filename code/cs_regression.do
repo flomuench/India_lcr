@@ -35,6 +35,8 @@ set scheme plotplain
 	* generate random order of observations
 		* note that sortseed and seed are defined in master do-file
 		* random order relevant as may influence results from matching
+set seed 8413195
+set sortseed 8413195
 gen random_order = uniform()
 sort random_order, stable
 

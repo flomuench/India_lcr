@@ -1,0 +1,37 @@
+\begin{table}[htbp]\centering \\  \def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi} \\ \caption{Adjusted for Treatment Intensity: Results of Matching combined with Difference in Differences} \\ \begin{tabular}{l*{8}{c}} \hline\hline
+                    &                     &                     &   All firms         &                     &Winner firms         &                     &All w/o outliers         &                     \\
+                    &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}&\multicolumn{1}{c}{(3)}&\multicolumn{1}{c}{(4)}&\multicolumn{1}{c}{(5)}&\multicolumn{1}{c}{(6)}&\multicolumn{1}{c}{(7)}&\multicolumn{1}{c}{(8)}\\
+                    &\multicolumn{1}{c}{Simple post difference}&\multicolumn{1}{c}{DiD}&\multicolumn{1}{c}{caliper = 0.1}&\multicolumn{1}{c}{caliper = 0.05}&\multicolumn{1}{c}{caliper = 0.1}&\multicolumn{1}{c}{caliper = 0.05}&\multicolumn{1}{c}{caliper = 0.1}&\multicolumn{1}{c}{caliper = 0.05}\\
+\hline \\ \multicolumn{8}{c}{\textbf{Panel A: Solar PV Patents}} \\\\[-1ex]
+No. of times participated in an LCR auction&        0.51\sym{*}  &        0.21         &       -0.02         &       -0.01         &       -0.17         &       -0.41         &       -0.19         &       -0.16         \\
+                    &      (0.31)         &      (0.20)         &      (0.29)         &      (0.29)         &      (0.55)         &      (0.39)         &      (0.41)         &      (0.37)         \\
+[1em]
+Constant            &        0.45         &        0.41\sym{**} &        0.88\sym{*}  &        0.86\sym{*}  &        1.14         &        0.69         &        0.72         &        0.55         \\
+                    &      (0.30)         &      (0.20)         &      (0.52)         &      (0.52)         &      (1.18)         &      (0.66)         &      (0.70)         &      (0.57)         \\
+\hline
+Observations        &         113         &         113         &         110         &         109         &          66         &          60         &         106         &         104         \\
+\hline \\ \multicolumn{8}{c}{\textbf{Panel B: PV Module \& PV Cell Patents only}} \\\\[-1ex]
+No. of times participated in an LCR auction&        0.37\sym{*}  &        0.18         &       -0.08         &       -0.08         &       -0.14         &       -0.33         &       -0.09         &       -0.14         \\
+                    &      (0.20)         &      (0.15)         &      (0.21)         &      (0.21)         &      (0.44)         &      (0.33)         &      (0.31)         &      (0.27)         \\
+[1em]
+Constant            &        0.22         &        0.19         &        0.55         &        0.54         &        1.00         &        0.57         &        0.56         &        0.42         \\
+                    &      (0.20)         &      (0.13)         &      (0.37)         &      (0.37)         &      (0.97)         &      (0.55)         &      (0.58)         &      (0.47)         \\
+\hline
+Observations        &         113         &         113         &         110         &         109         &          66         &          60         &         106         &         104         \\
+\hline \\ \multicolumn{8}{c}{\textbf{Panel C: Post-LCR solar patent (binary)}} \\\\[-1ex]
+No. of times participated in an LCR auction&        0.07\sym{*}  &        0.04         &        0.02         &        0.02         &        0.02         &       -0.09         &        0.01         &        0.00         \\
+                    &      (0.03)         &      (0.06)         &      (0.08)         &      (0.08)         &      (0.12)         &      (0.07)         &      (0.11)         &      (0.11)         \\
+[1em]
+Constant            &        0.08\sym{**} &        0.04         &        0.14\sym{*}  &        0.12         &        0.18         &        0.15         &        0.16         &        0.12         \\
+                    &      (0.03)         &      (0.03)         &      (0.08)         &      (0.08)         &      (0.20)         &      (0.11)         &      (0.13)         &      (0.11)         \\
+\hline
+Observations        &         113         &         113         &         110         &         109         &          66         &          60         &         106         &         104         \\
+\hline \\ \multicolumn{8}{c}{\textbf{Panel D: Revenues (in INR)}} \\\\[-1ex]
+No. of times participated in an LCR auction&   -9.88e+09         &   -9.88e+09         &   -4.38e+09         &   -3.32e+09         &   -1.08e+10         &   -1.00e+10         &   -5.28e+08         &   -1.55e+09         \\
+                    &  (7.00e+09)         &  (7.52e+09)         &  (3.44e+09)         &  (2.89e+09)         &  (8.83e+09)         &  (6.48e+09)         &  (1.86e+09)         &  (2.19e+09)         \\
+[1em]
+Constant            &    1.36e+10\sym{**} &    1.36e+10\sym{*}  &    1.46e+10\sym{**} &    1.23e+10\sym{**} &    1.35e+10\sym{*}  &    1.86e+10\sym{*}  &    6.48e+09\sym{**} &    7.91e+09\sym{**} \\
+                    &  (6.84e+09)         &  (6.94e+09)         &  (6.41e+09)         &  (5.34e+09)         &  (7.94e+09)         &  (1.05e+10)         &  (3.08e+09)         &  (3.82e+09)         \\
+\hline
+Observations        &         113         &         113         &         110         &         109         &          66         &          60         &         108         &         104         \\
+\hline\hline\hline \multicolumn{8}{l}{\footnotesize Results in columns (1) \& (2) use unmatched counterfactuals and columns (3)-(8) use matched counterfactuals based on the specified parameters. }\\\multicolumn{5}{l}{\footnotesize Robust Standard errors in parentheses}\\\multicolumn{2}{l}{\footnotesize \sym{**} \(p<0.05\), \sym{*} \(p<0.1\)}\\ \end{tabular} \\ \end{table}
