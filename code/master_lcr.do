@@ -28,21 +28,14 @@ set graphics off 					// switch off to on to display graphs
 capture program drop zscore 		// drops the program programname
 qui cap log c
 
-	*IF you dont have the following packages installed, please first install them: 
-*ssc install blindschemes
-*ssc install estout
-
-	* define graph scheme for visual outputs
-*set scheme burd
-set scheme plotplain
 
 ***********************************************************************
 * 	PART 2: 	Prepare dynamic folder paths & globals			  	  *
 ***********************************************************************
 {
-		* user specific part - USER LOCATION NEEDS TO BE ADJUSTED MANUALLY AND DEPENDS ON WHERE YOU DECIDE TO SAVE REPLICATION PACKAGE
+		* user specific part - USER LOCATION NEEDS TO BE ADJUSTED MANUALLY AND DEPENDS ON WHERE YOU DECIDE TO SAVE AND EXTRACT THE REPLICATION PACKAGE
 if c(os) == "Windows" {
-	global user_location = "C:/Users/`c(username)'/Documents/GitHub/India_lcr_replication_package"
+	global user_location = "C:/Users/`c(username)'/Documents/GitHub/India_lcr"
 }
 		
 		* code
@@ -65,10 +58,10 @@ global lcr_descriptives = "${output}/descriptive-statistics-figures"
 global lcr_psm = "${output}/propensity-score-matching"
 global final_figures = "${output}/final-figures"
 
-		* set seeds for replication
+		* set seeds for replication and define scheme for visual outputs
 set seed 8413195
 set sortseed 8413195
-	
+set scheme plotplain	
 }	
 ***********************************************************************
 * 	PART 3: 	Run do-files for employees + sales data 
