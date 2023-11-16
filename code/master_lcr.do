@@ -29,8 +29,8 @@ capture program drop zscore 		// drops the program programname
 qui cap log c
 
 	*IF you dont have the following packages installed, please first install them: 
-*ssc install blindschemes
-*ssc install estout
+*ssc install blindschemes, replace
+*ssc install estout, replace
 
 	* define graph scheme for visual outputs
 *set scheme burd
