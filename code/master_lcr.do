@@ -28,6 +28,14 @@ set graphics off 					// switch off to on to display graphs
 capture program drop zscore 		// drops the program programname
 qui cap log c
 
+	*IF you dont have the following packages installed, please first install them: 
+*ssc install blindschemes, replace
+*ssc install estout, replace
+
+	* define graph scheme for visual outputs
+*set scheme burd
+set scheme plotplain
+
 
 ***********************************************************************
 * 	PART 2: 	Prepare dynamic folder paths & globals			  	  *
